@@ -1,0 +1,22 @@
+{
+  "servers": [
+    {
+      "name": "playwright",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-playwright"],
+      "env": {}
+    },
+    {
+      "name": "filesystem",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "env": {}
+    },
+    {
+      "name": "cron",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-cron"],
+      "env": {}
+    }
+  ]
+}
