@@ -1,13 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import React from 'react';
 
 export default function Home() {
-  const [clicked, setClicked] = useState("");
-
-  function handleClick(name) {
-    setClicked(`你点击了：${name}`);
-  }
+  const [msg, setMsg] = React.useState('');
 
   return (
     <div style={{ padding: '20px', maxWidth: '400px', margin: '0 auto' }}>
@@ -15,67 +11,63 @@ export default function Home() {
       
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
         <button
-          onClick={() => handleClick("AAPL")}
+          onClick={() => setMsg('你点击了：AAPL')}
           style={{
             padding: '20px',
             backgroundColor: '#2563eb',
             color: 'white',
             border: 'none',
             borderRadius: '10px',
-            fontSize: '18px',
-            cursor: 'pointer'
+            fontSize: '18px'
           }}
         >
           AAPL
         </button>
         
         <button
-          onClick={() => handleClick("MSFT")}
+          onClick={() => setMsg('你点击了：MSFT')}
           style={{
             padding: '20px',
             backgroundColor: '#2563eb',
             color: 'white',
             border: 'none',
             borderRadius: '10px',
-            fontSize: '18px',
-            cursor: 'pointer'
+            fontSize: '18px'
           }}
         >
           MSFT
         </button>
         
         <button
-          onClick={() => handleClick("TSLA")}
+          onClick={() => setMsg('你点击了：TSLA')}
           style={{
             padding: '20px',
             backgroundColor: '#2563eb',
             color: 'white',
             border: 'none',
             borderRadius: '10px',
-            fontSize: '18px',
-            cursor: 'pointer'
+            fontSize: '18px'
           }}
         >
           TSLA
         </button>
         
         <button
-          onClick={() => handleClick("GOOGL")}
+          onClick={() => setMsg('你点击了：GOOGL')}
           style={{
             padding: '20px',
             backgroundColor: '#2563eb',
             color: 'white',
             border: 'none',
             borderRadius: '10px',
-            fontSize: '18px',
-            cursor: 'pointer'
+            fontSize: '18px'
           }}
         >
           GOOGL
         </button>
       </div>
       
-      {clicked && (
+      {msg && (
         <div style={{
           marginTop: '30px',
           padding: '20px',
@@ -84,13 +76,9 @@ export default function Home() {
           fontSize: '20px',
           textAlign: 'center'
         }}>
-          {clicked}
+          {msg}
         </div>
       )}
-      
-      <p style={{ marginTop: '20px', color: '#666' }}>
-        请点击上面的蓝色按钮测试
-      </p>
     </div>
   );
 }
