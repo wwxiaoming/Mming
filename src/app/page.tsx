@@ -1,6 +1,4 @@
-'use client';
-
-import { useState } from 'react';
+import Link from 'next/link';
 
 const popularStocks = [
   { symbol: 'AAPL', name: 'Apple' },
@@ -11,9 +9,9 @@ const popularStocks = [
   { symbol: 'NVDA', name: 'NVIDIA' },
 ];
 
-export default function Home() {
-  const [selectedStock, setSelectedStock] = useState(null);
-
+export default function Home({ searchParams }) {
+  const selected = searchParams?.stock || '';
+  
   return (
     <div style={{ 
       minHeight: '100vh',
@@ -47,32 +45,32 @@ export default function Home() {
             gap: '12px'
           }}>
             {popularStocks.map((stock) => (
-              <button
+              <Link
                 key={stock.symbol}
-                onClick={() => setSelectedStock(stock)}
+                href={`?stock=${stock.symbol}`}
                 style={{
                   padding: '20px 12px',
-                  backgroundColor: selectedStock?.symbol === stock.symbol ? '#1d4ed8' : '#2563eb',
+                  backgroundColor: selected === stock.symbol ? '#1d4ed8' : '#2563eb',
                   color: 'white',
-                  border: 'none',
                   borderRadius: '12px',
                   fontSize: '18px',
+                  textDecoration: 'none',
+                  textAlign: 'center',
                   fontWeight: 'bold',
-                  cursor: 'pointer',
-                  width: '100%'
+                  display: 'block'
                 }}
               >
                 {stock.symbol}
                 <div style={{ fontSize: '13px', opacity: '0.9', marginTop: '4px' }}>
                   {stock.name}
                 </div>
-              </button>
+              </Link>
             ))}
           </div>
         </div>
 
         {/* 股票详情区域 */}
-        {selectedStock ? (
+        {selected ? (
           <div style={{ 
             backgroundColor: 'white',
             padding: '24px',
@@ -87,32 +85,31 @@ export default function Home() {
             }}>
               <div>
                 <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
-                  {selectedStock.symbol}
+                  {selected}
                 </h2>
                 <p style={{ color: '#666', margin: '4px 0 0 0' }}>
-                  {selectedStock.name}
+                  {popularStocks.find(s => s.symbol === selected)?.name || '股票'}
                 </p>
               </div>
-              <button
-                onClick={() => setSelectedStock(null)}
+              <Link
+                href="/"
                 style={{
                   padding: '10px 20px',
                   backgroundColor: '#f3f4f6',
                   color: '#374151',
-                  border: 'none',
                   borderRadius: '8px',
+                  textDecoration: 'none',
                   fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer'
+                  fontWeight: '500'
                 }}
               >
                 返回选择
-              </button>
+              </Link>
             </div>
 
             {/* 模拟价格信息 */}
             <div style={{ 
-              backgroundColor: selectedStock.symbol === 'AAPL' || selectedStock.symbol === 'MSFT' || selectedStock.symbol === 'NVDA' ? '#ecfdf5' : '#fef2f2',
+              backgroundColor: selected === 'AAPL' || selected === 'MSFT' || selected === 'NVDA' ? '#ecfdf5' : '#fef2f2',
               padding: '20px',
               borderRadius: '12px',
               marginBottom: '20px'
@@ -122,11 +119,11 @@ export default function Home() {
               </div>
               <div style={{ 
                 fontSize: '18px',
-                color: selectedStock.symbol === 'AAPL' || selectedStock.symbol === 'MSFT' || selectedStock.symbol === 'NVDA' ? '#059669' : '#dc2626'
+                color: selected === 'AAPL' || selected === 'MSFT' || selected === 'NVDA' ? '#059669' : '#dc2626'
               }}>
-                {selectedStock.symbol === 'AAPL' || selectedStock.symbol === 'MSFT' || selectedStock.symbol === 'NVDA' ? '+' : ''}
+                {selected === 'AAPL' || selected === 'MSFT' || selected === 'NVDA' ? '+' : ''}
                 {(Math.random() * 10 - 2).toFixed(2)} 
-                ({selectedStock.symbol === 'AAPL' || selectedStock.symbol === 'MSFT' || selectedStock.symbol === 'NVDA' ? '+' : ''}
+                ({selected === 'AAPL' || selected === 'MSFT' || selected === 'NVDA' ? '+' : ''}
                 {(Math.random() * 5 - 1).toFixed(2)}%)
               </div>
             </div>
