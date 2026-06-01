@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const popularStocks = [
   { symbol: 'AAPL', name: 'Apple' },
@@ -14,24 +14,15 @@ const popularStocks = [
 export default function Home() {
   const [selectedStock, setSelectedStock] = useState(null);
 
-  // 监听URL变化
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const stock = urlParams.get('stock');
-    if (stock) {
-      const found = popularStocks.find(s => s.symbol === stock);
-      setSelectedStock(found || { symbol: stock, name: stock });
-    }
-  }, []);
-
   const handleStockClick = (stock) => {
+    console.log('点击股票:', stock);
     setSelectedStock(stock);
-    window.history.pushState(null, '', `?stock=${stock.symbol}`);
+    console.log('更新 selectedStock:', stock);
   };
 
   const handleReset = () => {
+    console.log('重置选择');
     setSelectedStock(null);
-    window.history.pushState(null, '', '/');
   };
 
   return (
@@ -70,8 +61,18 @@ export default function Home() {
               <button
                 key={stock.symbol}
                 onClick={() => handleStockClick(stock)}
+                onTouchStart={(e) => {
+                  e.currentTarget.style.transform = 'scale(0.95)';
+                  e.currentTarget.style.opacity = '0.8';
+                }}
+                onTouchEnd={(e) => {
+                  e.currentTarget.style.transform = '';
+                  e.currentTarget.style.opacity = '';
+                }}
                 style={{
                   padding: '20px 12px',
+                  minHeight: '44px',
+                  minWidth: '44px',
                   backgroundColor: selectedStock?.symbol === stock.symbol ? '#1d4ed8' : '#2563eb',
                   color: 'white',
                   border: 'none',
@@ -79,7 +80,9 @@ export default function Home() {
                   fontSize: '18px',
                   fontWeight: 'bold',
                   cursor: 'pointer',
-                  width: '100%'
+                  width: '100%',
+                  touchAction: 'manipulation',
+                  transition: 'transform 0.1s, opacity 0.1s'
                 }}
               >
                 {stock.symbol}
@@ -115,15 +118,27 @@ export default function Home() {
               </div>
               <button
                 onClick={handleReset}
+                onTouchStart={(e) => {
+                  e.currentTarget.style.transform = 'scale(0.95)';
+                  e.currentTarget.style.opacity = '0.8';
+                }}
+                onTouchEnd={(e) => {
+                  e.currentTarget.style.transform = '';
+                  e.currentTarget.style.opacity = '';
+                }}
                 style={{
                   padding: '10px 20px',
+                  minHeight: '44px',
+                  minWidth: '44px',
                   backgroundColor: '#f3f4f6',
                   color: '#374151',
                   border: 'none',
                   borderRadius: '8px',
                   fontSize: '14px',
                   fontWeight: '500',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  touchAction: 'manipulation',
+                  transition: 'transform 0.1s, opacity 0.1s'
                 }}
               >
                 返回选择
