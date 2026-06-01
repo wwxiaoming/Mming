@@ -540,10 +540,10 @@ export default function StockChart({ symbol }: StockChartProps) {
   ];
 
   const buttonClass = (active: boolean) =>
-    `px-3 py-1 text-sm rounded-md border transition-colors ${
+    `px-4 py-2 text-sm rounded-md border transition-colors min-h-[44px] min-w-[44px] ${
       active
         ? "border-blue-500 bg-blue-50 text-blue-700"
-        : "border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50"
+        : "border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50 active:bg-zinc-100"
     }`;
 
   if (!symbol) {

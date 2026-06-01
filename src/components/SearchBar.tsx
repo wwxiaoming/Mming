@@ -261,8 +261,19 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
                     e.preventDefault();
                     handleSelect(s);
                   }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSelect(s);
+                  }}
+                  onTouchStart={(e) => {
+                    setHighlightedIndex(index);
+                  }}
+                  onTouchEnd={(e) => {
+                    e.preventDefault();
+                    handleSelect(s);
+                  }}
                   onMouseEnter={() => setHighlightedIndex(index)}
-                  className={`flex items-center gap-3 px-4 py-2 cursor-pointer text-sm ${
+                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer text-sm active:bg-blue-50 ${
                     index === highlightedIndex
                       ? "bg-blue-50 text-blue-700"
                       : "hover:bg-zinc-50"

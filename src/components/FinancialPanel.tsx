@@ -53,9 +53,9 @@ function MetricRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-zinc-100 last:border-b-0">
+    <div className="flex items-center justify-between py-3 border-b border-zinc-100 last:border-b-0">
       <span className="text-sm text-zinc-500">{label}</span>
-      <span className="text-sm font-medium text-zinc-900">{children}</span>
+      <span className="text-sm font-medium text-zinc-900 text-right flex-1 ml-4 break-all">{children}</span>
     </div>
   );
 }
