@@ -1,4 +1,6 @@
-import Link from 'next/link';
+'use client';
+
+import { useState, useEffect } from 'react';
 
 const popularStocks = [
   { symbol: 'AAPL', name: 'Apple' },
@@ -9,9 +11,29 @@ const popularStocks = [
   { symbol: 'NVDA', name: 'NVIDIA' },
 ];
 
-export default function Home({ searchParams }) {
-  const selected = searchParams?.stock || '';
-  
+export default function Home() {
+  const [selectedStock, setSelectedStock] = useState(null);
+
+  // 监听URL变化
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const stock = urlParams.get('stock');
+    if (stock) {
+      const found = popularStocks.find(s => s.symbol === stock);
+      setSelectedStock(found || { symbol: stock, name: stock });
+    }
+  }, []);
+
+  const handleStockClick = (stock) => {
+    setSelectedStock(stock);
+    window.history.pushState(null, '', `?stock=${stock.symbol}`);
+  };
+
+  const handleReset = () => {
+    setSelectedStock(null);
+    window.history.pushState(null, '', '/');
+  };
+
   return (
     <div style={{ 
       minHeight: '100vh',
@@ -45,32 +67,32 @@ export default function Home({ searchParams }) {
             gap: '12px'
           }}>
             {popularStocks.map((stock) => (
-              <Link
+              <button
                 key={stock.symbol}
-                href={`?stock=${stock.symbol}`}
+                onClick={() => handleStockClick(stock)}
                 style={{
                   padding: '20px 12px',
-                  backgroundColor: selected === stock.symbol ? '#1d4ed8' : '#2563eb',
+                  backgroundColor: selectedStock?.symbol === stock.symbol ? '#1d4ed8' : '#2563eb',
                   color: 'white',
+                  border: 'none',
                   borderRadius: '12px',
                   fontSize: '18px',
-                  textDecoration: 'none',
-                  textAlign: 'center',
                   fontWeight: 'bold',
-                  display: 'block'
+                  cursor: 'pointer',
+                  width: '100%'
                 }}
               >
                 {stock.symbol}
                 <div style={{ fontSize: '13px', opacity: '0.9', marginTop: '4px' }}>
                   {stock.name}
                 </div>
-              </Link>
+              </button>
             ))}
           </div>
         </div>
 
         {/* 股票详情区域 */}
-        {selected ? (
+        {selectedStock ? (
           <div style={{ 
             backgroundColor: 'white',
             padding: '24px',
@@ -85,31 +107,32 @@ export default function Home({ searchParams }) {
             }}>
               <div>
                 <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: 0 }}>
-                  {selected}
+                  {selectedStock.symbol}
                 </h2>
                 <p style={{ color: '#666', margin: '4px 0 0 0' }}>
-                  {popularStocks.find(s => s.symbol === selected)?.name || '股票'}
+                  {selectedStock.name}
                 </p>
               </div>
-              <Link
-                href="/"
+              <button
+                onClick={handleReset}
                 style={{
                   padding: '10px 20px',
                   backgroundColor: '#f3f4f6',
                   color: '#374151',
+                  border: 'none',
                   borderRadius: '8px',
-                  textDecoration: 'none',
                   fontSize: '14px',
-                  fontWeight: '500'
+                  fontWeight: '500',
+                  cursor: 'pointer'
                 }}
               >
                 返回选择
-              </Link>
+              </button>
             </div>
 
             {/* 模拟价格信息 */}
             <div style={{ 
-              backgroundColor: selected === 'AAPL' || selected === 'MSFT' || selected === 'NVDA' ? '#ecfdf5' : '#fef2f2',
+              backgroundColor: selectedStock.symbol === 'AAPL' || selectedStock.symbol === 'MSFT' || selectedStock.symbol === 'NVDA' ? '#ecfdf5' : '#fef2f2',
               padding: '20px',
               borderRadius: '12px',
               marginBottom: '20px'
@@ -119,11 +142,11 @@ export default function Home({ searchParams }) {
               </div>
               <div style={{ 
                 fontSize: '18px',
-                color: selected === 'AAPL' || selected === 'MSFT' || selected === 'NVDA' ? '#059669' : '#dc2626'
+                color: selectedStock.symbol === 'AAPL' || selectedStock.symbol === 'MSFT' || selectedStock.symbol === 'NVDA' ? '#059669' : '#dc2626'
               }}>
-                {selected === 'AAPL' || selected === 'MSFT' || selected === 'NVDA' ? '+' : ''}
+                {selectedStock.symbol === 'AAPL' || selectedStock.symbol === 'MSFT' || selectedStock.symbol === 'NVDA' ? '+' : ''}
                 {(Math.random() * 10 - 2).toFixed(2)} 
-                ({selected === 'AAPL' || selected === 'MSFT' || selected === 'NVDA' ? '+' : ''}
+                ({selectedStock.symbol === 'AAPL' || selectedStock.symbol === 'MSFT' || selectedStock.symbol === 'NVDA' ? '+' : ''}
                 {(Math.random() * 5 - 1).toFixed(2)}%)
               </div>
             </div>
