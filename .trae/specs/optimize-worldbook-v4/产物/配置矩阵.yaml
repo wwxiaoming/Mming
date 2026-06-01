@@ -1,0 +1,903 @@
+# v4 世界书条目配置矩阵
+
+# 基于参考世界书最佳实践,适用于 85 个条目
+
+categories:
+  世界观:
+    mode: blue_0
+    note: "世界观总纲/帝王战队/神魔号/宇宙之子/天火 - 全局蓝灯常驻"
+  系统规则:
+    mode: blue_0
+    note: "收服/战斗/补魔/契约等机制层 - 全局蓝灯"
+  阵营:
+    mode: blue_0
+    note: "核心组织 - 蓝灯常驻"
+  英雄设定:
+    mode: green_4
+    note: "15 位英雄 - 位置 4 D0 触发"
+  NPC设定:
+    mode: green_4
+    note: "魔神会干部/反派/龙神等 - 位置 4 D0 触发"
+  专属装置:
+    mode: green_4
+    note: "15 种榨精装置 - 位置 4 D0 触发"
+  道具设定:
+    mode: green_4
+    note: "堕落神装/神纹/装备等 - 位置 4 D0 触发"
+  组织势力:
+    mode: green_4
+    note: "古武世家 - 位置 4 D0 触发"
+  地区设定:
+    mode: mixed
+    note: "01_人类安全区=蓝灯 0; 其余=绿灯 4"
+  剧情设定:
+    mode: mixed
+    note: "00_三条路线总纲=蓝灯 0; 01~15 篇=绿灯 4"
+
+entries:
+  - file: 世界观/00_世界观总纲.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 世界观/01_帝王战队.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 世界观/02_神魔号系统.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 世界观/03_宇宙之子与容器理论.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 世界观/04_死寂沙漠与蒲罗树.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 世界观/05_天火.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 系统规则/01_收服规则.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 系统规则/02_战斗规则.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 系统规则/03_任务系统.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 系统规则/05_补魔规则.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 系统规则/06_羁绊契约规则.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 阵营/01_联邦.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 阵营/02_魔神会.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 阵营/03_地下势力.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 阵营/04_猎人协会.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 英雄设定/01_问天.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "问天,祖龙,秩序之子,脚奴,六元素掌控者"
+
+  - file: 英雄设定/02_千瑞.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "千瑞,大地之子,贱虎,土元素掌控者,大地之躯"
+
+  - file: 英雄设定/03_子夜.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "子夜,乾坤,光暗双修,法则掌控者"
+
+  - file: 英雄设定/04_阚泽.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "阚泽,超能,魔能结晶,感知强化者"
+
+  - file: 英雄设定/05_凯风.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "凯风,时空,时空双属性,时空掌控者"
+
+  - file: 英雄设定/06_空耀.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "空耀,轮回,鬼魂克星,六道轮回"
+
+  - file: 英雄设定/07_嘉陵.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "嘉陵,神魔,影分身,暗影侵蚀者"
+
+  - file: 英雄设定/08_岚云.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "岚云,幻术,幻狐血脉,幻术师"
+
+  - file: 英雄设定/09_启润.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "启润,风系,古武陈家,风元素掌控者"
+
+  - file: 英雄设定/10_星野.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "星野,星轨,星辰系,卧底"
+
+  - file: 英雄设定/11_诗华.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "诗华,圣灵,光明系,治疗者"
+
+  - file: 英雄设定/12_战炎.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "战炎,麒麟血脉,火焰,魔兽后裔"
+
+  - file: 英雄设定/13_暮黎.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "暮黎,龙凰双脉,水系,战炎义兄"
+
+  - file: 英雄设定/14_准星.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "准星,烈阳世家,夜鸦战队,古武格斗"
+
+  - file: 英雄设定/15_文斌.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "文斌,誓约,机械之子,猫奴,弱点洞悉,机械星辉"
+
+  - file: NPC设定/01_魔神会干部.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "魔神会干部,皇后,洛基,奥西里斯,休,魔王主教,鼹鼠主教,暗狮,红衣主教,枢机主教"
+
+  - file: NPC设定/02_反派势力.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "反派势力,红衣主教,造神计划,深渊"
+
+  - file: NPC设定/03_帝王战队关联人物.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "帝王战队关联人物,亲友,同学,导师"
+
+  - file: NPC设定/04_系统意志.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "系统意志,神魔号系统,最终反派,诸神黄昏"
+
+  - file: NPC设定/05_黑文斌.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "黑文斌,暴走文斌,机械星辉,失控"
+
+  - file: NPC设定/06_龙神.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "龙神,龙族,秘境守护者"
+
+  - file: 专属装置/01_榨精自行车.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "榨精自行车"
+
+  - file: 专属装置/02_千手魔罂粟.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "千手魔罂粟"
+
+  - file: 专属装置/03_高刺激肉棒榨精套.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "高刺激肉棒榨精套"
+
+  - file: 专属装置/04_魔能系带责磨台.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "魔能系带责磨台"
+
+  - file: 专属装置/05_时空虫巢穴.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "时空虫巢穴"
+
+  - file: 专属装置/06_六轮犬穴榨精笼.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "六轮犬穴榨精笼"
+
+  - file: 专属装置/07_七罪分身同步榨精室.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "七罪分身同步榨精室"
+
+  - file: 专属装置/08_银狐种马榨精巢.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "银狐种马榨精巢"
+
+  - file: 专属装置/09_风压涡流榨精舱.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "风压涡流榨精舱"
+
+  - file: 专属装置/10_时间油质触手实验椅.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "时间油质触手实验椅"
+
+  - file: 专属装置/11_圣光自缚口枷台.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "圣光自缚口枷台"
+
+  - file: 专属装置/12_龙裔榨精巢.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "龙裔榨精巢"
+
+  - file: 专属装置/13_暗影格斗训练笼.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "暗影格斗训练笼"
+
+  - file: 专属装置/14_九重阴茎复制体同步榨精舱.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "九重阴茎复制体同步榨精舱"
+
+  - file: 专属装置/15_誓约锁链·弱点反噬调教台.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "誓约锁链·弱点反噬调教台"
+
+  - file: 道具设定/01_堕落神装.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "堕落神装,神装,紧身衣"
+
+  - file: 道具设定/02_神纹系统.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "神纹,神纹系统,淫纹,烙印"
+
+  - file: 道具设定/03_魔神会黑科技.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "魔神会黑科技,魔神会科技,改造"
+
+  - file: 道具设定/04_通用调教道具.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "调教道具,通用道具,束缚具"
+
+  - file: 道具设定/05_魔物相关道具.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "魔物道具,魔兽相关,魔物材料"
+
+  - file: 道具设定/06_战斗装备与武器.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "战斗装备,武器,武器库"
+
+  - file: 组织势力/02_炎陈世家.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "炎陈世家,陈家,古武世家"
+
+  - file: 组织势力/03_烈阳世家.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "烈阳世家,烈阳,古武世家"
+
+  - file: 地区设定/01_人类安全区.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 地区设定/02_魔神会控制区.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "魔神会控制区"
+
+  - file: 地区设定/03_中立区域.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "中立区域"
+
+  - file: 地区设定/04_秘境遗迹.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "秘境遗迹"
+
+  - file: 地区设定/05_神魔号内部.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "神魔号内部"
+
+  - file: 地区设定/06_奥义学院内部.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "奥义学院内部"
+
+  - file: 地区设定/07_帝王战队基地.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "帝王战队基地"
+
+  - file: 地区设定/08_商业区与红灯区.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "商业区与红灯区"
+
+  - file: 地区设定/09_龙渊秘境.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "龙渊秘境"
+
+  - file: 地区设定/10_魔神会化妆舞会场.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "魔神会化妆舞会场"
+
+  - file: 剧情设定/00_三条路线总纲.md
+    mode: blue_0
+    position: 0
+    constant: true
+    preventRecursion: true
+    excludeRecursion: true
+
+  - file: 剧情设定/01_问天篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "问天篇,问天,序章"
+
+  - file: 剧情设定/02_千瑞篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "千瑞篇,千瑞,序章"
+
+  - file: 剧情设定/03_子夜篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "子夜篇,子夜,序章"
+
+  - file: 剧情设定/04_空耀篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "空耀篇,空耀,序章"
+
+  - file: 剧情设定/05_阚泽篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "阚泽篇,阚泽,序章"
+
+  - file: 剧情设定/06_凯风篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "凯风篇,凯风,序章"
+
+  - file: 剧情设定/07_诗华篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "诗华篇,诗华,序章"
+
+  - file: 剧情设定/08_嘉陵篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "嘉陵篇,嘉陵,序章"
+
+  - file: 剧情设定/09_文斌篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "文斌篇,文斌,序章"
+
+  - file: 剧情设定/10_启润篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "启润篇,启润,序章"
+
+  - file: 剧情设定/11_岚云篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "岚云篇,岚云,序章"
+
+  - file: 剧情设定/12_准星篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "准星篇,准星,序章"
+
+  - file: 剧情设定/13_星野篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "星野篇,星野,序章"
+
+  - file: 剧情设定/14_战炎篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "战炎篇,战炎,序章"
+
+  - file: 剧情设定/15_暮黎篇.md
+    mode: green_4
+    position: 4
+    depth: 0
+    role: 0
+    constant: false
+    preventRecursion: true
+    excludeRecursion: true
+    scanDepth: 2
+    keys: "暮黎篇,暮黎,序章"
