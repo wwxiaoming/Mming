@@ -75,8 +75,8 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
   };
 
   // 提交搜索
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!query.trim()) return;
 
     if (suggestions.length > 0) {
@@ -89,7 +89,7 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
 
   return (
     <div ref={containerRef} className="relative">
-      <form onSubmit={handleSubmit} className="flex gap-3">
+      <div className="flex gap-3">
         <div className="relative flex-1">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <svg className="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -106,18 +106,23 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
                 setIsOpen(true);
               }
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSubmit();
+              }
+            }}
             placeholder="搜索股票代码或名称，如 AAPL、MSFT、Tesla..."
             className="w-full rounded-xl border-2 border-zinc-300 pl-12 pr-4 py-4 text-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all shadow-sm"
           />
         </div>
         <button
-          type="submit"
-          disabled={!query.trim()}
-          className="px-6 py-4 bg-blue-600 text-white rounded-xl font-medium text-lg hover:bg-blue-700 active:bg-blue-800 disabled:bg-zinc-300 disabled:cursor-not-allowed transition-all shadow-md min-w-[100px]"
+          type="button"
+          onClick={() => handleSubmit()}
+          className="px-6 py-4 bg-blue-600 text-white rounded-xl font-medium text-lg active:bg-blue-800 transition-all shadow-md min-w-[100px] touch-manipulation"
         >
           搜索
         </button>
-      </form>
+      </div>
 
       {isOpen && (
         <div className="absolute z-50 mt-1 w-full" style={{ maxWidth: 'calc(100% - 116px)' }}>
