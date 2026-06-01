@@ -16,22 +16,20 @@ const POPULAR_STOCKS = [
 ];
 
 export default function Home() {
-  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
-  const [selectedName, setSelectedName] = useState<string>("");
+  const [selectedSymbol, setSelectedSymbol] = useState(null);
+  const [selectedName, setSelectedName] = useState("");
 
-  function handleSelect(symbol: string, name: string) {
+  function handleSelect(symbol, name) {
     setSelectedSymbol(symbol);
     setSelectedName(name);
   }
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      {/* 顶部区域 */}
       <div className="bg-white border-b border-zinc-200">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <h1 className="text-2xl font-bold text-zinc-900 mb-6">📊 股票分析</h1>
           
-          {/* 热门股票 */}
           <div className="mb-6">
             <p className="text-lg font-semibold text-zinc-800 mb-3">热门股票</p>
             <div className="grid grid-cols-2 gap-3">
@@ -49,7 +47,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 搜索框 */}
           <div className="mb-4">
             <p className="text-lg font-semibold text-zinc-800 mb-3">搜索其他股票</p>
             <SearchBar onSelect={handleSelect} />
@@ -57,7 +54,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 内容区域 */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         {!selectedSymbol ? (
           <div className="bg-white rounded-xl border border-zinc-200 p-8 text-center">
