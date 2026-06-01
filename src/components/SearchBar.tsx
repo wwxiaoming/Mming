@@ -194,35 +194,55 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
     );
   };
 
+  const handleSearch = () => {
+    if (!query.trim()) return;
+    
+    if (suggestions.length > 0) {
+      handleSelect(suggestions[0]);
+    } else {
+      handleSelect({ symbol: query.trim().toUpperCase(), name: query.trim() });
+    }
+  };
+
   return (
     <div ref={containerRef} className="relative">
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <svg className="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+      <div className="flex gap-3">
+        <div className="relative flex-1">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg className="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setHighlightedIndex(-1);
+            }}
+            onKeyDown={handleKeyDown}
+            onFocus={() => {
+              if (suggestions.length > 0 || error || query.trim()) {
+                setIsOpen(true);
+              }
+            }}
+            placeholder="搜索股票代码或名称，如 AAPL、MSFT、Tesla..."
+            className="w-full rounded-xl border-2 border-zinc-300 pl-12 pr-4 py-4 text-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all shadow-sm"
+          />
         </div>
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setHighlightedIndex(-1);
-          }}
-          onKeyDown={handleKeyDown}
-          onFocus={() => {
-            if (suggestions.length > 0 || error || query.trim()) {
-              setIsOpen(true);
-            }
-          }}
-          placeholder="搜索股票代码或名称，如 AAPL、MSFT、Tesla..."
-          className="w-full rounded-xl border-2 border-zinc-300 pl-12 pr-4 py-4 text-lg focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all shadow-sm"
-        />
+        <button
+          onClick={handleSearch}
+          disabled={!query.trim()}
+          className="px-6 py-4 bg-blue-600 text-white rounded-xl font-medium text-lg hover:bg-blue-700 active:bg-blue-800 disabled:bg-zinc-300 disabled:cursor-not-allowed transition-all shadow-md min-w-[100px]"
+        >
+          搜索
+        </button>
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg">
+        <div className="absolute z-50 mt-1 w-full" style={{ maxWidth: 'calc(100% - 116px)' }}>
+          <div className="rounded-lg border border-zinc-200 bg-white shadow-lg">
           {isLoading && (
             <div className="flex items-center gap-2 px-4 py-3 text-sm text-zinc-500">
               <svg
@@ -296,6 +316,7 @@ export default function SearchBar({ onSelect }: SearchBarProps) {
               ))}
             </ul>
           )}
+          </div>
         </div>
       )}
     </div>
