@@ -1,84 +1,58 @@
-"use client";
+import Link from 'next/link';
 
-import React from 'react';
+const stocks = [
+  { symbol: 'AAPL', name: 'Apple' },
+  { symbol: 'MSFT', name: 'Microsoft' },
+  { symbol: 'TSLA', name: 'Tesla' },
+  { symbol: 'GOOGL', name: 'Google' },
+];
 
-export default function Home() {
-  const [msg, setMsg] = React.useState('');
+export default function Home({ searchParams }) {
+  const selected = searchParams.stock;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: '0 auto' }}>
-      <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>测试点击</h1>
+    <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto' }}>
+      <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>股票选择器</h1>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-        <button
-          onClick={() => setMsg('你点击了：AAPL')}
-          style={{
-            padding: '20px',
-            backgroundColor: '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: '10px',
-            fontSize: '18px'
-          }}
-        >
-          AAPL
-        </button>
-        
-        <button
-          onClick={() => setMsg('你点击了：MSFT')}
-          style={{
-            padding: '20px',
-            backgroundColor: '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: '10px',
-            fontSize: '18px'
-          }}
-        >
-          MSFT
-        </button>
-        
-        <button
-          onClick={() => setMsg('你点击了：TSLA')}
-          style={{
-            padding: '20px',
-            backgroundColor: '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: '10px',
-            fontSize: '18px'
-          }}
-        >
-          TSLA
-        </button>
-        
-        <button
-          onClick={() => setMsg('你点击了：GOOGL')}
-          style={{
-            padding: '20px',
-            backgroundColor: '#2563eb',
-            color: 'white',
-            border: 'none',
-            borderRadius: '10px',
-            fontSize: '18px'
-          }}
-        >
-          GOOGL
-        </button>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '30px' }}>
+        {stocks.map((stock) => (
+          <Link 
+            key={stock.symbol}
+            href={`/?stock=${stock.symbol}`}
+            style={{
+              padding: '24px 16px',
+              backgroundColor: '#2563eb',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              fontSize: '20px',
+              textDecoration: 'none',
+              textAlign: 'center',
+              fontWeight: 'bold'
+            }}
+          >
+            {stock.symbol}
+            <div style={{ fontSize: '14px', opacity: '0.9', marginTop: '4px' }}>{stock.name}</div>
+          </Link>
+        ))}
       </div>
       
-      {msg && (
+      {selected && (
         <div style={{
-          marginTop: '30px',
-          padding: '20px',
+          padding: '24px',
           backgroundColor: '#dcfce7',
-          borderRadius: '10px',
-          fontSize: '20px',
-          textAlign: 'center'
+          borderRadius: '12px',
+          fontSize: '22px',
+          textAlign: 'center',
+          fontWeight: 'bold'
         }}>
-          {msg}
+          ✓ 你选择了：{selected}
         </div>
       )}
+      
+      <p style={{ marginTop: '24px', color: '#666', textAlign: 'center' }}>
+        请点击上面的蓝色卡片来选择股票
+      </p>
     </div>
   );
 }
