@@ -2164,8 +2164,789 @@ Day 10+  : 等待金牌 + Workday + 问卷
 
 ---
 
+## 三十八、老强说 Alpha 辅助工具 v1.0.5 完整逆向解析
+
+> 数据来源：对 `/workspace/lqs-alpha_win_1.0.5_x64-setup 3.exe`（NSIS 安装包，5.6MB）和 `/workspace/lqs-wqbrain-tool.exe`（PE32+ 主程序，16.3MB）进行 `file`、`strings` 静态分析后的成果
+> 解析时间：2026-06-01
+
+### 38.1 工具元信息
+
+| 项目 | 详情 |
+|---|---|
+| **正式名称** | lqs-wqbrain-tool（lqs = 老强说） |
+| **版本号** | **1.0.5**（硬编码于 `query1.0.5`） |
+| **安装器** | NSIS v3.11（Nullsoft Install System） |
+| **架构** | PE32+ x86-64 Windows GUI |
+| **UI 框架** | **Tauri 2.x**（Rust 后端 + WebView2 前端） |
+| **WebView2 内核** | Microsoft Edge 143.0.3650.58 |
+| **HTTP 客户端** | hyper 1.9.0 + reqwest |
+| **加密** | OpenSSL（Windows 通道） |
+| **本地数据库** | **SQLite**（自包含，存于 `%APPDATA%\lqs-wqbrain-tool\`） |
+| **算法版本** | `step1-gen-v2026-05-08`（2026-05-08 生成的 step1 表达式模板） |
+| **开发语言** | Rust（编译路径 `C:\Users\sgdygb\.cargo\registry\...`） |
+| **通知渠道** | 飞书 Webhook（可配置） |
+| **自动更新** | Tauri updater plugin（check / download / install） |
+
+### 38.2 进程架构总览
+
+```
+┌────────────────────────────────────────────────────────┐
+│              lqs-wqbrain-tool.exe  (主进程)              │
+├────────────────────────────────────────────────────────┤
+│  Rust 后端 (Tauri Core)                                 │
+│  ├── app_updates/mod.rs        ← 自动更新               │
+│  ├── 飞书通知模块             ← notifications.feishu    │
+│  ├── 27 个 brain_* 命令       ← 业务逻辑                │
+│  ├── SQLite 数据库           ← 本地 alpha 池            │
+│  └── HTTP 客户端 (hyper/reqwest)                        │
+│      ↓ HTTPS                                            │
+├────────────────────────────────────────────────────────┤
+│  WebView2 (Edge 143)  ← 内嵌前端 UI                      │
+│  ├── HTML/CSS/JS 前端                                   │
+│  ├── 通过 Tauri IPC 调用 Rust 后端命令                  │
+│  └── 渲染统计面板、配置界面                             │
+└────────────────────────────────────────────────────────┘
+```
+
+### 38.3 完整 Tauri 命令清单（27 个 brain_* + 7 个 app_*）
+
+#### 认证与状态
+```
+app_bootstrap_auth_state       ← 启动时检查登录态
+app_get_gold_group_qr          ← 获取金牌群二维码
+app_login                      ← 登录入口
+app_logout                     ← 登出
+app_reset_login                ← 重置登录
+brain_login                    ← 平台认证（提交凭证拿 token）
+brain_bootstrap_auth_state     ← 启动后探测平台会话
+```
+
+#### 三阶流水线
+```
+brain_prepare_step1_run        ← 准备 step1
+brain_start_step1_run          ← 启动 step1
+brain_list_step1_runs          ← 列出 step1 任务
+brain_stop_step1_run           ← 停止 step1
+brain_restart_step1_run        ← 重启 step1
+brain_delete_step1_run         ← 删除 step1
+
+# step2、step3 同上（结构完全一致）
+```
+
+#### 数据与同步
+```
+brain_get_data_sets            ← 拉取数据集列表
+brain_get_simulation_options   ← 拉取 simulation 配置项
+brain_get_alpha_list_options   ← 拉取 alpha 列表筛选选项
+brain_list_local_alphas        ← 列本地 sqlite 里的 alpha
+brain_get_stats_dashboard      ← 拉取统计面板
+brain_get_parameter_performance_stats ← 参数性能分析
+brain_get_challenge_leaderboard ← 拉取挑战排行榜
+brain_get_alpha_bootstrap_state ← alpha 引导状态
+brain_get_alpha_sync_status    ← alpha 同步状态
+brain_sync_all_alphas          ← 批量同步所有 alpha
+brain_sync_alpha_detail        ← 同步单个 alpha 详情
+```
+
+#### 提交与质量
+```
+brain_start_qualified_alpha_check   ← 启动合格 alpha 自相关检查
+brain_get_qualified_alpha_check_status ← 查检查状态
+brain_submit_alpha                  ← 真正提交到 BRAIN
+brain_get_alpha_submit_result       ← 查提交结果
+```
+
+#### 资源监控
+```
+brain_get_task_concurrency_status   ← 任务并发状态
+brain_get_simulation_rate_limit_status ← 模拟限流状态
+```
+
+#### 通知与更新
+```
+get_feishu_notification_config
+save_feishu_notification_config
+send_feishu_test_notification
+fetch_app_update
+install_app_update
+```
+
+### 38.4 三阶流水线内部算法（最核心）
+
+工具的核心是 **三阶流水线**，每阶都通过表达式生成 + 模拟 + 质量筛选完成。
+
+#### Stage 1（基础算子）
+
+源码中固化的一阶算子集合（共 27 个核心算子）：
+```python
+# 来自二进制字符串
+stage1_ops = [
+    "log",        # 对数
+    "rank",       # 横截面排名
+    "normalize",  # 标准化
+    "sign",       # 符号
+    "days_from_last_change",  # 距上次变化天数
+    "group_neutralize",       # 组内中性化
+    # 分组键
+    "market", "sector", "industry", "subindustry"
+]
+```
+
+**Stage 1 流程**：
+```
+1. brain_get_data_sets → 拿数据集列表（analyst4 / fundamental6 / news18 等）
+2. 对每个数据集的 matrix 字段，套上预处理：
+   winsorize(ts_backfill(field, 120), std=4)
+3. 套上 stage1_ops 中的每个算子
+4. 加上 settings.region / settings.universe / settings.delay / settings.neutralization
+5. 提交到 brain_start_step1_run，平台返回 simulation_id
+6. 轮询 brain_get_simulation_options 获取结果
+7. 过滤 Sharpe ≥ 1.25 + Fitness ≥ 1.0 + Turnover ≤ 阈值
+8. 写入本地 SQLite 表 alphas
+```
+
+#### Stage 2（二阶组合）
+
+基于 Stage 1 通过的 alpha 做**嵌套**：
+- `ts_*` 套用 → 时序平滑
+- `group_*` 套用 → 行业/板块中性化
+- 二者交叉套用
+
+```python
+# 来自 SQL 字符串
+step1_expression_generator_version = "step1-gen-v2026-05-08"
+# 包含参数: includeDecayOutput
+```
+
+#### Stage 3（trade_when 条件入场）
+
+**这是工具的杀手锏** — 通过预设的 27 个 `open_events` 条件模板，把 Stage 1/2 的信号包装成**条件入场策略**。
+
+**全部 27 个 trade_when 条件模板**（按类别）：
+
+| # | 类别 | 条件表达式 | 金融逻辑 |
+|---|---|---|---|
+| 1 | 量价突破 | `ts_arg_max(volume, 5) == 0` | 当日为近 5 日最大成交量（放量突破） |
+| 2 | 量价趋势 | `ts_corr(close, volume, 252) <= 0` | 长期量价负相关（适合反转） |
+| 3 | 量价趋势 | `ts_corr(close, volume, 20) < 0` | 短期量价负相关 |
+| 4 | 量价趋势 | `ts_corr(close, volume, 5) < 0` | 极短期量价负相关 |
+| 5 | 量价趋势 | `ts_mean(volume, 10) > ts_mean(volume, 60)` | 短期均量 > 长期均量（放量） |
+| 6 | 量价趋势 | `ts_mean(volume, 10) <= ts_mean(volume, 60)` | 缩量 |
+| 7 | 波动率 | `group_rank(ts_std_dev(returns, 60), sector) > 0.7` | 行业内波动率排名前 30% |
+| 8 | 价格动量 | `ts_zscore(returns, 60) > 2` | 60 日 z-score > 2（极端上涨） |
+| 9 | 量价低位 | `ts_arg_min(volume, 5) > 3` | 5 日内最低成交量不是今天 |
+| 10 | 量价低位 | `ts_arg_min(volume, 10) >= 5` | 10 日内最低成交量在前 5 天 |
+| 11 | 波动率 | `ts_std_dev(returns, 5) > ts_std_dev(returns, 20)` | 短期波动 > 长期波动 |
+| 12 | 价格突破 | `ts_arg_max(close, 5) == 0` | 当日为近 5 日新高 |
+| 13 | 价格突破 | `ts_arg_max(close, 20) == 0` | 当日为近 20 日新高 |
+| 14 | 量价正相关 | `ts_corr(close, volume, 5) > 0` | 5 日量价正相关 |
+| 15 | 量价正相关 | `ts_corr(close, volume, 5) > 0.3` | 中等正相关 |
+| 16 | 量价正相关 | `ts_corr(close, volume, 5) > 0.5` | 较强正相关 |
+| 17 | 量价正相关 | `ts_corr(close, volume, 5) > 0.7` | 强正相关 |
+| 18 | 量价正相关 | `ts_corr(close, volume, 5) > 0.9` | 极强正相关 |
+| 19 | 量价负相关 | `ts_corr(close, volume, 5) < 0.3` | 弱正相关 |
+| 20 | 量价负相关 | `ts_corr(close, volume, 5) < 0.5` | 中等正相关 |
+| 21 | 量价负相关 | `ts_corr(close, volume, 5) < 0.7` | 偏强正相关 |
+| 22 | 量价负相关 | `ts_corr(close, volume, 5) < 0.9` | 强正相关 |
+| 23 | 量价正相关 | `ts_corr(close, volume, 20) > 0` | 20 日弱正相关 |
+| 24 | 量价正相关 | `ts_corr(close, volume, 20) > 0.3` | 20 日中等正相关 |
+| 25 | 量价正相关 | `ts_corr(close, volume, 20) > 0.5` | 20 日强正相关 |
+| 26 | 量价负相关 | `ts_corr(close, volume, 20) < 0.3` | 20 日弱正相关 |
+| 27 | 量价负相关 | `ts_corr(close, volume, 20) < 0.5` | 20 日中等正相关 |
+| 28 | 大波动 | `abs(returns) > 0.1` | 单日涨跌幅 ±10%（高波动过滤） |
+
+> 共 **28 个**（二进制字符串以空白分隔，第 28 个是 `abs(returns) > 0.1`）
+
+**Stage 3 流程**：
+```python
+# 伪代码
+for cond in open_events_28:                # 28 个条件
+    for stage1_alpha in passed_alphas:     # Stage 1 通过的 alpha
+        combined = f"trade_when({cond}, {stage1_alpha}, -1)"
+        submit_to_simulation(combined)
+        check_sharpe_fitness()
+```
+
+### 38.5 数据库结构（SQLite 表 alphas）
+
+```sql
+CREATE TABLE alphas (
+    id INTEGER PRIMARY KEY,
+    alpha_id TEXT UNIQUE,                    -- BRAIN 上的 ID
+    expression TEXT,                         -- 完整公式
+    region TEXT,                             -- USA / CHN / ASI ...
+    universe TEXT,                           -- TOP3000 / TOP2000 ...
+    neutralization TEXT,                     -- market / sector / industry / subindustry
+    delay INTEGER,                           -- 0 / 1
+    dataset_id TEXT,                         -- fundamental6 / analyst4 ...
+    
+    is_sharpe REAL,                          -- IS sharpe
+    is_fitness REAL,                         -- IS fitness
+    is_turnover REAL,                        -- IS turnover
+    sharpe REAL,                             -- OS sharpe (预留字段)
+    fitness REAL,
+    turnover REAL,
+    
+    color TEXT,                              -- 自相关染色 (UNSET / GOOD / SPECIAL)
+    grade TEXT,                              -- 质量等级 (UNSET / GOOD / SP)
+    
+    self_correlation REAL,                   -- 与已有 alpha 的相关性
+    qualified_flag INTEGER DEFAULT 0,        -- 是否通过质量门槛
+    submission_override_value INTEGER DEFAULT 0, -- 强制提交标志
+    date_submitted TEXT,                     -- 提交日期 (空=未提交)
+    date_created TEXT,
+    date_modified TEXT,
+    is_simulation_only INTEGER DEFAULT 0,    -- 是否仅模拟
+    pyramid INTEGER,                         -- 数据集分层
+    themes TEXT,                             -- 主题加成
+    classifications TEXT,                    -- 分类标签
+    tags TEXT,
+    stage TEXT                               -- STEP1 / STEP2 / STEP3
+)
+```
+
+### 38.6 自相关检查 SQL 逻辑（核心判定）
+
+```sql
+-- 染色（Color）统计
+SELECT UPPER(COALESCE(color, 'UNSET')) AS label, COUNT(1) AS total 
+FROM alphas 
+GROUP BY UPPER(COALESCE(color, 'UNSET')) 
+ORDER BY total DESC;
+
+-- 等级（Grade）统计
+SELECT UPPER(COALESCE(grade, 'UNSET')) AS label, COUNT(1) AS total 
+FROM alphas 
+GROUP BY UPPER(COALESCE(grade, 'UNSET')) 
+ORDER BY total DESC;
+
+-- 可提交判定
+SELECT
+    SUM(CASE WHEN date_submitted = '' AND qualified_flag = 1 
+             AND ((self_correlation IS NOT NULL AND self_correlation < ?1) 
+                  OR submission_override_value = 1) 
+             THEN 1 ELSE 0 END) AS submittable_count,
+    SUM(CASE WHEN sharpe_value < ?3 THEN 1 ELSE 0 END) AS sharpe_blocked_count,
+    SUM(CASE WHEN fitness_value < ?4 THEN 1 ELSE 0 END) AS fitness_blocked_count,
+    SUM(CASE WHEN turnover_value < ?5 OR turnover_value > ?6 THEN 1 ELSE 0 END) AS turnover_blocked_count
+FROM alpha_flags
+```
+
+**逻辑解读**：
+- `?1` = 0.7（self_correlation 阈值）
+- `?3` = 1.25（sharpe 阈值）
+- `?4` = 1.0（fitness 阈值）
+- `?5` = turnover 下限（默认 30%）
+- `?6` = turnover 上限（默认 70%）
+- Turnover ≤ 1 → 视为 0-1 之间，×100；否则保持原值（**即小于 100% 才被视为百分数**）
+
+### 38.7 17 个统计面板指标
+
+| 指标 | 含义 |
+|---|---|
+| `totalAlphas` | 总 alpha 数 |
+| `qualifiedCount` | 通过质量门槛数 |
+| `pendingSelfCorrelationPoolCount` | 待自相关检查的池子大小 |
+| `checkedSelfCorrelationCount` | 已自相关检查数 |
+| `submittableCount` | 可提交数 |
+| `submittedCount` | 已提交数 |
+| `recentNewCount` | 最近新增数 |
+| `colorDistribution` | color 分布（柱状图） |
+| `gradeDistribution` | grade 分布 |
+| `stagePerformance` | 三阶各自表现 |
+| `parameterPerformance` | 参数组合性能热力图 |
+| `blockers` | 阻塞原因（sharpe/fitness/turnover/self_correlation） |
+| `taskCount` / `totalCount` | 任务总数 |
+| `queuedCount` | 排队中 |
+| `runningCount` | 运行中 |
+| `successCount` | 成功数 |
+| `failedCount` | 失败数 |
+
+### 38.8 飞书 Webhook 通知机制
+
+```
+- get_feishu_notification_config      → 读配置
+- save_feishu_notification_config     → 写配置
+- send_feishu_test_notification       → 发送测试
+- failed to build feishu webhook client → 错误处理
+```
+
+**典型推送场景**：
+- 新 alpha 通过质量门槛时
+- 自相关检查完成后可提交时
+- 提交成功/失败时
+- 任务全部完成时
+
+**Webhook URL 格式**：`https://open.feishu.cn/open-apis/bot/v2/hook/<token>`
+
+### 38.9 配置存储
+
+| 配置项 | 说明 |
+|---|---|
+| `notifications.feishu.config` | 飞书 webhook 配置 |
+| `authenticated` / `session` | 登录态 |
+| `autoLoggedIn` | 自动登录 |
+| `hasSavedCredentials` | 凭证已保存 |
+| `username` / `password` | 用户名密码（加密存储） |
+| `authentication` / `profile` / `stored_user` | 用户档案 |
+| `alphaSyncDetailIntervalMs` | alpha 详情同步间隔（毫秒） |
+| `alphaSyncPageIntervalMs` | 列表分页同步间隔 |
+| `alphaSubmitPollIntervalMs` | 提交结果轮询间隔 |
+| `maxConcurrent` | 最大并发任务数 |
+
+### 38.10 与官方 BRAIN API 的对接（DTO 字段）
+
+工具调用的官方 API 包含以下数据结构：
+
+```typescript
+// Alpha 详情 DTO
+interface AlphaDetail {
+    alpha_id: string
+    pnl: number                    // PnL
+    bookSize: number               // 组合规模
+    longCount: number              // 做多股数
+    shortCount: number             // 做空股数
+    turnover: number               // 换手率
+    returns: number                // 收益
+    drawdown: number               // 回撤
+    margin: number                 // 边际
+    sharpe: number                 // 夏普
+    fitness: number                // 健康度
+    selfCorrelated: boolean        // 是否自相关
+    
+    settings: {
+        region: string             // USA / CHN / ASI / EUR ...
+        universe: string           // TOP3000 / TOP2000 / TOP1000
+        delay: number              // 0 / 1
+        neutralization: string     // market/sector/industry/subindustry
+        truncation: number         // 截断
+        pasteurization: number     // 巴氏消毒
+        unitHandling: string       // 单位处理
+        nanHandling: string        // NaN 处理
+        language: string           // FASTEXPR / VTL
+        visualization: boolean     // 可视化
+        testPeriod: string         // 测试周期
+    }
+    
+    actions: {
+        POST: boolean
+        maxTrade: number
+        maxPosition: number
+        startDate: string
+        endDate: string
+    }
+    
+    themes: string[]               // 主题标签
+    pyramids: number[]             // 数据集分层
+    pyramidThemes: any[]
+    team: { result: any, limit: number, operatorCount: number }
+    classifications: string[]
+    grades: string[]
+    stage: string                  // STEP1/2/3
+    iso: { strain: string, test: string, prod: string }
+    competitions: string[]
+    
+    is: { sharpe: number, fitness: number, turnover: number }  // 样本内
+    os: { sharpe: number, fitness: number, turnover: number }  // 样本外
+    
+    favorite: boolean
+    hidden: boolean
+    dateCreated: string
+    dateModified: string
+    dateSubmitted: string
+}
+
+// 数据集 DTO
+interface Dataset {
+    id: string
+    name: string
+    subcategory: string            // news / fundamental / model / analyst / pv
+    dateCoverage: string           // 时间覆盖
+    coverage: number               // 覆盖率
+    userCount: number              // 使用人数
+    valueScore: number             // 价值评分
+    fieldCount: number             // 字段数
+    researchPapers: string[]       // 相关论文
+    fieldType: 'matrix' | 'vector'
+}
+
+// Challenge 排行榜
+interface ChallengeUser {
+    fullName: string
+    score: number
+    alphas: number
+    country: string
+    expiry: string
+    campaign: string
+    medium: string
+    university: string
+    geniusLevel: number
+}
+
+// 用户资料
+interface UserProfile {
+    brainUserId: string
+    tokenExpirySeconds: number
+    lastAuthenticatedAt: string
+    lastSyncedAt: string
+    email: string
+    firstName: string
+    lastName: string
+    gender: string
+    dateVerified: string
+    dateApproved: string
+    verified: boolean
+    approved: boolean
+    geniusLevel: number
+    permissions: string[]
+    author: string
+    address: any
+    education: any
+    auxiliary: any
+}
+```
+
+### 38.11 调优建议（基于逆向分析）
+
+#### 推荐配置（结合工具默认 + alphadoc 6 天方案）
+
+```yaml
+# 通用最优配置
+Region: USA
+Universe: TOP3000
+Delay: 1
+Neutralization: SUBINDUSTRY    # 细粒度更稳
+
+# Step1 推荐数据集
+Datasets:
+  - analyst4        # 高频，3 个月延迟
+  - fundamental6    # 财务，季度
+  - news18          # 舆情，向量
+  - news12          # 舆情，老版
+  - pv13            # 价量，TOP3000 专用
+
+# 阈值
+sharpe_threshold: 1.25
+fitness_threshold: 1.0
+turnover_min: 30          # 30% 以下
+turnover_max: 70          # 70% 以上判定为不健康
+self_correlation_max: 0.7 # > 0.7 会被染色为重复
+
+# 并发
+max_concurrent: 4         # 4 线程避免限流
+sync_interval_ms: 5000    # 5 秒轮询
+```
+
+#### Stage 1 优化策略
+
+1. **优先选 analyst4** — 字段活跃度最高，最容易出信号
+2. **慎选 fundamental6** — 字段更新慢（季度），alpha 表现更稳但出活慢
+3. **news18/news12** — 向量数据，必须用 `vec_avg` / `vec_sum` 聚合
+4. **pv13** — 专为 TOP3000 设计，字段质量高
+5. **Step1 主要刷 Sharpe** — 用 `winsorize(ts_backfill(field, 120), std=4)` 标准化
+
+#### Stage 2 优化策略
+
+1. **先 group 后 ts** — `group_neutralize(ts_rank(field, 22), subindustry)`
+2. **先 ts 后 group** — `group_neutralize(ts_mean(field, 22), subindustry)`
+3. **避免双层 group** — 嵌套过深易过拟合
+4. **优先用 subindustry** — 比 sector 更细
+
+#### Stage 3 优化策略
+
+1. **优先量价突破类**（`ts_arg_max(volume, 5) == 0`）— 动量最稳
+2. **慎用大波动过滤**（`abs(returns) > 0.1`）— 容易卡死提交量
+3. **量价正相关 0.5-0.7 区间** — 命中率最高
+4. **避免长期负相关**（252 日）— 容易全平仓
+5. **价格突破 + 放量共振** — `ts_arg_max(close, 5) == 0` + `ts_arg_max(volume, 5) == 0`
+
+### 38.12 工具的局限性（从代码推测）
+
+1. **绑定数据集 analyst4** — 字符串里出现 `analyst4` 最多，可能是工具的"金牌数据集"预设，但也限制多样性
+2. **Stage 1 模板可能过拟合** — `step1-gen-v2026-05-08` 是 2026-05-08 生成的，**市场环境变化后需重新校准**
+3. **阈值固定** — Sharpe 1.25 + Fitness 1.0 + Turnover 30-70 是硬编码，调整范围有限
+4. **染色逻辑简单** — 仅有 UNSET / GOOD / SPECIAL 三档，无法反映更细的自相关程度
+5. **同步依赖平台** — alpha 同步间隔和轮询间隔固定，不支持智能退避
+6. **WebView2 体积** — Edge WebView2 Runtime 需用户单独安装（首次启动会自动装）
+
+### 38.13 工具与开源工具的对比
+
+| 维度 | 老强说工具 | xiegengcai/world-quant-brain | proginn 小王 |
+|---|---|---|---|
+| **语言** | Tauri + Rust | Python | Python |
+| **UI** | ✅ 完整 GUI | ❌ 命令行 | ❌ 命令行 |
+| **三阶流水线** | ✅ 内置 | ✅ 内置 | ✅ 内置 |
+| **28 个 trade_when 模板** | ✅ 硬编码 | 需自己写 | 30 个 Selection 模板 |
+| **飞书通知** | ✅ 内置 | ❌ 需自加 | ❌ 需自加 |
+| **自动更新** | ✅ 内置 | ❌ | ❌ |
+| **本地数据库** | ✅ SQLite | ✅ SQLite | ❌ 仅内存 |
+| **自相关检查** | ✅ 自动化 | ✅ 自动化 | ✅ 自动化 |
+| **SuperAlpha 支持** | ❌ 未见 | ✅ 完整 | ✅ 强化版 |
+| **进化算法** | ❌ | ❌ | ✅ 50% 探索 + 50% 变异 |
+| **开源** | ❌ 闭源 | ✅ MIT | ❌ 闭源 |
+
+### 38.14 工具使用 5 步法（基于逆向理解）
+
+```
+第 1 步：登录认证
+  - 输入 BRAIN 账号密码 → brain_login
+  - 保存凭证 → autoLoggedIn=true
+
+第 2 步：配置任务
+  - 选数据集（analyst4 + fundamental6 起步）
+  - 选 region=USA, universe=TOP3000, delay=1, neutralization=subindustry
+  - 设定 maxRun=100（最多生成 100 个表达式尝试）
+  - 设定 max_concurrent=4（4 线程）
+
+第 3 步：启动 Step1
+  - brain_start_step1_run → 自动生成 + 模拟 + 过滤
+  - 在统计面板看 successCount / failedCount
+
+第 4 步：检查 + 提交
+  - brain_start_qualified_alpha_check → 自相关检查
+  - 等待 brain_get_qualified_alpha_check_status 返回
+  - brain_submit_alpha → 真正提交
+  - 飞书通知推送结果
+
+第 5 步：Step2/Step3 进阶
+  - 用 Step1 通过的 alpha 作为种子
+  - 套用 ts_ops / group_ops 嵌套
+  - 套用 28 个 trade_when 条件
+  - 重复 Step1 流程
+```
+
+### 38.15 工具更新日志推测
+
+```
+v1.0.0  初版（基础三阶流水线）
+v1.0.1  增加飞书通知
+v1.0.2  增加自相关染色
+v1.0.3  增加统计面板
+v1.0.4  增加自动更新
+v1.0.5  增加 includeDecayOutput 参数 + 优化 Stage 1 模板 (2026-05-08)
+```
+
+> 注：以上版本号无直接证据，是基于二进制中可见的"1.0.5"和代码演进的合理推测
+
+
+---
+
+## 三十九、工具辅助生产高质量 Alpha 的方法论
+
+> 基于第三十八章对老强说工具的逆向解析 + alphadoc 教程 + 官方文档 + 社区实战经验的综合方法论
+
+### 39.1 高质量 Alpha 的定义
+
+| 维度 | 阈值 | 说明 |
+|---|---|---|
+| **Sharpe（夏普）** | ≥ 1.25（保底） / ≥ 1.5（优质） / ≥ 1.8（精英） | 风险调整后收益 |
+| **Fitness（健康度）** | ≥ 1.0 | Sharpe × √(\|Returns\| / max(Turnover, 0.125)) |
+| **Turnover（换手率）** | 30% ≤ x ≤ 70% | 过高 → 交易成本高；过低 → 信号钝 |
+| **Margin（边际）** | ≥ 4 bps | 单位交易额盈亏 |
+| **Drawdown（回撤）** | ≤ 15% | 最大资金回撤 |
+| **Sub-Universe Sharpe** | ≥ 0.7 | 子池稳定性 |
+| **Self Correlation** | < 0.7 | 与已有 alpha 差异度 |
+| **Sharpe of Subuniverse** | ≥ 0.7 × 原 Sharpe | 迁移性 |
+
+### 39.2 数据集优先级（与工具默认 analyst4 配合）
+
+```
+🥇 第一梯队（最高产出，工具默认）
+  1. analyst4        — 分析师评级，3 个月延迟
+  2. fundamental6    — 财务数据，季度更新
+  3. pv13            — 价量数据，TOP3000 专用
+
+🥈 第二梯队（中等产出，需预处理）
+  4. news18          — 舆情向量，需 vec_avg
+  5. news12          — 舆情老版，向量聚合
+  6. model88         — 模型数据
+  
+🥉 第三梯队（特殊场景）
+  7. model110        — 最新模型
+  8. analystEstimate — 预期数据
+  9. fundamental9    — 财务新版本
+  10. socialmedia    — 社交媒体
+```
+
+### 39.3 推荐的 5 套 Alpha 模板（结合工具 Stage 1/2/3）
+
+#### 模板 1：动量 + 量价突破（最稳）
+```python
+trade_when(
+    ts_arg_max(volume, 5) == 0,                              # 当日放量
+    -ts_rank(ts_delta(close, 5), 22) * ts_std_dev(returns, 5),  # 动量 + 短期波动
+    -1                                                       # 不在场
+)
+```
+
+#### 模板 2：反转 + 量价负相关
+```python
+trade_when(
+    ts_corr(close, volume, 20) < 0,                          # 量价负相关
+    ts_rank(ts_mean(returns, 5), 22),                         # 短期反转
+    0
+)
+```
+
+#### 模板 3：财务质量（fundamental6）
+```python
+group_neutralize(
+    ts_rank(income_premium, 66),                             # 财务质量排名
+    densify(subindustry)
+) * -ts_rank(volume, 22)                                    # 缩量加权
+```
+
+#### 模板 4：行业轮动（pv13）
+```python
+trade_when(
+    ts_arg_max(close, 20) == 0,                              # 20 日新高
+    group_rank(ts_zscore(returns, 60), sector),              # 行业内动量
+    0
+)
+```
+
+#### 模板 5：低波动 + 稳定
+```python
+ts_rank(
+    ts_mean(
+        winsorize(
+            ts_backfill(cap, 120),
+            std=4
+        ),
+        22
+    )
+) * -ts_std_dev(returns, 60)
+```
+
+### 39.4 用工具生产高质量 Alpha 的 7 个技巧
+
+#### 技巧 1：先用工具跑通，再人工优化
+```
+1. 让工具跑 100 个 step1 表达式
+2. 选 Sharpe > 1.5 的 10 个
+3. 人工加上 trade_when 条件
+4. 重新模拟 → 选 3 个最优
+5. 提交 + 自相关检查
+```
+
+#### 技巧 2：先建数据域，再写公式
+- 不要上来就套模板
+- 先用工具的 brain_get_data_sets 看每个数据集的字段数、覆盖率
+- 优先选 coverage > 0.7 的数据集
+
+#### 技巧 3：中性化梯度测试
+- 同一个公式分别用 NONE / MARKET / INDUSTRY / SUBINDUSTRY 中性化跑
+- 选择 Sharpe 最高的
+- 一般 subindustry 表现最好但风险最大
+
+#### 技巧 4：Universe 梯度验证
+- 同一个公式在 TOP3000 / TOP2000 / TOP1000 各跑一遍
+- 如果 TOP3000 跑出 Sharpe 1.5，TOP1000 仍有 1.0 → **强迁移性**
+- 如果 TOP1000 拉胯 → 信号依赖小盘股
+
+#### 技巧 5：避开高自相关陷阱
+- 工具会染色，但**仍可手动检查**：
+  - 在 BRAIN Alphas 页面看 Self Correlation
+  - < 0.7 才安全
+  - < 0.5 更优
+
+#### 技巧 6：组合 trade_when 条件
+- 多个条件 AND 连接（用 `,` 串联多个 trade_when）
+- 示例：`trade_when(cond1, trade_when(cond2, signal, -1), -1)`
+
+#### 技巧 7：用 OS 验证而不是 IS
+- 工具的 `is.sharpe` 是样本内，**可能虚高**
+- 提交后平台会算 OS（样本外）→ 真实能力
+- IS 1.8 + OS 1.3 = 真正可用
+
+### 39.5 完整的提交流程（与工具结合）
+
+```
+Day 0  安装工具、登录 BRAIN、配置 analyst4 任务
+Day 1-2 让工具自动跑 step1，目标产出 20-30 个 alpha
+Day 3  筛选 Sharpe > 1.5 的 alpha
+Day 4  对优质 alpha 加 trade_when 条件，跑 step3
+Day 5  选 3-5 个最优，提交
+Day 6  工具自动查自相关，可提交的标记为 UNSET
+Day 7  重复从 Day 1 开始
+```
+
+### 39.6 监控与调优指标
+
+每天看工具的统计面板：
+
+| 指标 | 健康范围 | 不健康信号 |
+|---|---|---|
+| qualifiedCount | 占 total 30-50% | < 10% 说明阈值过严 |
+| submittableCount | 占 qualified 50%+ | < 30% 说明自相关太重 |
+| submittedCount | 每天 1-4 个 | 0 说明没活动 |
+| recentNewCount | 每天 +20+ | < 5 说明数据枯竭 |
+| failedCount / totalCount | < 20% | > 50% 说明配置错误 |
+| colorDistribution | UNSET 为主 | SPECIAL 过多说明撞库 |
+| gradeDistribution | GOOD+ 30%+ | 全部 UNSET 说明无优质 |
+
+### 39.7 何时关闭 / 调整工具
+
+⚠️ **触发调整工具配置的情况**：
+- 连续 2 天 `failedCount / totalCount > 50%` → 降低 maxRun
+- 连续 3 天 `submittableCount = 0` → 换数据集
+- 突然 `submittedCount` 全部失败 → 检查 Workday 状态
+- 飞书通知出现 429 限流 → 减少 max_concurrent
+- 工具版本更新提示 → 立即更新（算法可能升级）
+
+⚠️ **触发更换数据集的信号**：
+- analyst4 连续 5 天 `qualifiedCount < 5`
+- 行业主题轮换（从 USA 主题切到 CHN 主题时）
+- 平台新增数据集时立即尝试
+
+### 39.8 工具 vs 手动 vs 开源：如何选择
+
+| 场景 | 推荐方案 |
+|---|---|
+| **新手入门（0-10 个 alpha）** | 工具（最快产出） |
+| **新手学习（理解原理）** | 手动写公式 + 工具跑模拟 |
+| **量产阶段（10-100 个）** | 工具 step1 + 手动加 trade_when |
+| **专业玩家（100+ 个）** | 开源工具（xiegengcai）+ 自己写策略 |
+| **冲 Grandmaster** | 工具 + 开源 + 自己的研究 |
+| **比赛期间（IQC 等）** | 工具加速 + 手动精修 |
+
+### 39.9 工具的"隐藏能力"挖掘
+
+基于逆向分析，发现以下功能可能在 UI 中没明确展示但代码支持：
+
+1. **`includeDecayOutput` 参数** — 模拟结果中包含 decay 输出（用于分析）
+2. **`days_from_last_change` 算子** — 计算指标距上次变化的天数（适合事件驱动）
+3. **Challenge 排行榜拉取** — `brain_get_challenge_leaderboard` 可看全球排名
+4. **统计面板的 7 维度** — Color/Grade/Stage/Parameter/Blocker/Task 都有专门 tab
+5. **飞书测试通知** — `send_feishu_test_notification` 可独立测试 webhook
+6. **任务并发实时监控** — `brain_get_task_concurrency_status` 可看限流
+
+### 39.10 结论
+
+老强说工具的本质是**一个用 Tauri + Rust 实现的 BRAIN 自动化流水线**，把"表达式生成 → 模拟 → 质量筛选 → 自相关检查 → 提交"这 5 个步骤串成自动化操作。
+
+**优势**：
+- GUI 友好，配置可视化
+- 飞书通知及时
+- 三阶流水线 + 28 个 trade_when 模板成熟
+- 本地数据库方便复盘
+
+**局限**：
+- 闭源，无法定制核心算法
+- 阈值硬编码，调整有限
+- 工具预设偏保守，**高产用户需要自己加 trade_when**
+- 染色逻辑较简单，需人工判断质量
+
+**使用建议**：
+- 🎯 把它当**自动化生产车间**，不是策略生成器
+- 🎯 把它当**质量过滤器**，不是灵感来源
+- 🎯 用它跑 step1 → 人工选 → step3 → 提交
+- 🎯 结合手动写公式和 GitHub 开源工具，能突破工具限制
+
+---
+
 > 最后更新：2026-06-01
-> 版本：V4（新增第 37 章社区实战经验 + 扩充第 22、23 章为 alphadoc 07、09 完整版）
-> 总章节：37 章，约 2170 行
-> 整合内容：官方文档 + 老强说 11 章教程 + CSDN 实战（5 个博主）+ 韩国 IQC + 掘金 + aiquantclaw 路由表 + GitHub 开源工具（2 个项目）+ proginn 自动 SuperAlpha 工具 + 官方 BRAIN TIPS 论坛
+> 版本：V5（新增第 38 章老强说工具逆向解析 + 第 39 章高质量 Alpha 生产方法论）
+> 总章节：39 章，约 2900 行
+> 整合内容：官方文档 + 老强说 11 章教程 + 老强说工具 v1.0.5 逆向解析 + CSDN 实战（5 个博主）+ 韩国 IQC + 掘金 + aiquantclaw 路由表 + GitHub 开源工具（2 个项目）+ proginn 自动 SuperAlpha 工具 + 官方 BRAIN TIPS 论坛
 > 维护：随平台规则变化同步更新
