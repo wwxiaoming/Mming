@@ -39,16 +39,17 @@ export default function Home() {
           <SearchBar onSelect={handleSelect} />
           
           {/* 热门股票快捷选择 */}
-          <div className="mt-6">
-            <p className="text-sm font-medium text-zinc-700 mb-3">热门股票：</p>
-            <div className="flex flex-wrap gap-2">
+          <div className="mt-8">
+            <p className="text-base font-bold text-zinc-800 mb-4">热门股票（点一下就看）：</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {POPULAR_STOCKS.map((stock) => (
                 <button
                   key={stock.symbol}
                   onClick={() => handleSelect(stock.symbol, stock.name)}
-                  className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors border border-blue-200"
+                  className="px-4 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold text-lg hover:from-blue-600 hover:to-blue-700 active:scale-95 transition-all shadow-md"
                 >
-                  {stock.symbol}
+                  <div>{stock.symbol}</div>
+                  <div className="text-xs opacity-90 mt-1">{stock.name}</div>
                 </button>
               ))}
             </div>
