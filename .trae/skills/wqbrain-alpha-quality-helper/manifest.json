@@ -1,0 +1,13 @@
+{
+  "name": "wqbrain-alpha-quality-helper",
+  "version": "0.1.0",
+  "description": "帮助 WorldQuant BRAIN 学员结合老强说 Alpha 辅助工具 v1.0.5 批量挖出更高质量 alpha 的判定器",
+  "entry": "SKILL.md",
+  "depends": [],
+  "capabilities": [
+    "config-audit",
+    "expression-preflight",
+    "result-diagnose",
+    "submission-strategy"
+  ]
+}
