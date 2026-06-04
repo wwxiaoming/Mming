@@ -214,18 +214,6 @@
 </div>
 
 <div id="stats"></div>
-<div id="quoteArea" class="card" style="display:none">
-  <div class="toolbar">
-    <label><b>实时行情</b> <span class="legend" id="quoteStatus">拉取中…</span></label>
-  </div>
-  <div class="stat-row" id="quoteStats"></div>
-</div>
-<div id="sectorArea" class="card" style="display:none">
-  <div class="toolbar">
-    <label><b>所属板块</b> <span class="legend" id="sectorStatus">拉取中…</span></label>
-  </div>
-  <div id="sectorChips" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-</div>
 <div id="klineArea" class="card" style="display:none">
   <div class="toolbar">
     <label><b>K线 + MA + 成交量 + MACD + 主力净流入</b></label>
@@ -335,81 +323,6 @@ const fillTsCode = code => {
   return c + '.SH';
 };
 
-// 实时行情前缀(腾讯财经用 sh/sz/bj)
-const tencentPrefix = code => {
-  const c = (code||'').trim();
-  if (c.startsWith('6') || c.startsWith('9') || c.startsWith('5')) return 'sh' + c;
-  if (c.startsWith('4') || c.startsWith('8')) return 'bj' + c;
-  return 'sz' + c;
-};
-
-// ─────── 腾讯财经实时行情(不封 IP,GBK 编码,~ 分隔) ───────
-// 字段索引(实测校准):
-//   1=名称 3=现价 4=昨收 5=今开 31=涨跌额 32=涨跌幅% 33=最高 34=最低
-//   37=成交额(万) 38=换手率% 39=PE(TTM) 43=振幅% 44=总市值(亿) 45=流通市值(亿)
-//   46=PB 47=涨停价 48=跌停价 49=量比 52=PE(静)
-async function tencentQuote(code) {
-  const url = `https://qt.gtimg.cn/q=${tencentPrefix(code)}`;
-  const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const txt = await r.text();
-  // 格式: v_sh600519="1~贵州茅台~600519~...~"
-  const m = txt.match(/"([^"]+)"/);
-  if (!m) throw new Error('空响应');
-  const v = m[1].split('~');
-  if (v.length < 53) throw new Error('字段不全');
-  return {
-    name:        v[1]  || '',
-    code:        v[2]  || code,
-    price:       parseFloat(v[3])  || 0,
-    last_close:  parseFloat(v[4])  || 0,
-    open:        parseFloat(v[5])  || 0,
-    change_amt:  parseFloat(v[31]) || 0,
-    change_pct:  parseFloat(v[32]) || 0,
-    high:        parseFloat(v[33]) || 0,
-    low:         parseFloat(v[34]) || 0,
-    amount_wan:  parseFloat(v[37]) || 0,
-    turnover_pct:parseFloat(v[38]) || 0,
-    pe_ttm:      parseFloat(v[39]) || 0,
-    mcap_yi:     parseFloat(v[44]) || 0,
-    float_mcap_yi:parseFloat(v[45])|| 0,
-    pb:          parseFloat(v[46]) || 0,
-    limit_up:    parseFloat(v[47]) || 0,
-    limit_down:  parseFloat(v[48]) || 0,
-    vol_ratio:   parseFloat(v[49]) || 0,
-  };
-}
-
-// ─────── 东财 slist 板块归属(spt=3 一次拿全,V3.2.2 替换百度PAE) ───────
-// 返回: { boards:[{name, code, change_pct, lead_stock}], total, error? }
-async function eastmoneyConceptBlocks(code) {
-  const marketCode = code.startsWith('6') || code.startsWith('5') || code.startsWith('9') ? 1 : 0;
-  const url = 'https://push2.eastmoney.com/api/qt/slist/get';
-  const params = new URLSearchParams({
-    fltt: '2', invt: '2',
-    secid: `${marketCode}.${code}`,
-    spt: '3', pi: '0', pz: '200', po: '1',
-    fields: 'f12,f14,f3,f128',
-  });
-  const r = await fetch(`${url}?${params}`, {
-    headers: { 'User-Agent': 'Mozilla/5.0', 'Referer': 'https://quote.eastmoney.com/' }
-  });
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const d = await r.json();
-  const diff = (d && d.data && d.data.diff) || {};
-  const items = diff.values ? diff.values() : (Array.isArray(diff) ? diff : []);
-  const boards = items.map(it => ({
-    name: it.f14 || '',
-    code: it.f12 || '',
-    change_pct: typeof it.f3 === 'number' ? it.f3 : 0,
-    lead_stock: it.f128 || '',
-  })).filter(b => b.name);
-  return { total: boards.length, boards };
-}
-
-// 当前股票实时行情(渲染涨跌停标记线用)
-let currentQuote = null;
-
 // 默认日期
 $('endDate').value = today();
 $('startDate').value = yearsAgo(5);
@@ -438,20 +351,15 @@ document.addEventListener('keydown', e => {
 
 function clearResults() {
   $('stats').innerHTML = '';
-  $('quoteArea').style.display = 'none';
-  $('sectorArea').style.display = 'none';
   $('klineArea').style.display = 'none';
   $('tableArea').style.display = 'none';
   $('chartsArea').style.display = 'none';
   $('backtestArea').style.display = 'none';
   currentKline = null;
-  currentQuote = null;
   klineLoaded = false;
   if (klineChart) { klineChart.clear(); }
   $('loadKlineBtn').textContent = '加载 K 线';
   $('klineStatus').textContent = '';
-  $('quoteStatus').textContent = '';
-  $('sectorStatus').textContent = '';
   // 重置后回到查询 tab
   switchTab('query');
   notice('参数已修改,请重新查询','warn');
@@ -539,32 +447,6 @@ async function query() {
   $('chartsArea').style.display = 'block';
   $('backtestArea').style.display = 'block';
   $('btStatus').textContent = '点击「跑回测」开始(会自动获取 K 线)';
-
-  // 自动拉实时行情(腾讯)+ 板块归属(东财),并行
-  loadQuoteAndSectors(code);
-}
-
-// 并行拉取行情 + 板块,互不阻塞;失败各自降级
-async function loadQuoteAndSectors(code) {
-  $('quoteStatus').textContent = '拉取中…';
-  $('sectorStatus').textContent = '拉取中…';
-  // 1) 行情(腾讯, 不封 IP)
-  try {
-    currentQuote = await tencentQuote(code);
-    renderQuote(currentQuote);
-  } catch (e) {
-    console.warn('tencent quote failed:', e);
-    currentQuote = null;
-    renderQuote(null);
-  }
-  // 2) 板块(东财 slist)
-  try {
-    const sectors = await eastmoneyConceptBlocks(code);
-    renderSectors(sectors);
-  } catch (e) {
-    console.warn('eastmoney sectors failed:', e);
-    renderSectors(null);
-  }
 }
 
 // ───────── 顶部统计卡 ─────────
@@ -602,53 +484,6 @@ function renderStats() {
   $('stats').innerHTML = '<div class="stat-row">' + cards.map(([l,v,c]) =>
     `<div class="stat"><div class="stat-label">${l}</div><div class="stat-value ${c}">${v}</div></div>`
   ).join('') + '</div>';
-}
-
-// ───────── 实时行情(腾讯) ─────────
-function renderQuote(q) {
-  if (!q) {
-    $('quoteArea').style.display = 'block';
-    $('quoteStatus').textContent = '⚠️ 暂未获取到实时行情';
-    $('quoteStats').innerHTML = '<div class="legend">请检查网络,或该股票暂不支持腾讯接口(港股/美股)。</div>';
-    return;
-  }
-  $('quoteArea').style.display = 'block';
-  $('quoteStatus').innerHTML = `✅ ${q.name} (${q.code})`;
-  const cls = v => v>0?'pos':(v<0?'neg':'neutral');
-  const cards = [
-    ['当前价',     q.price.toFixed(2),                          cls(q.change_pct)],
-    ['涨跌幅',     `${q.change_pct>=0?'+':''}${q.change_pct.toFixed(2)}%`, cls(q.change_pct)],
-    ['涨跌额',     `${q.change_amt>=0?'+':''}${q.change_amt.toFixed(2)}`,  cls(q.change_amt)],
-    ['换手率',     `${q.turnover_pct.toFixed(2)}%`,             'neutral'],
-    ['量比',       q.vol_ratio.toFixed(2),                      q.vol_ratio>=1?'pos':'neg'],
-    ['PE(TTM)',    q.pe_ttm > 0 ? q.pe_ttm.toFixed(1) : '-',   'neutral'],
-    ['PB',         q.pb > 0 ? q.pb.toFixed(2) : '-',            'neutral'],
-    ['总市值',     q.mcap_yi > 0 ? `${q.mcap_yi.toFixed(1)}亿` : '-',  'neutral'],
-    ['流通市值',   q.float_mcap_yi > 0 ? `${q.float_mcap_yi.toFixed(1)}亿` : '-', 'neutral'],
-    ['涨停价',     q.limit_up.toFixed(2),                       'pos'],
-    ['跌停价',     q.limit_down.toFixed(2),                     'neg'],
-  ];
-  $('quoteStats').innerHTML = cards.map(([l,v,c]) =>
-    `<div class="stat"><div class="stat-label">${l}</div><div class="stat-value ${c}">${v}</div></div>`
-  ).join('');
-}
-
-// ───────── 板块归属(东财) ─────────
-function renderSectors(data) {
-  if (!data || !data.boards || data.boards.length === 0) {
-    $('sectorArea').style.display = 'block';
-    $('sectorStatus').textContent = '⚠️ 暂未获取到板块信息';
-    $('sectorChips').innerHTML = '<div class="legend">东财接口暂无返回,稍后再试。</div>';
-    return;
-  }
-  $('sectorArea').style.display = 'block';
-  $('sectorStatus').textContent = `✅ 共 ${data.boards.length} 个板块`;
-  $('sectorChips').innerHTML = data.boards.map(b => {
-    const c = b.change_pct > 0 ? '#1f6feb' : (b.change_pct < 0 ? '#475569' : '#30363d');
-    const tc = b.change_pct > 0 ? '#e6edf3' : (b.change_pct < 0 ? '#c9d1d9' : '#8b949e');
-    const pct = b.change_pct ? `${b.change_pct > 0 ? '+' : ''}${b.change_pct.toFixed(2)}%` : '';
-    return `<span style="display:inline-block;padding:4px 10px;border-radius:14px;background:${c};color:${tc};font-size:0.78rem" title="${b.lead_stock ? '领涨:'+b.lead_stock : ''}">${b.name}${pct?' · '+pct:''}</span>`;
-  }).join('');
 }
 
 // ───────── 表格 ─────────
@@ -928,40 +763,12 @@ async function loadKlineChart() {
   }));
   const xData = dates.map(compactToYmd);
 
-  // 换手率(粗算:每日成交量 / 流通股本 * 100%)
-  // 流通股本 ≈ 流通市值 / 当前价;只能在有实时行情时算,否则全 null
-  let turnoverArr = dates.map(() => null);
-  if (currentQuote && currentQuote.float_mcap_yi > 0 && currentQuote.price > 0) {
-    const floatShares = (currentQuote.float_mcap_yi * 1e8) / currentQuote.price; // 股
-    turnoverArr = dates.map(d => {
-      const v = kmap[d].volume || 0;
-      return +(v / floatShares * 100).toFixed(2);
-    });
-  }
-
-  // 涨跌停标记线(仅在有实时行情时画)
-  const markLines = [];
-  if (currentQuote && currentQuote.limit_up > 0) {
-    markLines.push({
-      yAxis: currentQuote.limit_up, name: `涨停 ${currentQuote.limit_up.toFixed(2)}`,
-      label: { show: true, position: 'end', color: '#fd7e35', fontSize: 10, formatter: '涨停' },
-      lineStyle: { color: '#fd7e35', type: 'dashed', width: 1 },
-    });
-  }
-  if (currentQuote && currentQuote.limit_down > 0) {
-    markLines.push({
-      yAxis: currentQuote.limit_down, name: `跌停 ${currentQuote.limit_down.toFixed(2)}`,
-      label: { show: true, position: 'end', color: '#6e7681', fontSize: 10, formatter: '跌停' },
-      lineStyle: { color: '#6e7681', type: 'dashed', width: 1 },
-    });
-  }
-
   if (!klineChart) klineChart = echarts.init($('klineChart'), null, { renderer: 'canvas' });
   klineChart.setOption({
     backgroundColor: 'transparent',
     animation: false,                     // 关闭过渡,缩放更丝滑
     legend: {
-      data: ['K线', 'MA5', 'MA10', 'MA20', '成交量', '换手率', 'MACD', '主力净流入'],
+      data: ['K线', 'MA5', 'MA10', 'MA20', '成交量', 'MACD', '主力净流入'],
       textStyle: { color: '#c9d1d9' },
       top: 4, right: 10,
       itemWidth: 14, itemHeight: 8,
@@ -977,47 +784,12 @@ async function loadKlineChart() {
       backgroundColor: 'rgba(22,27,34,0.95)',
       borderColor: '#30363d',
       textStyle: { color: '#e6edf3' },
-      // Tooltip 中文化:OHLC 字段改中文名 + 加涨跌额/涨跌幅
-      formatter: (params) => {
-        if (!params || !params.length) return '';
-        const date = params[0].axisValueLabel;
-        const lines = [`<div style="font-weight:600;margin-bottom:4px">${date}</div>`];
-        // 找出 K 线那行(主数据)
-        const k = params.find(p => p.seriesType === 'candlestick');
-        if (k && k.data) {
-          const [open, close, low, high] = k.data;
-          // 找前一日收盘算涨跌幅
-          const idx = xData.indexOf(date);
-          const prevClose = idx > 0 ? kmap[dates[idx-1]].close : close;
-          const change_amt = close - prevClose;
-          const change_pct = prevClose > 0 ? (change_amt / prevClose * 100) : 0;
-          const cc = v => v>0?'#58a6ff':(v<0?'#fdba74':'#c9d1d9');
-          lines.push(`<div>开盘 <b>${open.toFixed(2)}</b></div>`);
-          lines.push(`<div>收盘 <b style="color:${cc(change_amt)}">${close.toFixed(2)}</b></div>`);
-          lines.push(`<div>最低 <b>${low.toFixed(2)}</b></div>`);
-          lines.push(`<div>最高 <b>${high.toFixed(2)}</b></div>`);
-          lines.push(`<div style="color:${cc(change_amt)}">涨跌额 <b>${change_amt>=0?'+':''}${change_amt.toFixed(2)}</b> · 涨跌幅 <b>${change_pct>=0?'+':''}${change_pct.toFixed(2)}%</b></div>`);
-        }
-        // 成交量
-        const v = params.find(p => p.seriesName === '成交量');
-        if (v && v.data != null) lines.push(`<div>成交量 <b>${fmtInt(v.data.value||v.data)}</b></div>`);
-        // 换手率
-        const t = params.find(p => p.seriesName === '换手率');
-        if (t && t.data != null) lines.push(`<div>换手率 <b>${t.data.toFixed(2)}%</b></div>`);
-        // MACD
-        const m = params.find(p => p.seriesName === 'MACD');
-        if (m && m.data != null) lines.push(`<div>MACD <b>${m.data.toFixed(4)}</b></div>`);
-        // 主力净流入
-        const f = params.find(p => p.seriesName === '主力净流入');
-        if (f && f.data != null) lines.push(`<div>主力净流入 <b>${f.data.value.toFixed(2)} 万</b></div>`);
-        return lines.join('');
-      },
     },
     axisPointer: { link: [{ xAxisIndex: 'all' }] },
     // 4 个独立 grid,共享 xAxisIndex
     grid: [
-      { left: 56, right: 56, top: 40, height: '52%' },
-      { left: 56, right: 56, top: '64%', height: '10%' },
+      { left: 56, right: 18, top: 40, height: '52%' },
+      { left: 56, right: 18, top: '64%', height: '10%' },
       { left: 56, right: 18, top: '76%', height: '10%' },
       { left: 56, right: 18, top: '88%', height: '10%' },
     ],
@@ -1048,62 +820,43 @@ async function loadKlineChart() {
         splitLine: { show: false }, axisTick: { show: false }},
     ],
     yAxis: [
-      // 0: K线主轴(左)
       { gridIndex: 0, scale: true, position: 'left',
         axisLine: { lineStyle: { color: '#30363d' }},
         splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
         axisLabel: { color: '#8b949e', fontSize: 10 }},
-      // 1: 成交量主轴(左)
       { gridIndex: 1, scale: true, position: 'left',
         axisLine: { lineStyle: { color: '#30363d' }},
         splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
         axisLabel: { color: '#8b949e', fontSize: 10 }},
-      // 2: 成交量副轴(右,换手率)
-      { gridIndex: 1, scale: true, position: 'right',
-        axisLine: { lineStyle: { color: '#30363d' }},
-        splitLine: { show: false },
-        axisLabel: { color: '#c678dd', fontSize: 10, formatter: '{value}%' },
-        show: turnoverArr.some(v => v != null) },
-      // 3: MACD
       { gridIndex: 2, scale: true, position: 'left',
         axisLine: { lineStyle: { color: '#30363d' }},
         splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
         axisLabel: { color: '#8b949e', fontSize: 10 }},
-      // 4: 主力净流入
       { gridIndex: 3, scale: true, position: 'left',
         axisLine: { lineStyle: { color: '#30363d' }},
         splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
         axisLabel: { color: '#8b949e', fontSize: 10 }},
     ],
     series: [
-      // Panel 1: K线 + MA(含涨跌停 markLine)
+      // Panel 1: K线 + MA
       { name: 'K线', type: 'candlestick', data: ohlc, xAxisIndex: 0, yAxisIndex: 0,
-        itemStyle: { color: '#fd7e35', color0: '#58a6ff', borderColor: '#fd7e35', borderColor0: '#58a6ff' },
-        markLine: markLines.length ? {
-          symbol: ['none', 'none'],
-          data: markLines,
-          animation: false,
-          silent: true,
-        } : undefined },
+        itemStyle: { color: '#fd7e35', color0: '#58a6ff', borderColor: '#fd7e35', borderColor0: '#58a6ff' }},
       { name: 'MA5',  type: 'line', data: ma5,  xAxisIndex: 0, yAxisIndex: 0,
         smooth: true, showSymbol: false, lineStyle: { width: 1.2, color: '#f5d142' }},
       { name: 'MA10', type: 'line', data: ma10, xAxisIndex: 0, yAxisIndex: 0,
         smooth: true, showSymbol: false, lineStyle: { width: 1.2, color: '#58a6ff' }},
       { name: 'MA20', type: 'line', data: ma20, xAxisIndex: 0, yAxisIndex: 0,
         smooth: true, showSymbol: false, lineStyle: { width: 1.2, color: '#c678dd' }},
-      // Panel 2: 成交量 + 换手率(副轴)
+      // Panel 2: 成交量
       { name: '成交量', type: 'bar', data: vols, xAxisIndex: 1, yAxisIndex: 1 },
-      { name: '换手率', type: 'line', data: turnoverArr, xAxisIndex: 1, yAxisIndex: 2,
-        showSymbol: false, smooth: true, yAxisIndex: 2,
-        lineStyle: { width: 1, color: '#c678dd' }, itemStyle: { color: '#c678dd' }},
       // Panel 3: MACD
-      { name: 'MACD', type: 'bar',  data: macdBars, xAxisIndex: 2, yAxisIndex: 3 },
-      { name: 'DIF',  type: 'line', data: dif, xAxisIndex: 2, yAxisIndex: 3,
+      { name: 'MACD', type: 'bar',  data: macdBars, xAxisIndex: 2, yAxisIndex: 2 },
+      { name: 'DIF',  type: 'line', data: dif, xAxisIndex: 2, yAxisIndex: 2,
         smooth: true, showSymbol: false, lineStyle: { width: 1, color: '#f5d142' }},
-      { name: 'DEA',  type: 'line', data: dea, xAxisIndex: 2, yAxisIndex: 3,
+      { name: 'DEA',  type: 'line', data: dea, xAxisIndex: 2, yAxisIndex: 2,
         smooth: true, showSymbol: false, lineStyle: { width: 1, color: '#58a6ff' }},
       // Panel 4: 主力净流入
-      { name: '主力净流入', type: 'bar', data: mainNet, xAxisIndex: 3, yAxisIndex: 4 },
+      { name: '主力净流入', type: 'bar', data: mainNet, xAxisIndex: 3, yAxisIndex: 3 },
     ],
   }, true);  // true = notMerge,避免多次加载叠加
 
