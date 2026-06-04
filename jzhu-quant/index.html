@@ -278,7 +278,8 @@
 // 用相对路径,所有 /api/* 请求会走 server.py 的反向代理 → localhost:8180
 // 这样无论本地还是 Codespaces 都不会有 CORS 问题
 const API_BASE = '/api/plugin';
-document.getElementById('apiBaseLabel').textContent = '(自动代理) ' + window.location.origin + API_BASE;
+// (apiBaseLabel 元素已在新版头部移除,这里只控制台提示一下)
+console.log('Mming量化 · API 代理地址:', window.location.origin + API_BASE);
 
 // ───────── 工具函数 ─────────
 const $ = id => document.getElementById(id);
