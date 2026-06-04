@@ -1,0 +1,21 @@
+帮我写一个单文件 index.html(深色主题,纯前端,不用任何框架,原生 JS),做一个"个股资金流向查询器":
+
+1. 顶部:标题 + 一个输入区:
+   - 股票代码输入框:用户只填 6 位数字,自动补后缀生成 ts_code —— 6/5/9 开头→.SH,0/3 开头→.SZ,4/8 开头→.BJ(后缀在查询时自动补,页面上不用显示提示)。
+   - 起始日期、结束日期两个 date 选择器(默认:结束=今天,起始=五年前)。
+   - 一个"查询"按钮。
+2. 点查询后,用 fetch 调本地接口(我本机运行了一个行情数据服务,监听 8180 端口):
+   GET http://localhost:8180/api/plugin/moneyflow?ts_code=<ts_code>&start_date=<YYYYMMDD>&end_date=<YYYYMMDD>
+   (日期要转成 YYYYMMDD 纯数字格式)
+   返回 { ok:true, rows:[ {trade_date, buy_sm_amount, sell_sm_amount, buy_md_amount, sell_md_amount,
+   buy_lg_amount, sell_lg_amount, buy_elg_amount, sell_elg_amount, ...对应的 _vol 字段, net_mf_amount, net_mf_vol} ] }
+   金额单位是万元。
+3. 把 rows 按 trade_date 倒序,渲染成一个表格(交易日期 + 各档买入/卖出额),trade_date 显示成 2024-12-31 格式。
+4. 错误处理要分清两类,千万别用一个大 try/catch 把所有错都报成"服务没运行"(否则代码里一个小 bug 也会被误判成连接问题,白白去查服务):
+   - 只把 fetch 那一句单独 try/catch:只有 fetch 抛错(连不上 / 网络问题)才提示"请确认本地行情服务已在 8180 端口运行";
+   - fetch 成功后:若 ok 为 false,显示接口返回的错误信息;
+   - 拿到数据之后的解析、计算、渲染代码不要再套在那个"网络错"catch 里——它们一旦出错,要 console.error 打印真实错误,并在页面显示具体报错信息(不要再说"服务没运行")。
+   - 另外:查询时按钮置灰 + 文案变"查询中…"。
+5. 配色:深色背景,蓝色系为主,数字等宽对齐。不要用红绿(对红绿色盲友好)。
+
+请给出完整 index.html。

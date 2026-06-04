@@ -1,0 +1,13 @@
+在现有 index.html 基础上增强(保持单文件、原生 JS、深色蓝橙配色):
+
+1. 定义这些"净额"列(金额单位万元,正=净流入):
+   - 主力净流入 = (buy_lg_amount + buy_elg_amount) - (sell_lg_amount + sell_elg_amount)
+   - 特大单净额 = buy_elg_amount - sell_elg_amount
+   - 大单净额  = buy_lg_amount - sell_lg_amount
+   - 中单净额  = buy_md_amount - sell_md_amount
+   - 小单净额  = buy_sm_amount - sell_sm_amount
+   - 全单净流入 = net_mf_amount
+2. 表格改成展示上面这些净额列(正数蓝色、负数橙色,主力净流入列加粗)。加一个"显示买卖原始明细"复选框,勾上才显示各档买入/卖出额与量的原始列。
+3. 顶部加一排统计卡(区间内汇总):交易日区间、累计主力净流入、主力净买入天数(及占比%)、单日最大净流入(含日期)、单日最大净流出(含日期)。
+4. 加一个"导出 CSV"按钮,把当前表格导出(带 UTF-8 BOM,中文不乱码)。
+5. 说明:小单<5万 / 中单5-20万 / 大单20-100万 / 特大单≥100万,主力=大单+特大单 —— 放在页面上做个简短图例。
