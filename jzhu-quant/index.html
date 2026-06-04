@@ -214,6 +214,14 @@
 </div>
 
 <div id="stats"></div>
+<div id="klineArea" class="card" style="display:none">
+  <div class="toolbar">
+    <label><b>K线 + MA + 成交量 + MACD + 主力净流入</b></label>
+    <button class="btn" id="loadKlineBtn">加载 K 线</button>
+    <span class="legend" id="klineStatus"></span>
+  </div>
+  <div id="klineChart" class="chart" style="height:600px"></div>
+</div>
 <div id="tableArea" style="display:none">
   <h2>资金流向明细</h2>
   <div class="toolbar">
@@ -229,14 +237,6 @@
   <div class="card"><div id="chart1" class="chart"></div></div>
   <div class="card"><div id="chart2" class="chart"></div></div>
   <div class="card"><div id="chart3" class="chart"></div></div>
-  <div class="card">
-    <div class="toolbar">
-      <label><b>K线 + MA + 成交量 + MACD + 主力净流入</b></label>
-      <button class="btn" id="loadKlineBtn">加载 K 线</button>
-      <span class="legend" id="klineStatus"></span>
-    </div>
-    <div id="klineChart" class="chart" style="height:600px"></div>
-  </div>
 </div>
 </div><!-- /section-charts -->
 
@@ -351,10 +351,15 @@ document.addEventListener('keydown', e => {
 
 function clearResults() {
   $('stats').innerHTML = '';
+  $('klineArea').style.display = 'none';
   $('tableArea').style.display = 'none';
   $('chartsArea').style.display = 'none';
   $('backtestArea').style.display = 'none';
   currentKline = null;
+  klineLoaded = false;
+  if (klineChart) { klineChart.clear(); }
+  $('loadKlineBtn').textContent = '加载 K 线';
+  $('klineStatus').textContent = '';
   // 重置后回到查询 tab
   switchTab('query');
   notice('参数已修改,请重新查询','warn');
@@ -436,6 +441,7 @@ async function query() {
   notice(`✅ 成功获取 ${rows.length} 个交易日的数据`,'info');
   renderStats();
   renderTable();
+  $('klineArea').style.display = 'block';
   $('tableArea').style.display = 'block';
   renderCharts();
   $('chartsArea').style.display = 'block';
@@ -876,7 +882,6 @@ $('loadKlineBtn').addEventListener('click', loadKlineChart);
     }
   });
 });
-
 // ───────── 导出 CSV ─────────
 function exportCSV() {
   if (currentRows.length === 0) { notice('没有数据可导出','warn'); return; }
