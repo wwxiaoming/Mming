@@ -220,19 +220,11 @@
 <script>
 'use strict';
 
-// ───────── 数据源 base URL(自动适配 Codespaces / 本地) ─────────
-function getApiBase() {
-  const host = window.location.host || '';
-  if (host.includes('github.dev') || host.includes('gitpod') || host.includes('app.github')) {
-    // Codespaces 转发:把当前 URL 的端口替换成 8180
-    const u = new URL(window.location.href);
-    u.port = '8180';
-    return u.origin + '/api/plugin';
-  }
-  return 'http://localhost:8180/api/plugin';
-}
-const API_BASE = getApiBase();
-document.getElementById('apiBaseLabel').textContent = API_BASE;
+// ───────── 数据源 base URL ─────────
+// 用相对路径,所有 /api/* 请求会走 server.py 的反向代理 → localhost:8180
+// 这样无论本地还是 Codespaces 都不会有 CORS 问题
+const API_BASE = '/api/plugin';
+document.getElementById('apiBaseLabel').textContent = '(自动代理) ' + window.location.origin + API_BASE;
 
 // ───────── 工具函数 ─────────
 const $ = id => document.getElementById(id);
