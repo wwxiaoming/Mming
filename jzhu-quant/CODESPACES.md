@@ -9,7 +9,7 @@ bash start-all.sh
 
 启动后:
 - **8000 端口**(必转发):打开 `http://localhost:8000` —— 资金流向工具主页
-- **8180 端口**(可选转发):打开 `http://localhost:8180` —— 小宇量化自带 UI
+- **8180 端口**(可选转发):打开 `http://localhost:8180` —— 量化系统自带 UI
 
 ## 文件说明
 
@@ -17,9 +17,9 @@ bash start-all.sh
 |---|---|
 | `index.html` | 资金流向工具主页面(打开 8000 看的就是这个) |
 | `server.py` | 一体化服务器:静态文件 + 反向代理 `/api/* → 8180` |
-| `start-all.sh` | 一键启动(小宇量化 + 服务器) |
-| `compose.yml` | 小宇量化的 Docker 配置 |
-| `start.sh` / `stop.sh` | 小宇量化单独的启停(被 start-all.sh 包含) |
+| `start-all.sh` | 一键启动(量化系统 + 服务器) |
+| `compose.yml` | 量化系统的 Docker 配置 |
+| `start.sh` / `stop.sh` | 量化系统单独的启停(被 start-all.sh 包含) |
 | `prompt-1.txt` ~ `prompt-5.txt` | 5 个提示词,本仓库的 `index.html` 已按它们实现 |
 | `API.html` | 本地 API 浏览器(打开 8000/API.html) |
 | `db-init/` | 数据库初始化 SQL |

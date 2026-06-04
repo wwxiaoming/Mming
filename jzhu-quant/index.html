@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>资金流向量化回测系统</title>
+<title>Mming量化</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -135,12 +135,61 @@
   .pill { display:inline-block; padding:1px 7px; border-radius:9px; font-size:0.74rem; }
   .pill.in { background:rgba(88,166,255,0.16); color:#79c0ff; }
   .pill.out { background:rgba(249,115,22,0.16); color:#fdba74; }
+
+  /* ─── Mming 品牌头 ─── */
+  .brand {
+    display:flex; align-items:center; gap:14px; margin-bottom:6px;
+    padding-bottom:14px; border-bottom:1px solid #21262d;
+  }
+  .brand-logo {
+    width:40px; height:40px; border-radius:9px;
+    background:linear-gradient(135deg, #58a6ff 0%, #1f6feb 60%, #d29922 130%);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:1.05rem; color:#0d1117; letter-spacing:-0.5px;
+    box-shadow:0 2px 8px rgba(31,111,235,0.3);
+  }
+  .brand-text { display:flex; flex-direction:column; gap:2px; }
+  .brand-name { font-size:1.3rem; font-weight:700; color:#e6edf3; letter-spacing:-0.3px; }
+  .brand-name span { color:#d29922; }
+  .brand-tag { font-size:0.7rem; color:#8b949e; letter-spacing:0.4px; }
+  .brand-ver {
+    margin-left:auto; font-size:0.7rem; color:#6e7681;
+    padding:3px 9px; border:1px solid #21262d; border-radius:5px;
+  }
+  .nav-tabs {
+    display:flex; gap:4px; margin:16px 0 14px;
+    border-bottom:1px solid #21262d;
+  }
+  .nav-tab {
+    padding:8px 16px; background:transparent; border:none; color:#8b949e;
+    font-size:0.85rem; cursor:pointer; border-bottom:2px solid transparent;
+    margin-bottom:-1px; transition:color 0.15s, border-color 0.15s;
+  }
+  .nav-tab:hover { color:#c9d1d9; }
+  .nav-tab.active { color:#58a6ff; border-bottom-color:#58a6ff; }
+  .section { display:block; }
+  .section.hidden { display:none; }
+  .toolbar-right { margin-left:auto; display:flex; gap:8px; }
 </style>
 </head>
 <body>
 
-<h1>资金流向量化回测系统</h1>
-<div class="sub">输入 6 位股票代码 + 选好日期,点查询。数据来自本机的「小宇量化」服务(<code id="apiBaseLabel">http://localhost:8180</code>)。</div>
+<div class="brand">
+  <div class="brand-logo">M</div>
+  <div class="brand-text">
+    <div class="brand-name">Mming<span>·</span>量化</div>
+    <div class="brand-tag">资金流向 · 择时回测 · 本地运行</div>
+  </div>
+  <div class="brand-ver">v1.0</div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" data-tab="query">数据查询</button>
+  <button class="nav-tab" data-tab="charts">资金图表</button>
+  <button class="nav-tab" data-tab="backtest">择时回测</button>
+</div>
+
+<div id="section-query" class="section">
 
 <div class="card">
   <div class="input-row">
@@ -172,8 +221,10 @@
   </div>
   <div class="table-wrap"><table id="dataTable"><thead></thead><tbody></tbody></table></div>
 </div>
+</div><!-- /section-query -->
 
-<div id="chartsArea" style="display:none">
+<div id="section-charts" class="section hidden">
+<div id="chartsArea">
   <h2>图表</h2>
   <div class="card"><div id="chart1" class="chart"></div></div>
   <div class="card"><div id="chart2" class="chart"></div></div>
@@ -199,9 +250,10 @@
     </div>
   </div>
 </div>
+</div><!-- /section-backtest -->
 
 <div class="footer">
-  本工具在本地运行,数据来自本机的「小宇量化」行情服务(端口 8180),所有数据不离开你的电脑。<br>
+  本工具在本地运行,数据来自本机的「量化系统」行情服务(端口 8180),所有数据不离开你的电脑。<br>
   欢迎继续在它上面扩展:加更多数据源、自选股、批量扫描、自己的回测规则……
 </div>
 
@@ -292,8 +344,29 @@ function clearResults() {
   $('chartsArea').style.display = 'none';
   $('backtestArea').style.display = 'none';
   currentKline = null;
+  // 重置后回到查询 tab
+  switchTab('query');
   notice('参数已修改,请重新查询','warn');
 }
+
+// ───────── Tab 切换 ─────────
+function switchTab(name) {
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === name);
+  });
+  ['query','charts','backtest'].forEach(n => {
+    const s = $('section-' + n);
+    if (s) s.classList.toggle('hidden', n !== name);
+  });
+  // 切换时通知 ECharts 重绘(否则可能尺寸不对)
+  setTimeout(() => {
+    [chart1, chart2, chart3, pieBuyChart, pieSellChart, ...(window._btCharts||[])]
+      .forEach(c => c && c.resize());
+  }, 50);
+}
+document.querySelectorAll('.nav-tab').forEach(t => {
+  t.addEventListener('click', () => switchTab(t.dataset.tab));
+});
 
 // ───────── 查询 ─────────
 async function query() {
@@ -315,7 +388,7 @@ async function query() {
     resp = await fetch(url);
   } catch (e) {
     btn.disabled = false; btn.textContent = '查询';
-    notice(`网络错误:无法连接到 ${API_BASE}。请确认本地行情服务(小宇量化)已在 8180 端口运行。详细:${e.message}`,'err');
+    notice(`网络错误:无法连接到 ${API_BASE}。请确认本地行情服务(量化系统)已在 8180 端口运行。详细:${e.message}`,'err');
     console.error('fetch error:', e);
     return;
   }

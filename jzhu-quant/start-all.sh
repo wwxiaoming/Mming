@@ -1,9 +1,9 @@
 #!/bin/bash
-# 启动小宇量化 + 一体化服务器(给你 Codespace 用)
+# 启动量化系统 + 一体化服务器(给你 Codespace 用)
 set -e
 cd "$(dirname "$0")"
 
-echo "=== 1/3 启动小宇量化 (docker compose) ==="
+echo "=== 1/3 启动量化系统 (docker compose) ==="
 docker compose up -d
 
 echo ""
