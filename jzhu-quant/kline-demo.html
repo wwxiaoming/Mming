@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多 Panel K 线 + 指标 联动图表 · 丝滑缩放</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    background:#0d1117; color:#e6edf3;
+    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Segoe UI',sans-serif;
+    min-height:100vh;
+  }
+  body { padding:14px; }
+  h1 { font-size:1.2rem; margin-bottom:4px; text-align:center; }
+  .sub { color:#8b949e; font-size:0.78rem; text-align:center; margin-bottom:12px; }
+  #chart { width:100%; height:calc(100vh - 70px); min-height:560px; background:#0d1117; }
+  .tip {
+    position:fixed; bottom:8px; left:50%; transform:translateX(-50%);
+    color:#6e7681; font-size:0.72rem; pointer-events:none;
+  }
+</style>
+</head>
+<body>
+  <h1>多 Panel 联动 K 线图（K线 / MA / 成交量 / MACD / 主力净流入）</h1>
+  <div class="sub">滚轮缩放 · 拖拽平移 · 十字光标联动 · 移动端双指缩放</div>
+  <div id="chart"></div>
+  <div class="tip">Tip: 滚轮 = 缩放, 拖拽 = 平移, 双击 panel 复位</div>
+
+<script>
+'use strict';
+
+// ─────── 工具：生成模拟数据 ───────
+// 用「几何布朗运动 + 周期项 + 趋势」生成接近真实股票走势的 K 线
+function genMockData(n = 480) {
+  const out = [];
+  let price = 11.0;
+  const start = new Date('2025-01-02');
+  for (let i = 0; i < n; i++) {
+    const d = new Date(start.getTime() + i * 86400000);
+    // 跳过周末
+    if (d.getDay() === 0 || d.getDay() === 6) continue;
+    const date = d.toISOString().slice(0, 10);
+    // 趋势 + 噪声
+    const trend = 0.0006 * Math.sin(i / 60);
+    const noise = (Math.random() - 0.5) * 0.18;
+    const ret = trend + noise;
+    const open = price;
+    const close = +(price * (1 + ret)).toFixed(2);
+    const high = +(Math.max(open, close) * (1 + Math.random() * 0.012)).toFixed(2);
+    const low  = +(Math.min(open, close) * (1 - Math.random() * 0.012)).toFixed(2);
+    const vol  = Math.round(4000 + Math.random() * 16000);
+    // 主力净流入（万元），与涨跌幅弱相关
+    const mainNet = Math.round((ret * 15000 + (Math.random() - 0.5) * 3000));
+    out.push({ date, open, close, low, high, vol, mainNet });
+    price = close;
+  }
+  return out;
+}
+
+// ─────── 工具：MA 均线 ───────
+function calcMA(data, n) {
+  const out = [];
+  let s = 0;
+  for (let i = 0; i < data.length; i++) {
+    s += data[i].close;
+    if (i >= n) s -= data[i - n].close;
+    out.push(i >= n - 1 ? +(s / n).toFixed(3) : null);
+  }
+  return out;
+}
+
+// ─────── 工具：MACD(12, 26, 9) ───────
+function calcMACD(data) {
+  const ema = (k) => {
+    const a = 2 / (k + 1);
+    const arr = [data[0].close];
+    for (let i = 1; i < data.length; i++) {
+      arr.push(+(a * data[i].close + (1 - a) * arr[i - 1]).toFixed(4));
+    }
+    return arr;
+  };
+  const e12 = ema(12), e26 = ema(26);
+  const dif = e12.map((v, i) => +(v - e26[i]).toFixed(4));
+  const dea = [];
+  const a = 2 / (9 + 1);
+  dea.push(+(dif[0]).toFixed(4));
+  for (let i = 1; i < dif.length; i++) dea.push(+(a * dif[i] + (1 - a) * dea[i - 1]).toFixed(4));
+  const macd = dif.map((v, i) => +((v - dea[i]) * 2).toFixed(4));
+  return { dif, dea, macd };
+}
+
+// ─────── 准备数据 ───────
+const raw = genMockData(480);
+const dates = raw.map(x => x.date);
+const ohlc  = raw.map(x => [x.open, x.close, x.low, x.high]);
+const vols  = raw.map((x, i) => ({
+  value: x.vol,
+  itemStyle: { color: x.close >= x.open ? '#fd7e35' : '#58a6ff' }
+}));
+const mainNet = raw.map((x, i) => ({
+  value: x.mainNet,
+  itemStyle: { color: x.mainNet >= 0 ? '#58a6ff' : '#fd7e35' }
+}));
+const ma5  = calcMA(raw, 5);
+const ma10 = calcMA(raw, 10);
+const ma20 = calcMA(raw, 20);
+const { dif, dea, macd } = calcMACD(raw);
+const macdBars = macd.map((v, i) => ({
+  value: v,
+  itemStyle: { color: v >= 0 ? '#fd7e35' : '#58a6ff' }
+}));
+
+// ─────── 渲染 ───────
+const chart = echarts.init(document.getElementById('chart'), null, { renderer: 'canvas' });
+
+// 4 个 grid:  K线(55%) / 成交量(15%) / MACD(15%) / 主力净流入(15%)
+const GH = ['55%', '15%', '15%', '15%'];
+const tops = [8, 64, 80, 96].map(p => p + '%');
+
+const baseOption = {
+  backgroundColor: 'transparent',
+  animation: false,                 // 关闭默认动画,缩放/平移更丝滑
+  legend: {
+    data: ['K线', 'MA5', 'MA10', 'MA20', '成交量', 'MACD', '主力净流入'],
+    textStyle: { color: '#c9d1d9' },
+    top: 4, right: 10,
+    itemWidth: 14, itemHeight: 8,
+  },
+  // 4 个独立的 grid 共享一个 category x 轴,dataZoom 联动所有
+  grid: [
+    { left: 56, right: 18, top: tops[0], height: GH[0] },
+    { left: 56, right: 18, top: tops[1], height: GH[1] },
+    { left: 56, right: 18, top: tops[2], height: GH[2] },
+    { left: 56, right: 18, top: tops[3], height: GH[3] },
+  ],
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',           // 十字光标
+      link: [{ xAxisIndex: 'all' }],  // 4 个 panel 联动
+      lineStyle:  { color: '#6e7681', width: 1, type: 'dashed' },
+      crossStyle: { color: '#6e7681', width: 1, type: 'dashed' },
+    },
+    backgroundColor: 'rgba(22,27,34,0.95)',
+    borderColor: '#30363d',
+    textStyle: { color: '#e6edf3' },
+    padding: 10,
+  },
+  axisPointer: {
+    link: [{ xAxisIndex: 'all' }],
+  },
+  // dataZoom 同时控制 4 个 xAxis,且支持滚轮/捏合/滑块
+  dataZoom: [
+    {
+      type: 'inside',                      // 鼠标滚轮 + 拖拽平移
+      xAxisIndex: [0, 1, 2, 3],
+      start: 70, end: 100,
+      zoomOnMouseWheel: true,
+      moveOnMouseMove: true,
+      moveOnMouseWheel: false,
+      throttle: 50,                        // 50ms 节流,丝滑不卡
+    },
+    {
+      type: 'slider',                      // 底部滑块
+      xAxisIndex: [0, 1, 2, 3],
+      start: 70, end: 100,
+      bottom: 4, height: 18,
+      borderColor: 'transparent',
+      backgroundColor: 'rgba(33,38,45,0.6)',
+      fillerColor: 'rgba(88,166,255,0.18)',
+      handleStyle: { color: '#58a6ff' },
+      textStyle: { color: '#8b949e', fontSize: 10 },
+      showDataShadow: false,
+    },
+  ],
+  xAxis: [
+    { type: 'category', data: dates, gridIndex: 0, scale: true,
+      axisLine: { lineStyle: { color: '#30363d' }},
+      axisLabel: { show: false }, splitLine: { show: false }, axisTick: { show: false }},
+    { type: 'category', data: dates, gridIndex: 1, scale: true,
+      axisLine: { lineStyle: { color: '#30363d' }},
+      axisLabel: { show: false }, splitLine: { show: false }, axisTick: { show: false }},
+    { type: 'category', data: dates, gridIndex: 2, scale: true,
+      axisLine: { lineStyle: { color: '#30363d' }},
+      axisLabel: { show: false }, splitLine: { show: false }, axisTick: { show: false }},
+    { type: 'category', data: dates, gridIndex: 3, scale: true,
+      axisLine: { lineStyle: { color: '#30363d' }},
+      axisLabel: { color: '#8b949e', fontSize: 10 },
+      splitLine: { show: false }, axisTick: { show: false }},
+  ],
+  yAxis: [
+    { gridIndex: 0, scale: true, position: 'left',
+      axisLine: { lineStyle: { color: '#30363d' }},
+      splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
+      axisLabel: { color: '#8b949e', fontSize: 10 }},
+    { gridIndex: 1, scale: true, position: 'left',
+      axisLine: { lineStyle: { color: '#30363d' }},
+      splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
+      axisLabel: { color: '#8b949e', fontSize: 10 }},
+    { gridIndex: 2, scale: true, position: 'left',
+      axisLine: { lineStyle: { color: '#30363d' }},
+      splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
+      axisLabel: { color: '#8b949e', fontSize: 10 }},
+    { gridIndex: 3, scale: true, position: 'left',
+      axisLine: { lineStyle: { color: '#30363d' }},
+      splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
+      axisLabel: { color: '#8b949e', fontSize: 10 }},
+  ],
+  series: [
+    // Panel 1: K线 + MA
+    { name: 'K线', type: 'candlestick', data: ohlc, xAxisIndex: 0, yAxisIndex: 0,
+      itemStyle: {
+        color:        '#fd7e35', color0:       '#58a6ff',
+        borderColor:  '#fd7e35', borderColor0: '#58a6ff',
+      }},
+    { name: 'MA5',  type: 'line', data: ma5,  xAxisIndex: 0, yAxisIndex: 0,
+      smooth: true, showSymbol: false,
+      lineStyle: { width: 1.2, color: '#f5d142' }},
+    { name: 'MA10', type: 'line', data: ma10, xAxisIndex: 0, yAxisIndex: 0,
+      smooth: true, showSymbol: false,
+      lineStyle: { width: 1.2, color: '#58a6ff' }},
+    { name: 'MA20', type: 'line', data: ma20, xAxisIndex: 0, yAxisIndex: 0,
+      smooth: true, showSymbol: false,
+      lineStyle: { width: 1.2, color: '#c678dd' }},
+
+    // Panel 2: 成交量
+    { name: '成交量', type: 'bar', data: vols, xAxisIndex: 1, yAxisIndex: 1 },
+
+    // Panel 3: MACD
+    { name: 'MACD', type: 'bar',  data: macdBars, xAxisIndex: 2, yAxisIndex: 2 },
+    { name: 'DIF',  type: 'line', data: dif,  xAxisIndex: 2, yAxisIndex: 2,
+      smooth: true, showSymbol: false, lineStyle: { width: 1, color: '#f5d142' }},
+    { name: 'DEA',  type: 'line', data: dea,  xAxisIndex: 2, yAxisIndex: 2,
+      smooth: true, showSymbol: false, lineStyle: { width: 1, color: '#58a6ff' }},
+
+    // Panel 4: 主力净流入
+    { name: '主力净流入', type: 'bar', data: mainNet, xAxisIndex: 3, yAxisIndex: 3 },
+  ],
+};
+
+chart.setOption(baseOption);
+
+// ─────── 双击任意 panel → 复位到全量视图 ───────
+chart.getDom().addEventListener('dblclick', () => {
+  chart.dispatchAction({ type: 'dataZoom', start: 0, end: 100 });
+});
+
+// ─────── 窗口缩放自适应 ───────
+window.addEventListener('resize', () => chart.resize());
+
+// ─────── 移动端双指缩放（ECharts inside 已支持 pointer 事件，无需额外代码）───────
+</script>
+</body>
+</html>
