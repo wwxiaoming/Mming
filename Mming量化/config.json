@@ -1,0 +1,17 @@
+{
+  "ai": {
+    "provider": "deepseek",
+    "base_url": "https://api.deepseek.com",
+    "api_key": "",
+    "model": "deepseek-chat"
+  },
+  "limits": {
+    "rate_per_min": 10,
+    "max_prompt_tokens": 8000,
+    "max_code_chars": 5000
+  },
+  "price_per_million_tokens": {
+    "input": 1.0,
+    "output": 2.0
+  }
+}
