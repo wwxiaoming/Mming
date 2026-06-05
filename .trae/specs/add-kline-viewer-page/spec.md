@@ -1,50 +1,44 @@
-# QuantDinger K线查看器 (A 股) Spec
+# QuantDinger K线查看器 (多市场) Spec
 
 ## Why
 
-QuantDinger 默认前端是私有 Vue 仓库（`QuantDinger-Vue`），无法直接修改源码。但其 Flask 后端暴露了完整的 K 线/行情/自选股 REST API。我们要在不修改 Vue 源码的前提下，新增一个「K 线 + 资金流向 + 买卖点回测 + 自选股」综合页面，复用 jzhu-quant 中已经验证过的多 Panel K 线布局，挂在 QuantDinger 同一域名下，作为「量化系统 · A 股视图」入口。
+QuantDinger 默认前端是私有 Vue 仓库（`QuantDinger-Vue`），无法直接修改源码。但其 Flask 后端暴露了完整的 K 线/行情/自选股 REST API，覆盖 CNStock/HKStock/USStock/Crypto/Forex/Futures 等多个市场。我们要在不修改 Vue 源码的前提下，新增一个「**多市场 K 线 + 资金流向 + 买卖点回测 + 自选股**」综合页面，复用 jzhu-quant 中已经验证过的多 Panel K 线布局，挂在 QuantDinger 同一域名下，作为「量化系统 · 多市场 K 线视图」入口。
 
 ## What Changes
 
 - **新增文件**：
-  - `backend_api_python/app/static/kline_viewer/index.html` — 单文件 SPA，4 个 Tab（K线 / 资金流向 / 买卖点回测 / 自选股）
-  - `backend_api_python/app/routes/kline_viewer.py` — 把 `/kline-viewer/*` 静态路径交给 Flask
-  - `kline_viewer_proxy.py` — 独立启动脚本（开发用，Codespaces 可直接 `python3 kline_viewer_proxy.py` 跑在 8000 端口，做 CORS 代理）
+  - `backend_api_python/app/static/kline_viewer/index.html` — 单文件 SPA，4 个 Tab（K线 / 资金流向 / 买卖点回测 / 自选股），顶部市场选择器
+  - `kline_viewer_proxy.py` — 独立启动脚本，8000 端口，serve 静态文件 + CORS 代理 `/api/*` → backend
 - **修改文件**：
-  - `backend_api_python/app/__init__.py` — 注册 kline_viewer 蓝图
-  - `backend_api_python/run.py` — 让 gunicorn 也能 serve 静态文件
-  - `docker-compose.ghcr.yml` — 添加一个 `kline-viewer` 服务（8000 端口），挂载静态目录
-  - `docker-compose.yml` — 同上
-  - `backend_api_python/env.example` — 添加 K线查看器相关配置（`KLINE_VIEWER_ENABLED`、`KLINE_VIEWER_PORT`）
+  - `backend_api_python/app/routes/market_cn_moneyflow.py`（**新增**）— A 股日度资金流向 API
+  - `backend_api_python/app/openapi/register.py` — 注册新蓝图
+  - `backend_api_python/app/routes/settings.py` — brand-config 暴露 `kline_viewer` 字段
+  - `backend_api_python/env.example` — 添加 K 线查看器配置
+  - `docker-compose.ghcr.yml` + `docker-compose.yml` — 添加 kline-viewer 服务
 
-- **不修改** Vue 前端源码（不可访问）。集成通过以下 2 种方式实现：
-  1. **同源挂载**：Flask 直接 serve `/kline-viewer/`，前端通过 nginx 反代访问 `http://<host>/kline-viewer/`
-  2. **独立端口 + 链接跳转**：在 QuantDinger 登录页 dashboard 通过 `BRAND_*` env 注入一个 banner 链接（QuantDinger 已支持 brand-config 动态化）
+- **多市场支持**（核心）：
+  - 顶部市场下拉选择器：**A 股 / 港股 / 美股 / 加密货币 / 外汇 / 期货**
+  - 默认 A 股（CNStock），可一键切换
+  - 切换后：搜索、K 线、自选股全部基于新市场
+  - 自选股保留每个标的所属的市场，跨市场也能点回
+  - 资金流向和买卖点回测**仅 A 股**支持（其他市场数据源不提供资金流明细）
 
-- **核心功能**（参考 `/workspace/jzhu-quant/index.html` 实现）：
-  - **Tab 1 - K线图**：4 Panel 联动 K线（K线+MA5/10/20 / 成交量 / MACD / 主力净流入），支持缩放/拖动/双击还原
-  - **Tab 2 - 资金流向**：日度资金流向明细表格 + 饼图（特大单/大单/中单/小单 买入/卖出构成）
-  - **Tab 3 - 买卖点回测**：基于「主力净流入 N 日均线 > 0 看多」规则回测，K线叠加买卖点 marker
-  - **Tab 4 - 自选股**：股票搜索 + 添加/移除自选股 + 自选股列表 + 一键跳到 K线 Tab
+- **核心功能**（参考 `/workspace/jzhu-quant/index.html`）：
+  - **Tab 1 - K线图**：3 Panel 联动 K线（K线+MA5/10/20 / 成交量 / MACD），支持缩放/拖动/双击还原
+  - **Tab 2 - 资金流向**（仅 A 股）：日度资金流向明细表格 + 柱状图 + 趋势线（特大/大/中/小单）
+  - **Tab 3 - 买卖点回测**（仅 A 股）：基于「主力净流入 N 日均线 > 0 看多」规则回测，K线叠加买卖点 marker
+  - **Tab 4 - 自选股**：多市场股票搜索 + 添加/移除 + 列表 + 一键跳到 K线 Tab
 
-- **数据源**（复用 QuantDinger 后端 API）：
-  - K线：`GET /api/kline?market=CNStock&symbol=sh600519&timeframe=1D&limit=300`
-  - 行情搜索：`GET /api/market/symbols/search?keyword=...&market=CNStock`
-  - 热门股票：`GET /api/market/symbols/hot?market=CNStock&limit=20`
+- **数据源**：
+  - K线：`GET /api/kline?market={CNStock|HKStock|USStock|Crypto|Forex|Futures}&symbol=...`
+  - 行情搜索：`GET /api/market/symbols/search?market=...&keyword=...`
   - 自选股：`GET/POST /api/market/watchlist/{get|add|remove}`
-  - 自选股价格：`GET /api/market/watchlist/prices`
-  - 资金流向：通过 `/api/global-market/...` 或后端补充接口（如果后端没有直接的「A 股日度资金流」接口，需新增一个 `GET /api/market/cn-moneyflow?symbol=...`）
+  - A股资金流向：**新增** `GET /api/market/cn-moneyflow?symbol=...&days=...`（Tencent/AKShare 东方财富）
 
-- **进入方式**（集成到 QuantDinger）：
-  - **方式 A（推荐）**：在 QuantDinger dashboard 顶部加一个 banner 链接 "🆕 打开 A 股 K 线查看器"（用 `BRAND_LOGIN_BANNER_HTML` env 注入）
-  - **方式 B**：在 AI 智能分析 / 自选股页面加外链（需要 Vue 源码，不可行 → 用方法 A 替代）
-  - **方式 C**：登录后跳转默认页时附带一个弹窗（最小侵入）
-  - **方式 D**：在 QuantDinger 左侧菜单底部加一行 "更多工具 · A 股 K 线"（同 A）
-
-- **A 股特化**：
-  - 默认显示沪深京 A 股（`market=CNStock`）
-  - 在 AI 智能分析 / 及时分析的 6 个板块（涨跌幅榜、成交量榜、资金流入榜、热门股、AI 信号、组合监控）加入 CNStock 板块的开关（需在 `app/utils/market_visibility.py` 暴露 `SHOW_CN_*` 类目 env，本次不动它）
-  - 股票代码格式：`sh600519` / `sz000001` / `bj833000`
+- **进入方式**（不修改 Vue 源码）：
+  - **主入口**：QuantDinger dashboard 通过 `BRAND_*` env 注入 banner 链接
+  - **备用入口**：浏览器直接书签 `http://<host>:8000/`
+  - **同源**：Flask serve `/kline-viewer/`（未来 Vue 改后可挂同源）
 
 ## Impact
 

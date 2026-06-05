@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>量化系统 · A 股 K 线视图</title>
+<title>量化系统 · K 线视图(A股/港股/美股/加密)</title>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <style>
 :root {
@@ -67,6 +67,12 @@ header {
 .search-result .item .code { color: var(--fg-2); font-family: monospace; }
 
 .header-actions { display: flex; gap: 8px; align-items: center; }
+.market-select select {
+  background: var(--bg-3); color: var(--fg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 7px 10px; font-size: 13px; cursor: pointer;
+  outline: none;
+}
+.market-select select:focus { border-color: var(--accent); }
 .btn {
   background: var(--accent); color: white; border: none; padding: 7px 14px;
   border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;
@@ -197,10 +203,20 @@ tbody tr:hover { background: var(--bg-3); }
 <header>
   <div class="brand">
     <div class="logo">📈</div>
-    <span>量化系统 <small>· A 股 K 线视图</small></span>
+    <span>量化系统 <small>· K 线多市场</small></span>
+  </div>
+  <div class="market-select">
+    <select id="marketSelect" title="选择市场">
+      <option value="CNStock">🇨🇳 A 股</option>
+      <option value="HKStock">🇭🇰 港股</option>
+      <option value="USStock">🇺🇸 美股</option>
+      <option value="Crypto">₿ 加密货币</option>
+      <option value="Forex">💱 外汇</option>
+      <option value="Futures">📊 期货</option>
+    </select>
   </div>
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="搜索股票:代码/名称 (例:600519、茅台、sh600519)" autocomplete="off">
+    <input type="text" id="searchInput" placeholder="搜索代码/名称 (例:600519、茅台、AAPL、TSLA、BTC)" autocomplete="off">
     <div class="search-result" id="searchResult"></div>
   </div>
   <div class="header-actions">
@@ -322,7 +338,8 @@ tbody tr:hover { background: var(--bg-3); }
 
 // ───────── 配置 ─────────
 const API_BASE = '/api';  // 走 kline_viewer_proxy.py 代理
-let currentSymbol = null;   // sh600519 格式
+let currentSymbol = null;   // sh600519 / AAPL / BTCUSDT 等格式
+let currentMarket = 'CNStock';  // 当前选中的市场
 let currentStockName = null;
 let currentTf = '1D';
 let klineChart = null;
@@ -331,7 +348,10 @@ let mfLineChart = null;
 let btKChart = null;
 let btEqChart = null;
 let cachedKlines = null;       // 缓存最近一次拉到的 K 线
-let cachedMoneyflow = null;    // 缓存资金流向
+let cachedMoneyflow = null;    // 缓存资金流向(仅 A 股有效)
+
+// A 股才支持资金流向和回测
+const SUPPORTS_MONEYFLOW = () => currentMarket === 'CNStock';
 
 // ───────── 工具 ─────────
 const $ = id => document.getElementById(id);
@@ -438,11 +458,11 @@ document.addEventListener('click', e => {
 
 async function doSearch(q) {
   try {
-    const data = await api(`/market/symbols/search?keyword=${encodeURIComponent(q)}&market=CNStock&limit=15`);
+    const data = await api(`/market/symbols/search?keyword=${encodeURIComponent(q)}&market=${currentMarket}&limit=15`);
     const list = Array.isArray(data) ? data : (data.items || data.symbols || []);
     const box = $('searchResult');
     if (!list.length) {
-      box.innerHTML = '<div class="item" style="color:var(--fg-2)">无结果,试试 600519 / 茅台 / sh600519</div>';
+      box.innerHTML = '<div class="item" style="color:var(--fg-2)">无结果,试试其他关键词</div>';
     } else {
       box.innerHTML = list.map(s => {
         const code = s.symbol || s.code || s.value || '';
@@ -474,21 +494,25 @@ async function selectStock(symbol, name) {
   currentStockName = name;
   $('currentStockCard').style.display = 'block';
   $('stockName').textContent = name || symbol;
-  $('stockCode').textContent = symbol;
+  $('stockCode').textContent = symbol + ' · ' + (marketLabel(currentMarket));
   switchTab('kline');
   await loadKline();
+}
+
+function marketLabel(m) {
+  return { CNStock: 'A 股', HKStock: '港股', USStock: '美股', Crypto: '加密货币', Forex: '外汇', Futures: '期货' }[m] || m;
 }
 
 // ───────── 加载 K 线 ─────────
 async function loadKline() {
   if (!currentSymbol) {
-    notice('kline', '请先在搜索框选一只股票', 'info');
+    notice('kline', '请先在搜索框选一只标的', 'info');
     return;
   }
   notice('kline', '加载 K 线中...', 'info');
   try {
     const limit = +$('limitInput').value || 300;
-    const data = await api(`/kline?market=CNStock&symbol=${encodeURIComponent(currentSymbol)}&timeframe=${currentTf}&limit=${limit}`);
+    const data = await api(`/kline?market=${currentMarket}&symbol=${encodeURIComponent(currentSymbol)}&timeframe=${currentTf}&limit=${limit}`);
     const klines = Array.isArray(data) ? data : (data.klines || data.data || []);
     if (!klines.length) throw new Error('后端返回空数据');
     cachedKlines = klines;
@@ -496,7 +520,7 @@ async function loadKline() {
 
     // 拉最新价
     try {
-      const tk = await api(`/market/price?market=CNStock&symbol=${encodeURIComponent(currentSymbol)}`);
+      const tk = await api(`/market/price?market=${currentMarket}&symbol=${encodeURIComponent(currentSymbol)}`);
       const t = tk.price || tk;
       $('stockPrice').textContent = t.last ?? '--';
       const cp = t.changePercent ?? 0;
@@ -589,7 +613,11 @@ function renderKline(klines) {
 
 // ───────── 资金流向 ─────────
 async function loadMoneyflow() {
-  if (!currentSymbol) { notice('mf', '请先选股票', 'info'); return; }
+  if (!currentSymbol) { notice('mf', '请先选标的', 'info'); return; }
+  if (!SUPPORTS_MONEYFLOW()) {
+    notice('mf', '资金流向功能仅支持 A 股(当前市场: ' + marketLabel(currentMarket) + ')', 'error');
+    return;
+  }
   notice('mf', '加载资金流向...', 'info');
   try {
     const data = await api(`/market/cn-moneyflow?symbol=${encodeURIComponent(currentSymbol)}&days=60`);
@@ -661,7 +689,11 @@ function renderMoneyflowCharts(rows) {
 
 // ───────── 买卖点回测 ─────────
 async function runBacktest() {
-  if (!currentSymbol) { notice('bt', '请先选股票', 'info'); return; }
+  if (!currentSymbol) { notice('bt', '请先选标的', 'info'); return; }
+  if (!SUPPORTS_MONEYFLOW()) {
+    notice('bt', '买卖点回测功能仅支持 A 股(当前市场: ' + marketLabel(currentMarket) + ')', 'error');
+    return;
+  }
   if (!cachedKlines) { await loadKline(); if (!cachedKlines) return; }
   if (!cachedMoneyflow) { await loadMoneyflow(); }
 
@@ -822,17 +854,23 @@ async function loadWatchlist() {
     box.innerHTML = list.map(s => {
       const symbol = s.symbol || s.code;
       const name = s.name || symbol;
-      return `<div class="watchlist-item" data-symbol="${symbol}" data-name="${name}">
+      const market = s.market || 'CNStock';
+      return `<div class="watchlist-item" data-symbol="${symbol}" data-name="${name}" data-market="${market}">
         <div class="info">
           <div class="name">${name}</div>
-          <div class="code">${symbol} · ${s.market || 'CNStock'}</div>
+          <div class="code">${symbol} · ${marketLabel(market)}</div>
         </div>
-        <div class="remove" data-symbol="${symbol}">×</div>
+        <div class="remove" data-symbol="${symbol}" data-market="${market}">×</div>
       </div>`;
     }).join('');
     box.querySelectorAll('.watchlist-item').forEach(el => {
       el.addEventListener('click', e => {
         if (e.target.classList.contains('remove')) return;
+        // 切到该股票所在的市场
+        if (el.dataset.market && el.dataset.market !== currentMarket) {
+          currentMarket = el.dataset.market;
+          $('marketSelect').value = currentMarket;
+        }
         selectStock(el.dataset.symbol, el.dataset.name);
       });
     });
@@ -843,7 +881,7 @@ async function loadWatchlist() {
         try {
           await api('/market/watchlist/remove', {
             method: 'POST',
-            body: JSON.stringify({ market: 'CNStock', symbol: el.dataset.symbol }),
+            body: JSON.stringify({ market: el.dataset.market || 'CNStock', symbol: el.dataset.symbol }),
           });
           notice('wl', '已移除', 'success');
           loadWatchlist();
@@ -857,11 +895,11 @@ async function loadWatchlist() {
 }
 
 async function addCurrentToWatchlist() {
-  if (!currentSymbol) { notice('kline', '请先选股票', 'info'); return; }
+  if (!currentSymbol) { notice('kline', '请先选标的', 'info'); return; }
   try {
     await api('/market/watchlist/add', {
       method: 'POST',
-      body: JSON.stringify({ market: 'CNStock', symbol: currentSymbol, name: currentStockName }),
+      body: JSON.stringify({ market: currentMarket, symbol: currentSymbol, name: currentStockName }),
     });
     notice('kline', '✓ 已加入自选股', 'success');
   } catch (e) { notice('kline', '加入失败: ' + e.message, 'error'); }
@@ -894,6 +932,17 @@ document.querySelectorAll('[data-tf]').forEach(b => {
     currentTf = b.dataset.tf;
     if (currentSymbol) loadKline();
   });
+});
+
+// 市场切换
+$('marketSelect').addEventListener('change', e => {
+  currentMarket = e.target.value;
+  currentSymbol = null;
+  currentStockName = null;
+  cachedKlines = null;
+  cachedMoneyflow = null;
+  $('currentStockCard').style.display = 'none';
+  notice('kline', '已切到 ' + marketLabel(currentMarket) + ' 市场,请搜索标的', 'info');
 });
 
 // ───────── 响应式 ─────────
