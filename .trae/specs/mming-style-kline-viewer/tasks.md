@@ -1,48 +1,104 @@
-# Tasks — Mming 风格 K 线查看器
+# Tasks — QuantDinger IDE K 线优化 v2
 
-## 总览
+按顺序执行；标 ⭐ 的为关键里程碑。
 
-按顺序执行；标 ⭐ 的为里程碑。
+## Phase 1：环境准备（Codespace 30 分钟）
 
-- [ ] **Task 1**：抽出 Mming 量化 K 线渲染核心代码到独立模块
-  - [ ] SubTask 1.1：从 `/workspace/jzhu-quant/index.html` 复制 `loadKlineChart()` 函数、MA / MACD 计算函数（`calcMA`、`calcMACD`）、tooltip 格式化函数到 `/workspace/jzhu-quant/qd-kline.js` 顶部
-  - [ ] SubTask 1.2：把 `loadKlineChart()` 内的 `klineChart.setOption({...})` 完整 4 面板配置抽成函数 `renderKlinePanel(domEl, ohlc, volArr, macdData, netInflowArr, dates, opts)`，接收数据返回 chart 实例
-  - [ ] SubTask 1.3：抽 tooltip 拼装为 `buildKlineTooltip(params, dates)`，输出中文
+- [ ] **Task 1：Codespace 仓库准备**
+  - [ ] SubTask 1.1：在 GitHub 新建空仓库 `quantdinger-custom`（或复用上次 `quantdinger`）
+  - [ ] SubTask 1.2：开启 Codespace（4-core / 16GB）
+  - [ ] SubTask 1.3：终端执行 `git clone https://github.com/brokermr810/QuantDinger.git .`（注意有点 `.`）拉主仓库源码
+  - [ ] SubTask 1.4：执行 `git clone https://github.com/brokermr810/QuantDinger-Vue.git` 拉前端源码到 `./QuantDinger-Vue/`
+  - [ ] SubTask 1.5：在 `QuantDinger-Vue/Dockerfile` 顶部加 `RUN npm config set registry https://registry.npmmirror.com`（加速国内网络）
 
-- [ ] **Task 2**：实现 `/workspace/jzhu-quant/qd-kline.html` 单页查看器
-  - [ ] SubTask 2.1：HTML 骨架 — 顶部股票标题栏（代码 + 名称 + 周期切换 1D/1W/1m/5m 等）、`<div id="qdChart">` 容器（高 600px）、错误条 `<div id="errBox" class="hidden">`、重试按钮
-  - [ ] SubTask 2.2：JS 入口 `init()` — 解析 URL query（market, symbol, tf, limit）→ fetch `/qd-api/kline?...` → 转成 `[date, o, c, l, h, v]` 格式 → 计算 MA/MACD/主力净流入 → 调 `renderKlinePanel()` → 启用 dataZoom 联动
-  - [ ] SubTask 2.3：实现周期切换按钮 — 点击修改 URL 并 `init()` 重渲染
-  - [ ] SubTask 2.4：错误处理 — `fetch` 失败 / 502 / 超时（>15s）时显示 errBox，按钮触发重试
-  - [ ] SubTask 2.5：配色常量集中到 CSS 变量（`--bg: #0d1117; --red: #ef4444; --green: #10b981;`）便于暗色统一
+- [ ] **Task 2：后端配置（A 股 + 安全）**
+  - [ ] SubTask 2.1：复制 `cp backend_api_python/env.example backend_api_python/.env`
+  - [ ] SubTask 2.2：生成 SECRET_KEY：`python3 -c "import secrets; print(secrets.token_hex(32))"` 写入 `backend_api_python/.env`
+  - [ ] SubTask 2.3：在 `backend_api_python/.env` 设 `ENABLED_MARKETS=Crypto,USStock,CNStock,HKStock,Forex,Futures,MOEX`
+  - [ ] SubTask 2.4：根目录建 `.env` 文件：`IMAGE_PREFIX=docker.m.daocloud.io/library/`
 
-- [ ] **Task 3**：扩展 `/workspace/jzhu-quant/server.py` 代理
-  - [ ] SubTask 3.1：增加 `QD_API_BASE` 类属性（默认 `http://localhost:5000`），从环境变量 `QD_API_BASE` 读取
-  - [ ] SubTask 3.2：在 `do_GET` 中增加分支：`if self.path.startswith("/qd-api/")` → 转发到 `QD_API_BASE + path.replace('/qd-api', '/api')`
-  - [ ] SubTask 3.3：502 处理 — 后端连不上时返回 `{"error":"QuantDinger backend not reachable on port 5000"}` + 502 状态码
-  - [ ] SubTask 3.4：保留原 `/api/*` 行为不变（jzhu-quant 8180 后端）
+## Phase 2：探索（45 分钟）⭐
 
-- [ ] **Task 4**：在 Mming 量化资金流向 tab 集成入口
-  - [ ] SubTask 4.1：在 `index.html` 的 `#klineArea` 顶部"加载 K 线"按钮旁边加新按钮 `<button id="openMmingKlineBtn">🎨 Mming 风格 (QD数据)</button>`
-  - [ ] SubTask 4.2：JS 中加监听 — 点击时 `window.open('qd-kline.html?market=CNStock&symbol=' + addPrefix($('stockCode').value) + '&tf=1D&limit=180', '_blank')`
-  - [ ] SubTask 4.3：自动加前缀 — 输入 `600519` 自动补成 `sh600519`，输入 `000001` 补成 `sz000001`（6开头→sh，0/3开头→sz）
-  - [ ] SubTask 4.4：在按钮旁加 tooltip：「用 QuantDinger 真实数据 + Mming 暗色 4 面板渲染」
+- [ ] **Task 3：摸清 IDE 页面结构**
+  - [ ] SubTask 3.1：`cd QuantDinger-Vue && cat package.json` — 确认 klinecharts 版本、vue 版本、构建工具
+  - [ ] SubTask 3.2：`find src/views -iname "*ide*"` 找指标 IDE 页面路径（可能叫 `IndicatorIDE.vue` / `ide/index.vue` 等）
+  - [ ] SubTask 3.3：`find src -name "*.vue" | xargs grep -l "klinecharts"` — 找所有用 KLineCharts 的文件
+  - [ ] SubTask 3.4：阅读 IDE 主页面的 `<template>` + `<script>` 段，识别：① 图表初始化函数 ② setStyles 主题调用 ③ 周期切换按钮事件 ④ 数据加载函数
+  - [ ] SubTask 3.5：把找到的 3-5 个关键文件路径写到 `quantdinger-ide-files.md` 备忘
 
-- [ ] **Task 5**：本地验证（jzhu-quant 不依赖 QuantDinger 也能跑通）
-  - [ ] SubTask 5.1：模拟 QD 响应 — 写一个 `/workspace/jzhu-quant/mock-qd-server.py` 用 `http.server` 监听 5000，收到 `/api/kline` 返回 60 根假 K 线（随机游走 + 趋势）
-  - [ ] SubTask 5.2：浏览器打开 `qd-kline.html?market=CNStock&symbol=sh600519&tf=1D&limit=60`，目视检查：4 面板完整、中文 tooltip、配色暗色、缩放联动
-  - [ ] SubTask 5.3：kill mock server 后刷新页面，验证错误条 + 重试按钮
-  - [ ] SubTask 5.4：浏览器打开 `index.html`，资金流向 tab 查一只股票（如 600519），点击新按钮，验证新窗口打开 qd-kline.html 且 symbol 自动填好
+- [ ] **Task 4：本地最小 demo 验证 KLineCharts 多 pane**
+  - [ ] SubTask 4.1：在 `QuantDinger-Vue/src/views/` 下新建一个 `KDemo/index.vue` 测试页
+  - [ ] SubTask 4.2：在路由 `src/router/index.js` 加一条 `/k-demo` 路由指向这个测试页
+  - [ ] SubTask 4.3：测试页里写 4 pane（K线 + MA / VOL / MACD / 主力净流入），用 mock 数据（写死 100 根假 K 线）
+  - [ ] SubTask 4.4：在 IDE 主页面的菜单里加临时菜单项 "K Demo" 跳到 `/k-demo`
+  - [ ] SubTask 4.5：启动 `docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build`（⭐ 第一次 build）
+  - [ ] SubTask 4.6：Codespace 端口转发 8888，浏览器登录 → 菜单 → "K Demo" → 验证 4 pane + 中文 tooltip + 暗色都正常
+  - [ ] SubTask 4.7：截屏保存到 `/workspace/.trae/specs/mming-style-kline-viewer/screenshots/k-demo.png`
 
-- [ ] **Task 6**：QuantDinger 实数据联调（用户在 Codespace）
-  - [ ] SubTask 6.1：在 `.env` 加 `QD_API_BASE=http://quantdinger-backend:5000`（docker 网络内）或 `http://localhost:5000`（宿主机跑）
-  - [ ] SubTask 6.2：Codespace 端口转发 5000 后，`curl http://localhost:5000/api/kline?market=CNStock&symbol=sh600519&timeframe=1D&limit=10` 验证返回
-  - [ ] SubTask 6.3：浏览器访问 qd-kline.html，确认拿到真 A 股数据，图表正常显示
+## Phase 3：正式改 IDE 页面（1.5 小时）⭐
+
+- [ ] **Task 5：注入中文 i18n**
+  - [ ] SubTask 5.1：在 IDE 主页面 `<script>` 顶部加 `import { loadLocales } from 'klinecharts'`
+  - [ ] SubTask 5.2：在 `created()` / `mounted()` 里执行 `loadLocales('zh-CN')`
+  - [ ] SubTask 5.3：把内置未翻译的字段（Open/High/Low/Close/Volume）写一个 `tooltipOverride` 函数覆盖
+  - [ ] SubTask 5.4：周期切换按钮文案「1m / 5m / 15m / 30m / 1H / 4H / 1D / 1W」改为「1分 / 5分 / 15分 / 30分 / 1时 / 4时 / 1日 / 1周」
+
+- [ ] **Task 6：注册"主力净流入"自定义指标**
+  - [ ] SubTask 6.1：新建 `QuantDinger-Vue/src/charts/indicators/netInflow.js`
+  - [ ] SubTask 6.2：用 `klinecharts.registerIndicator('NET_INFLOW', { calc, figures, ... })` 注册
+  - [ ] SubTask 6.3：`calc` 函数计算 `volume * (close - open) / (high - low)`，遇 0 除法返回 0
+  - [ ] SubTask 6.4：figures 配置为柱子（type: 'bar'），基线 0，baseValue: 0
+  - [ ] SubTask 6.5：styles 配红涨绿跌 + tooltip 数值格式化为"X.X亿"
+
+- [ ] **Task 7：改造 IDE 主页面的图表区**
+  - [ ] SubTask 7.1：找到现有 KLineCharts 实例，调 `chart.setStyles({...})` 切换到暗色 + 改 K 线配色为红涨绿跌
+  - [ ] SubTask 7.2：把图表容器高度从 500px 改 700px
+  - [ ] SubTask 7.3：用 `createIndicator('MA', ..., { calcParams: [5,10,20] })` 在主图叠加 MA 三条线
+  - [ ] SubTask 7.4：用 `createIndicator('VOL')` 创建成交量副图（KLineCharts 内置）
+  - [ ] SubTask 7.5：用 `createIndicator('MACD')` 创建 MACD 副图
+  - [ ] SubTask 7.6：用 `createIndicator('NET_INFLOW')` 创建主力净流入副图
+  - [ ] SubTask 7.7：调 `setPaneOptions({ height: 200 })` 等调 pane 高度比例
+
+- [ ] **Task 8：容器化与构建**
+  - [ ] SubTask 8.1：写 `dev-rebuild.sh` 脚本（增量 build）：
+    ```bash
+    #!/bin/bash
+    cd QuantDinger-Vue && \
+      docker compose -f ../docker-compose.yml -f ../docker-compose.build.yml build frontend && \
+      docker compose -f ../docker-compose.yml -f ../docker-compose.build.yml up -d frontend
+    ```
+  - [ ] SubTask 8.2：`chmod +x dev-rebuild.sh`
+  - [ ] SubTask 8.3：写 `start-qd.sh` 脚本（首次启动全 build）：
+    ```bash
+    #!/bin/bash
+    cd QuantDinger-Vue && \
+      npm install --registry https://registry.npmmirror.com
+    cd .. && \
+      docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+    ```
+
+## Phase 4：验证（30 分钟）⭐
+
+- [ ] **Task 9：浏览器端到端验证**
+  - [ ] SubTask 9.1：访问 `https://<codespace>-8888.app.github.dev/`
+  - [ ] SubTask 9.2：登录（quantdinger / 123456，改密码）
+  - [ ] SubTask 9.3：菜单 → 指标 IDE
+  - [ ] SubTask 9.4：股票选择器选「CNStock / 600519 贵州茅台」
+  - [ ] SubTask 9.5：周期切到「1日」，验证 4 pane 出现
+  - [ ] SubTask 9.6：鼠标悬停 K 线，验证 tooltip 全中文
+  - [ ] SubTask 9.7：截屏保存到 `screenshots/ide-after.png`，对比 `k-demo.png`
+
+- [ ] **Task 10：iPad Safari 兼容性**
+  - [ ] SubTask 10.1：iPad Safari 登录，访问 IDE 页面
+  - [ ] SubTask 10.2：横屏 / 竖屏切换，验证图表响应式正常
+  - [ ] SubTask 10.3：双指缩放 / 拖动，验证联动正常
+  - [ ] SubTask 10.4：切周期按钮，验证响应 < 5s
 
 ## Task Dependencies
 
-- Task 2 依赖 Task 1（要先抽出渲染函数）
-- Task 3 独立（可与 Task 1/2 并行）
-- Task 4 依赖 Task 2（按钮跳转的页面要先存在）
-- Task 5 依赖 Task 1, 2, 3, 4（全部完成后才能端到端测）
-- Task 6 依赖 Task 5（本地 mock 测通后再上真数据）
+- Task 2 依赖 Task 1
+- Task 3, 4 依赖 Task 2
+- Task 5, 6, 7 依赖 Task 4（demo 跑通后才改主页面）
+- Task 8 依赖 Task 5, 6, 7
+- Task 9 依赖 Task 8
+- Task 10 依赖 Task 9
