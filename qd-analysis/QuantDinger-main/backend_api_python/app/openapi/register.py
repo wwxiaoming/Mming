@@ -58,7 +58,6 @@ def register_human_blueprints(api: Api) -> None:
     from app.routes.kline import kline_blp
     from app.routes.backtest import backtest_blp
     from app.routes.market import market_blp
-    from app.routes.market_cn_moneyflow import moneyflow_blp
     from app.routes.ai_chat import ai_chat_blp
     from app.routes.indicator import indicator_blp
     from app.routes.strategy import strategy_blp
@@ -84,7 +83,6 @@ def register_human_blueprints(api: Api) -> None:
         (kline_blp, "/api/indicator"),
         (backtest_blp, "/api/indicator"),
         (market_blp, "/api/market"),
-        (moneyflow_blp, "/api/market"),
         (ai_chat_blp, "/api/ai"),
         (indicator_blp, "/api/indicator"),
         (strategy_blp, "/api"),

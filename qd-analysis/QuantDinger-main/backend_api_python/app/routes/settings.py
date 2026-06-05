@@ -1576,12 +1576,6 @@ def get_brand_config():
                 'collapsed': _brand_env('BRAND_LOGO_COLLAPSED_URL'),
                 'favicon': _brand_env('BRAND_FAVICON_URL'),
             },
-            'kline_viewer': {
-                'enabled': os.getenv('KLINE_VIEWER_ENABLED', 'true').strip().lower() in ('1', 'true', 'yes', 'on'),
-                'url': os.getenv('KLINE_VIEWER_URL', 'http://localhost:8000').strip(),
-                'title': os.getenv('KLINE_VIEWER_TITLE', '量化系统 · A 股 K 线视图').strip(),
-                'banner_html': os.getenv('KLINE_VIEWER_BANNER_HTML', '').strip(),
-            },
             'contact': {
                 'email': _brand_env('BRAND_CONTACT_EMAIL', 'contact_email'),
                 'support_url': _brand_env('BRAND_CONTACT_SUPPORT_URL', 'contact_support_url'),

@@ -145,33 +145,6 @@ services:
       timeout: 10s
       retries: 3
 
-  # ========================
-  # K 线查看器 (A 股视图)
-  # ========================
-  # 独立的轻量 HTTP 服务器,同时 serve 静态文件 + 反向代理 /api/* 到后端
-  kline-viewer:
-    image: ${IMAGE_PREFIX:-}python:3.12-slim-bookworm
-    container_name: quantdinger-kline-viewer
-    restart: unless-stopped
-    ports:
-      - "${KLINE_VIEWER_PORT:-8000}:8000"
-    environment:
-      - BACKEND_URL=${BACKEND_URL:-http://backend:5000}
-      - PORT=8000
-      - TZ=${TZ:-Asia/Shanghai}
-    volumes:
-      - ./kline_viewer_proxy.py:/app/proxy.py:ro
-      - ./backend_api_python/app/static/kline_viewer:/app/static:ro
-    working_dir: /app
-    command: ["python3", "proxy.py"]
-    networks:
-      - quantdinger-network
-    healthcheck:
-      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/', timeout=3)"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
 volumes:
   postgres_data:
     driver: local
