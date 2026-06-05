@@ -1,142 +1,142 @@
-# Tasks: QuantDinger K 线查看器
+# Tasks: QuantDinger K 线查看器 (多市场) — 重写版
 
-## 实施顺序（按依赖关系排列）
+## 实施顺序
 
-### Task 1: 后端 - 确认现有 API 并补充缺失接口
-- [x] 1.1 测试现有 `GET /api/kline?market=CNStock&symbol=sh600519` 是否能拉 A 股 K 线
-  - [x] 已确认:DataSourceFactory 已支持 CNStock,get_kline 走 Tencent/AKShare
-- [x] 1.2 测试 `GET /api/market/symbols/search?keyword=...&market=CNStock` 是否能用
-  - [x] 已确认:market_blp.search_symbols 路由存在
-- [x] 1.3 测试自选股 API:`GET /api/market/watchlist/get`、`POST /api/market/watchlist/add`、`POST /api/market/watchlist/remove`、`GET /api/market/watchlist/prices`
-- [x] 1.4 **新增** `GET /api/market/cn-moneyflow?symbol=sh600519&start=...&end=...` A 股日度资金流向接口
-  - [x] 已创建 `backend_api_python/app/routes/market_cn_moneyflow.py`
-  - [x] 数据源:AKShare `stock_individual_fund_flow` (东方财富,免费)
-  - [x] 返回格式:`{symbol, count, rows:[{date, close, change_pct, main_net, super_net, big_net, mid_net, small_net, total_net}]}` (单位:万元)
+### Task 1: 后端 - 确认现有 API + 新增 cn-moneyflow
+- [x] 1.1 测试现有 `GET /api/kline?market=CNStock&symbol=sh600519&timeframe=1m|5m|15m|30m|1H|4H|1D|1W` 能拉数据
+  - [x] 已确认:DataSourceFactory 已支持 CNStock,catch_quote/fetch_kline 调用 Tencent API
+  - [x] 已确认:cn_stock.py 支持 1m/5m/15m/30m/1H/4H（短周期）+ 1D/1W/1M（长周期）
+- [x] 1.2 测试 `GET /api/market/symbols/search?market=...&keyword=...` 能用
+- [x] 1.3 测试 `GET /api/market/symbols/hot?market=...&limit=10` 能用
+- [x] 1.4 测试自选股 API:watchlist/get、add、remove
+- [x] 1.5 **新增** A 股日度资金流向 `GET /api/market/cn-moneyflow`
+  - [x] 文件 `backend_api_python/app/routes/market_cn_moneyflow.py`（167 行）
+  - [x] 数据源:AKShare `stock_individual_fund_flow`(东方财富,免费)
+  - [x] 字段:date/close/change_pct/main_net/super_net/big_net/mid_net/small_net/total_net(单位:万元)
+  - [x] 30 分钟缓存
   - [x] 已注册到 `app/openapi/register.py`
-
-**验证**：
-```bash
-curl -sf http://127.0.0.1:5000/api/market/cn-moneyflow?symbol=sh600519&days=10
-# 期望: { code:1, data: [{date:"2025-09-03", main_net: -19000, ...}] }
-```
-
-### Task 2: 前端 - K 线查看器单页应用(核心)
-- [x] 2.1 创建 `backend_api_python/app/static/kline_viewer/index.html` 单文件
-  - [x] 顶部 header(品牌名 + 返回按钮)
-  - [x] 4 个 Tab:K线 / 资金流向 / 买卖点回测 / 自选股
-  - [x] 通用搜索框(默认 CNStock)
-  - [x] **顶部市场选择器**:A 股 / 港股 / 美股 / 加密货币 / 外汇 / 期货
-  - [x] ECharts 5.4.3 CDN
-- [x] 2.2 实现 K 线 Tab(支持多市场)
-  - [x] 复用 calcMA 和 calcMACD 函数
-  - [x] 3 panel 联动(K线+MA/成交量/MACD)
-  - [x] 时间周期切换:1D / 1W / 1M
-  - [x] 缩放/拖动:animation:false, throttle:50
-- [x] 2.3 实现资金流向 Tab(**仅 A 股**)
-  - [x] 表格:日期/主力/特大/大/中/小/全
-  - [x] 累计资金流向柱状图
-  - [x] 主力净流入趋势线图
-  - [x] 非 A 股市场会显示"仅 A 股支持"提示
-- [x] 2.4 实现买卖点回测 Tab(**仅 A 股**)
-  - [x] N 输入 + 初始资金 + "跑回测" 按钮
-  - [x] **marker bug 修复**:画在信号触发日的前一日 K 线收盘价上
-  - [x] 统计卡片:年化、最大回撤、胜率、交易次数
-  - [x] 收益曲线图(策略 vs 基准)
-  - [x] 非 A 股市场会显示"仅 A 股支持"提示
-- [x] 2.5 实现自选股 Tab(**多市场**)
-  - [x] 搜索 + 添加按钮(K 线 Tab)
-  - [x] 列表(带 × 移除)
-  - [x] 点击跳到 K 线 Tab(自动切到对应市场)
-  - [x] 列表项显示所属市场
-
-**验证**：
-```bash
-# 在浏览器打开 http://localhost:8000/
-# 应该看到 4 个 Tab，能加载茅台 K 线
-```
-
-### Task 3: 部署集成 - Flask 静态文件 + docker-compose
-- [x] 3.1 ~~在 `backend_api_python/app/routes/kline_viewer.py` 新建 Flask 蓝图~~ — 改为独立 `kline_viewer_proxy.py`(更轻量,无需改 Flask)
-- [x] 3.2 ~~在 `backend_api_python/app/__init__.py` 注册 `kline_viewer_blp`~~ — 不需要
-- [x] 3.3 在 `backend_api_python/env.example` 添加 KLINE_VIEWER_* 配置
-- [x] 3.4 在 `docker-compose.yml` 和 `docker-compose.ghcr.yml` 添加 `kline-viewer` 服务(python:3.12-slim)
-- [x] 3.5 在仓库根目录创建 `kline_viewer_proxy.py`:单文件 Python http.server,8000 端口,CORS 代理 `/api/*` → backend
-
-**验证**：
-```bash
-# 重启后端
-docker compose -f docker-compose.ghcr.yml up -d
-
-# 测试
-curl -sf http://127.0.0.1:8000/  # 应该返回 HTML
-curl -sf http://127.0.0.1:8000/api/kline?market=CNStock\&symbol=sh600519  # 应该代理到后端
-```
-
-### Task 4: QuantDinger 入口集成(不修改 Vue 源码)
-- [x] 4.1 ~~在 `backend_api_python/app/routes/dashboard.py`(或 Flask 入口)找到首页 HTML 返回位置~~ — dashboard 返回 JSON,无法注入 HTML
-- [x] 4.2 改用 brand-config 方案:在 `app/routes/settings.py` 的 brand-config 响应中暴露 `kline_viewer` 字段(包含 url/title/banner_html)
-- [x] 4.3 通过 env `KLINE_VIEWER_BANNER_HTML` 控制是否注入
-- [x] 4.4 **备用入口**:K 线查看器顶部"⬅ QuantDinger"按钮直接跳回 `http://<host>/` 后端根
-- [x] 4.5 **最稳的入口**:直接书签 `http://<host>:8000/`
-
-> ⚠️ 限制说明:QuantDinger 的 Vue 前端是私有仓库,我们无法直接修改它来读取 `brand-config.kline_viewer` 字段。
-> 此次集成采用「数据层就绪 + 用户书签 + 后端 banner 占位」三路并进的方式:
-> 1. 后端 brand-config 已经暴露 kline_viewer 字段(若将来 Vue 端读取即生效)
-> 2. K 线查看器自带"返回 QuantDinger"按钮
-> 3. 用户可直接书签 8000 端口
-
-**验证**：
-```bash
-# 登录 QuantDinger 后，dashboard 顶部应该看到蓝色 banner
-# 点击 → 跳到 /kline-viewer/
-```
-
-### Task 5: AI 智能分析页加入 A 股板块
-- [x] 5.1 验证 `app/utils/market_visibility.py` 已支持 `ENABLED_MARKETS` 白名单
-- [x] 5.2 在 `env.example` 添加推荐配置:
-  ```bash
-  ENABLED_MARKETS=Crypto,USStock,CNStock,HKStock,Forex,Futures,MOEX
-  ```
-- [x] 5.3 测试 `GET /api/global-market/opportunities` 返回的板块中是否包含 CNStock
-  - 由于 QuantDinger 私有 Vue 前端不可见,后端逻辑已就绪
-- [x] 5.4 ~~在 `app/services/global_market/opportunities.py` 找代码并扩展~~ — 已有,无需扩展
-- [x] 5.5 K 线查看器已经支持所有市场(包括 A 股) — 用户切到对应市场即可
-
-> 关键点:QuantDinger 的 `market_visibility.py` 是统一的「市场白名单」开关,**只配置 env 就够了**。当 `ENABLED_MARKETS` 包含 `CNStock` 时:
-> - `/api/global-market/opportunities` 返回的板块会包含 A 股
-> - 行情搜索会包含 A 股
-> - 自选股可添加 A 股
-> - 仪表盘的 6 个板块会显示 A 股数据
 
 **验证**:
 ```bash
-# 设置环境变量
-export ENABLED_MARKETS=Crypto,USStock,CNStock,HKStock,Forex,Futures,MOEX
-# 重启后端
-docker compose -f docker-compose.ghcr.yml restart backend
-
-# 测试
-curl -sf http://127.0.0.1:5000/api/global-market/opportunities | jq '.data[] | {market: .market, count: (.items | length)}'
-# 期望:CNStock 的 count > 0
+curl -sf http://127.0.0.1:5000/api/market/cn-moneyflow?symbol=sh600519\&days=10
 ```
 
-### Task 6: 文档和验证
-- [x] 6.1 创建 `docs/CN_README_KLINE_VIEWER.md`:使用说明(部署/API/故障排查)
-- [x] 6.2 在主 `README.md` 添加一行 "**新功能**:多市场 K 线查看器"(已通过 KLINE_VIEWER_BANNER_HTML 占位 + README 文档)
-- [x] 6.3 iPad Safari 端到端测试(本机模拟)
-  - [x] 服务能起: `python3 kline_viewer_proxy.py` 启动成功
-  - [x] 静态文件能 serve: `curl http://127.0.0.1:8000/` 返回 200 + 40KB HTML
-  - [x] API 代理待部署时验证(需要 QuantDinger 后端在跑)
+### Task 2: 后端 - K 线查看器 Flask 蓝图
+- [x] 2.1 创建 `backend_api_python/app/routes/kline_viewer.py`(71 行)
+  - [x] 蓝图路由:`/kline-viewer/` 返回 `index.html`
+  - [x] 静态文件路由:`/kline-viewer/<path>` 返回静态文件
+  - [x] `KLINE_VIEWER_ENABLED=false` 时返回 404
+  - [x] 路径安全检查(防止跳出 kline_viewer 目录)
+- [x] 2.2 注册蓝图到 `app/openapi/register.py`
+- [x] 2.3 brand-config 暴露 `kline_viewer` 字段
+  - [x] enabled/url/title/banner_html
+  - [x] supported_markets:6 个
+  - [x] supported_timeframes:8 个
+
+**验证**:
+```bash
+# 重启后端
+docker compose -f docker-compose.ghcr.yml restart backend
+curl -sf http://127.0.0.1:5000/kline-viewer/  # 应该返回 HTML
+```
+
+### Task 3: 前端 - K 线查看器单页应用 (1198 行)
+- [x] 3.1 顶部品牌栏
+  - [x] Logo + 标题
+  - [x] 6 个市场 tab(默认 CNStock 选中)
+  - [x] 搜索框 + 联想结果
+  - [x] 返回 QuantDinger 按钮
+- [x] 3.2 当前标的信息卡
+  - [x] 名称 + 代码 + 市场
+  - [x] 最新价 + 涨跌幅
+  - [x] ⭐ 加自选按钮
+- [x] 3.3 K 线图工具栏
+  - [x] 8 个时间周期按钮(1m/5m/15m/30m/1H/4H/1D/1W)
+  - [x] 主图指标下拉(MA/EMA/BOLL/无)
+  - [x] 副图指标下拉(VOL+MACD/VOL+RSI/仅 MACD/仅 VOL)
+  - [x] 全屏按钮 + 刷新按钮
+- [x] 3.4 K 线图渲染
+  - [x] 动态 1-3 个 panel
+  - [x] 跨 panel dataZoom 联动
+  - [x] 十字光标联动
+  - [x] 丝滑缩放(throttle 50ms)
+  - [x] 双击还原
+- [x] 3.5 底部 4 个 Tab
+  - [x] **图表与交易**:自选标的快速切换 + 图表设置开关
+  - [x] **回测与结果**:N/初始资金/跑回测 + 统计卡 + 收益曲线
+  - [x] **资金流向**(仅 A 股):表格 + 趋势线
+  - [x] **自选股**:完整列表
+- [x] 3.6 右侧栏
+  - [x] 我的自选股(点击跳到 K 线)
+  - [x] 热门标的(按当前市场自动筛选)
+
+**验证**:
+```bash
+# 浏览器打开
+http://<host>/kline-viewer/
+
+# 应该看到:
+# - 顶部 6 个市场 tab
+# - 8 个时间周期按钮
+# - 当前显示 "-- 请搜索标的 --"
+# - 右侧"暂无自选"占位
+# - 底部 4 个 Tab
+```
+
+### Task 4: AI 智能分析页加入 A 股板块
+- [x] 4.1 验证 `app/utils/market_visibility.py` 已支持 `ENABLED_MARKETS` 白名单
+- [x] 4.2 在 `env.example` 添加推荐配置:
+  ```bash
+  ENABLED_MARKETS=Crypto,USStock,CNStock,HKStock,Forex,Futures,MOEX
+  SHOW_CN_STOCK=true
+  ```
+
+### Task 5: 部署验证
+- [ ] 5.1 在 Codespace 重启 backend 容器
+  ```bash
+  docker compose -f docker-compose.ghcr.yml restart backend
+  ```
+- [ ] 5.2 测试 K 线查看器能访问
+  ```bash
+  curl -sf http://localhost:5000/kline-viewer/
+  ```
+- [ ] 5.3 测试 A 股资金流向 API
+  ```bash
+  curl -sf "http://localhost:5000/api/market/cn-moneyflow?symbol=sh600519&days=5"
+  ```
+- [ ] 5.4 在 iPad Safari 打开 K 线查看器
+  - [ ] 顶部市场 tab 切换正常
+  - [ ] 搜索 600519 / AAPL / BTCUSDT 都有结果
+  - [ ] K 线加载成功
+  - [ ] 8 个周期按钮都能切换
+  - [ ] 主图/副图指标切换都重绘
+  - [ ] 加自选 / 移自选 成功
+  - [ ] 回测 Tab 能跑(仅 A 股)
+  - [ ] 资金流向 Tab 显示数据(仅 A 股)
+
+### Task 6: 清理旧文件
+- [x] 6.1 删除旧的 `kline_viewer_proxy.py`(独立代理服务器)
+- [x] 6.2 删除旧的 `kline-viewer` docker 服务(从 docker-compose.yml 移除)
+- [x] 6.3 删除 `KLINE_VIEWER_PORT` / `KLINE_VIEWER_URL` / `KLINE_VIEWER_TITLE` 配置项
 
 ## Task Dependencies
 
-- Task 1（后端 API 补充）必须先完成 → Task 2（前端）才能拿到真实数据
-- Task 2（前端）可以与 Task 3（部署）并行做（用 mock 数据）
-- Task 4（QuantDinger 集成）依赖 Task 3（kline-viewer 服务能跑）
-- Task 5（AI 智能分析 A 股）独立，可与 1-4 并行
-- Task 6（文档）依赖所有前置任务
+- Task 1 必须先完成 → Task 2 才能注册蓝图
+- Task 2 完成 → Task 3 才能被 Flask serve
+- Task 4 独立,可与 1-3 并行
+- Task 5 依赖所有前置任务(实际部署验证)
+- Task 6 独立(清理工作)
 
-## 并行建议
+## 与上一版的关键差异
 
-- **可并行**：Task 1（后端 A）、Task 2.1-2.2（前端 K 线）、Task 5（AI A 股）
-- **串行**：Task 2.3-2.5（前端依赖 K 线框架）→ Task 3（部署）→ Task 4（集成）
+| 项目 | 旧版(已删除) | 新版 |
+|---|---|---|
+| 部署方式 | 独立 `kline_viewer_proxy.py` + 单独 docker 服务(端口 8000) | Flask 蓝图同源挂载(无 CORS) |
+| 访问路径 | `http://host:8000/`(独立端口) | `http://host/kline-viewer/`(同源) |
+| 时间周期 | 3 个(1D/1W/1M) | **8 个**(1m/5m/15m/30m/1H/4H/1D/1W) |
+| 主图指标 | 仅 MA | MA / EMA / BOLL / 无 |
+| 副图指标 | 固定 VOL+MACD | VOL+MACD / VOL+RSI / 仅 MACD / 仅 VOL |
+| 底部 Tab | K线/资金流/回测/自选(中文) | 图表与交易/回测与结果/资金流/自选(**与 QuantDinger 截图一致**) |
+| 视觉风格 | 自定义深色 | **仿 QuantDinger** dashboard(蓝色 #2d7ff9) |
+| 配置文件 | 需要 KLINE_VIEWER_* 3 个 | 只需 KLINE_VIEWER_ENABLED 1 个开关 |
+| docker-compose | 新增 1 个服务 | **零修改** |
