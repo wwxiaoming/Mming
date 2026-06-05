@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mming 量化 K 线图 (示例)</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    /* QuantDinger Light 配色 + GitHub Dark 背景的混合主题 */
+    :root {
+      --bg:        #0d1117;
+      --text:      #e6edf3;
+      --muted:     #8b949e;
+      --grid:      #21262d;
+      --border:    #30363d;
+      --up:        #10b981; /* 涨: 绿 */
+      --down:      #ef4444; /* 跌: 红 */
+      --ma5:       #f5d142;
+      --ma10:      #58a6ff;
+      --ma20:      #c678dd;
+      --panel-bg:  rgba(22,27,34,0.55);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%; width: 100%;
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      overflow: hidden;
+    }
+    .app {
+      display: flex; flex-direction: column; height: 100vh; width: 100vw;
+      padding: 10px 14px;
+    }
+    /* 顶部 header */
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    }
+    .header h1 {
+      font-size: 16px; font-weight: 600; margin: 0; color: var(--text);
+    }
+    .header .meta {
+      font-size: 12px; color: var(--muted);
+    }
+    .header .meta strong { color: var(--text); font-weight: 500; }
+    /* 输入行 (装饰) */
+    .toolbar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 0; flex-wrap: wrap;
+    }
+    .toolbar input {
+      background: var(--panel-bg); color: var(--text);
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 5px 9px; font-size: 12px; outline: none;
+    }
+    .toolbar input:focus { border-color: var(--ma10); }
+    .toolbar label { font-size: 12px; color: var(--muted); }
+    /* 图表容器 */
+    .chart-wrap {
+      flex: 1 1 auto; min-height: 0;
+      background: var(--panel-bg);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 4px;
+    }
+    #klineChart { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <h1>Mming 量化 K 线图 (示例)</h1>
+      <div class="meta">
+        <strong>000001</strong> 平安银行 · 60 日 · 自动刷新 OFF · 加入自选
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <label>股票代码</label>
+      <input id="stockCode" type="text" value="000001" maxlength="6" />
+      <label>开始日期</label>
+      <input id="startDate" type="date" value="2025-03-01" />
+      <label>结束日期</label>
+      <input id="endDate" type="date" value="2025-05-30" />
+    </div>
+
+    <div class="chart-wrap">
+      <div id="klineChart"></div>
+    </div>
+  </div>
+
+  <script>
+    // ===========================================================
+    // 1. 生成 60 个交易日的 mock K 线数据 (000001 平安银行)
+    //    起点 ~11.5, 终点 ~12.5, 在 index=35 附近模拟一个尖峰
+    // ===========================================================
+    function makeMockKlines(n) {
+      const out = [];
+      let price = 11.5;
+      let trend = 0; // 趋势分量,影响随机游走
+      const peakIdx = 35;
+      const peakBoost = 1.8; // 峰值高度
+      const startDate = new Date(2025, 2, 3); // 2025-03-03 (周一)
+      for (let i = 0; i < n; i++) {
+        // 在 peak 附近加大正向偏移
+        const dist = Math.abs(i - peakIdx);
+        const nearPeak = Math.max(0, 1 - dist / 8); // 0..1
+        const drift = 0.012 * Math.sin(i / 6) + 0.06 * nearPeak - 0.015;
+        // 噪声
+        const noise = (Math.random() - 0.5) * 0.18;
+        const changePct = drift + noise;
+        const open = price;
+        const close = +(open * (1 + changePct / 100)).toFixed(2);
+        // 最高最低基于振幅
+        const amp = 0.18 + 0.6 * nearPeak;
+        const high = +Math.max(open, close, open + Math.random() * amp).toFixed(2);
+        const low = +Math.min(open, close, open - Math.random() * amp).toFixed(2);
+        // 成交量 (手), 周末少, 峰值附近大
+        const volBase = 80000 + Math.floor(Math.random() * 40000);
+        const volPeak = nearPeak > 0.5 ? Math.floor(nearPeak * 90000) : 0;
+        const volume = volBase + volPeak;
+        // 日期: 跳过周末
+        const d = new Date(startDate);
+        d.setDate(startDate.getDate() + Math.floor(i * 1.4));
+        while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        out.push({
+          date: `${y}-${m}-${day}`,
+          dateKey: `${y}${m}${day}`,
+          open, close, high, low, volume
+        });
+        price = close;
+      }
+      // 平滑到终点 ~12.5
+      const last = out[out.length - 1];
+      if (last) {
+        const adj = 12.5 / last.close;
+        for (let i = out.length - 1; i >= 0; i--) {
+          const k = out[i];
+          k.open  = +(k.open  * adj).toFixed(2);
+          k.close = +(k.close * adj).toFixed(2);
+          k.high  = +(k.high  * adj).toFixed(2);
+          k.low   = +(k.low   * adj).toFixed(2);
+        }
+      }
+      return out;
+    }
+
+    // ===========================================================
+    // 2. 指标计算
+    // ===========================================================
+    function calcMA(arr, n) {
+      const out = new Array(arr.length).fill('-');
+      let sum = 0;
+      for (let i = 0; i < arr.length; i++) {
+        sum += arr[i];
+        if (i >= n) sum -= arr[i - n];
+        if (i >= n - 1) out[i] = +(sum / n).toFixed(2);
+      }
+      return out;
+    }
+    function calcMACD(close, fast = 12, slow = 26, signal = 9) {
+      const ema = (n) => {
+        const k = 2 / (n + 1);
+        const out = [];
+        let prev = close[0];
+        for (let i = 0; i < close.length; i++) {
+          prev = i === 0 ? close[0] : close[i] * k + prev * (1 - k);
+          out.push(prev);
+        }
+        return out;
+      };
+      const emaFast = ema(fast);
+      const emaSlow = ema(slow);
+      const dif = close.map((_, i) => +(emaFast[i] - emaSlow[i]).toFixed(4));
+      const deaRaw = [];
+      let prevD = dif[0];
+      const sigK = 2 / (signal + 1);
+      for (let i = 0; i < dif.length; i++) {
+        prevD = i === 0 ? dif[0] : dif[i] * sigK + prevD * (1 - sigK);
+        deaRaw.push(prevD);
+      }
+      const dea = deaRaw.map(v => +v.toFixed(4));
+      const macd = dif.map((v, i) => +((v - dea[i]) * 2).toFixed(4));
+      return { dif, dea, macd };
+    }
+    // 主力净流入: volume * (close - open) / (high - low), 0 除保护
+    function calcMainNet(k) {
+      const span = (k.high - k.low);
+      if (span <= 0) return 0;
+      return +(k.volume * (k.close - k.open) / span).toFixed(0);
+    }
+    // 格式化成交量: >= 10000 转为 "X.XX万"
+    function fmtVol(v) {
+      if (v == null) return '-';
+      if (v >= 10000) return (v / 10000).toFixed(2) + '万';
+      return String(v);
+    }
+
+    // ===========================================================
+    // 3. 数据准备
+    // ===========================================================
+    const klines = makeMockKlines(60);
+    const dates = klines.map(k => k.date);
+    const ohlc = klines.map(k => [k.open, k.close, k.low, k.high]);
+    const closeArr = klines.map(k => k.close);
+    const vols = klines.map(k => {
+      const up = k.close >= k.open;
+      return {
+        value: k.volume,
+        itemStyle: { color: up ? '#10b981' : '#ef4444' }
+      };
+    });
+    const mainNet = klines.map(k => {
+      const v = calcMainNet(k);
+      return { value: v, itemStyle: { color: v >= 0 ? '#ef4444' : '#10b981' } };
+    });
+    const ma5  = calcMA(closeArr, 5);
+    const ma10 = calcMA(closeArr, 10);
+    const ma20 = calcMA(closeArr, 20);
+    const { dif, dea, macd } = calcMACD(closeArr);
+    const macdBars = macd.map(v => ({
+      value: v,
+      itemStyle: { color: v >= 0 ? '#ef4444' : '#10b981' }
+    }));
+
+    // ===========================================================
+    // 4. 渲染: 4 个 panel 的 ECharts 实例
+    // ===========================================================
+    const chart = echarts.init(document.getElementById('klineChart'), null, { renderer: 'canvas' });
+    chart.setOption({
+      backgroundColor: 'transparent',
+      animation: false,
+      legend: {
+        data: ['K线', 'MA5', 'MA10', 'MA20', '成交量', 'MACD', 'DIF', 'DEA', '主力净流入'],
+        textStyle: { color: '#c9d1d9' },
+        top: 4, right: 10,
+        itemWidth: 14, itemHeight: 8,
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+          link: [{ xAxisIndex: 'all' }],
+          lineStyle:  { color: '#6e7681', width: 1, type: 'dashed' },
+          crossStyle: { color: '#6e7681', width: 1, type: 'dashed' },
+        },
+        backgroundColor: 'rgba(22,27,34,0.95)',
+        borderColor: '#30363d',
+        textStyle: { color: '#e6edf3' },
+        formatter: function (params) {
+          if (!params || !params.length) return '';
+          const idx = params[0].dataIndex;
+          const k = klines[idx];
+          const prev = idx > 0 ? klines[idx - 1].close : k.open;
+          const chg = +(k.close - prev).toFixed(2);
+          const chgPct = +(((k.close - prev) / prev) * 100).toFixed(2);
+          const arrow = chg >= 0 ? '+' : '';
+          const upClass = chg >= 0 ? '#10b981' : '#ef4444';
+          // 各 series 在当前 idx 的值
+          const findV = (name) => {
+            const p = params.find(x => x.seriesName === name);
+            if (!p) return '-';
+            const v = p.value;
+            if (v == null || v === '-') return '-';
+            if (typeof v === 'number') return v.toFixed(2);
+            return v;
+          };
+          return `
+            <div style="font-size:12px;line-height:1.55;min-width:200px;">
+              <div style="color:#8b949e;margin-bottom:4px;">${k.date}</div>
+              <div>开盘 <b>${k.open.toFixed(2)}</b></div>
+              <div>收盘 <b>${k.close.toFixed(2)}</b></div>
+              <div>最高 <b style="color:#ef4444">${k.high.toFixed(2)}</b></div>
+              <div>最低 <b style="color:#10b981">${k.low.toFixed(2)}</b></div>
+              <div>成交量 <b>${fmtVol(k.volume)}</b></div>
+              <div>涨跌幅 <b style="color:${upClass}">${arrow}${chg} (${arrow}${chgPct}%)</b></div>
+              <div style="border-top:1px dashed #30363d;margin:4px 0;"></div>
+              <div>MA5 <b style="color:#f5d142">${findV('MA5')}</b></div>
+              <div>MA10 <b style="color:#58a6ff">${findV('MA10')}</b></div>
+              <div>MA20 <b style="color:#c678dd">${findV('MA20')}</b></div>
+              <div style="border-top:1px dashed #30363d;margin:4px 0;"></div>
+              <div>DIF <b>${findV('DIF')}</b></div>
+              <div>DEA <b>${findV('DEA')}</b></div>
+              <div>MACD <b>${findV('MACD')}</b></div>
+              <div style="border-top:1px dashed #30363d;margin:4px 0;"></div>
+              <div>主力净流入 <b style="color:${mainNet[idx].value >= 0 ? '#ef4444' : '#10b981'}">${fmtVol(Math.abs(mainNet[idx].value))}</b></div>
+            </div>
+          `;
+        }
+      },
+      axisPointer: { link: [{ xAxisIndex: 'all' }] },
+      // 4 个独立 grid, 共享 xAxisIndex
+      grid: [
+        { left: 56, right: 18, top: 40,  height: '52%' },
+        { left: 56, right: 18, top: '64%', height: '10%' },
+        { left: 56, right: 18, top: '76%', height: '10%' },
+        { left: 56, right: 18, top: '88%', height: '10%' },
+      ],
+      dataZoom: [
+        { type: 'inside', xAxisIndex: [0,1,2,3], start: 50, end: 100,
+          zoomOnMouseWheel: true, moveOnMouseMove: true, throttle: 50 },
+        { type: 'slider', xAxisIndex: [0,1,2,3], start: 50, end: 100,
+          bottom: 4, height: 18, borderColor: 'transparent',
+          backgroundColor: 'rgba(33,38,45,0.6)',
+          fillerColor: 'rgba(88,166,255,0.18)',
+          handleStyle: { color: '#58a6ff' },
+          textStyle: { color: '#8b949e', fontSize: 10 },
+          showDataShadow: false },
+      ],
+      xAxis: [
+        { type:'category', data: dates, gridIndex: 0, scale: true,
+          axisLine: { lineStyle: { color: '#30363d' }}, axisLabel: { show: false },
+          splitLine: { show: false }, axisTick: { show: false }},
+        { type:'category', data: dates, gridIndex: 1, scale: true,
+          axisLine: { lineStyle: { color: '#30363d' }}, axisLabel: { show: false },
+          splitLine: { show: false }, axisTick: { show: false }},
+        { type:'category', data: dates, gridIndex: 2, scale: true,
+          axisLine: { lineStyle: { color: '#30363d' }}, axisLabel: { show: false },
+          splitLine: { show: false }, axisTick: { show: false }},
+        { type:'category', data: dates, gridIndex: 3, scale: true,
+          axisLine: { lineStyle: { color: '#30363d' }},
+          axisLabel: { color: '#8b949e', fontSize: 10 },
+          splitLine: { show: false }, axisTick: { show: false }},
+      ],
+      yAxis: [
+        { gridIndex: 0, scale: true, position: 'left',
+          axisLine: { lineStyle: { color: '#30363d' }},
+          splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
+          axisLabel: { color: '#8b949e', fontSize: 10 }},
+        { gridIndex: 1, scale: true, position: 'left',
+          axisLine: { lineStyle: { color: '#30363d' }},
+          splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
+          axisLabel: { color: '#8b949e', fontSize: 10 }},
+        { gridIndex: 2, scale: true, position: 'left',
+          axisLine: { lineStyle: { color: '#30363d' }},
+          splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
+          axisLabel: { color: '#8b949e', fontSize: 10 }},
+        { gridIndex: 3, scale: true, position: 'left',
+          axisLine: { lineStyle: { color: '#30363d' }},
+          splitLine: { lineStyle: { color: 'rgba(33,38,45,0.5)' }},
+          axisLabel: { color: '#8b949e', fontSize: 10 }},
+      ],
+      series: [
+        // Panel 1: K线 + MA (涨绿跌红)
+        { name: 'K线', type: 'candlestick', data: ohlc, xAxisIndex: 0, yAxisIndex: 0,
+          itemStyle: {
+            color:        '#10b981', color0:       '#ef4444',
+            borderColor:  '#10b981', borderColor0: '#ef4444'
+          }},
+        { name: 'MA5',  type: 'line', data: ma5,  xAxisIndex: 0, yAxisIndex: 0,
+          smooth: true, showSymbol: false, lineStyle: { width: 1.2, color: '#f5d142' }},
+        { name: 'MA10', type: 'line', data: ma10, xAxisIndex: 0, yAxisIndex: 0,
+          smooth: true, showSymbol: false, lineStyle: { width: 1.2, color: '#58a6ff' }},
+        { name: 'MA20', type: 'line', data: ma20, xAxisIndex: 0, yAxisIndex: 0,
+          smooth: true, showSymbol: false, lineStyle: { width: 1.2, color: '#c678dd' }},
+        // Panel 2: 成交量 (同 K 线配色)
+        { name: '成交量', type: 'bar', data: vols, xAxisIndex: 1, yAxisIndex: 1 },
+        // Panel 3: MACD (DIF/DEA/柱)
+        { name: 'MACD', type: 'bar',  data: macdBars, xAxisIndex: 2, yAxisIndex: 2 },
+        { name: 'DIF',  type: 'line', data: dif, xAxisIndex: 2, yAxisIndex: 2,
+          smooth: true, showSymbol: false, lineStyle: { width: 1, color: '#f5d142' }},
+        { name: 'DEA',  type: 'line', data: dea, xAxisIndex: 2, yAxisIndex: 2,
+          smooth: true, showSymbol: false, lineStyle: { width: 1, color: '#58a6ff' }},
+        // Panel 4: 主力净流入 (正红负绿)
+        { name: '主力净流入', type: 'bar', data: mainNet, xAxisIndex: 3, yAxisIndex: 3 },
+      ],
+    }, true);
+
+    // 双击复位 zoom
+    document.getElementById('klineChart').ondblclick = () => {
+      chart.dispatchAction({ type: 'dataZoom', start: 0, end: 100 });
+    };
+
+    // 窗口 resize
+    window.addEventListener('resize', () => chart.resize());
+
+    // 适配 iPad 横竖屏切换
+    window.addEventListener('orientationchange', () => setTimeout(() => chart.resize(), 200));
+  </script>
+</body>
+</html>

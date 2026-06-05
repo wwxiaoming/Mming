@@ -1,0 +1,73 @@
+Mming量化K线图完整位置与代码结构
+
+代码包含两个独立的K线图：主页面的「多指标综合K线图」和回测页的「带买卖点K线图」，以下是精准定位和核心代码块。
+
+一、HTML 容器位置
+
+1. 主K线图容器（数据查询页）
+<!-- 第132行左右，id="klineArea" 卡片内 -->
+<div id="klineArea" class="card" style="display:none">
+  <div class="toolbar">
+    <label><b>K线 + MA + 成交量 + MACD + 主力净流入</b></label>
+    <button class="btn" id="loadKlineBtn">加载 K 线</button>
+    <span class="legend" id="klineStatus"></span>
+  </div>
+  <!-- 核心K线图容器，高度600px覆盖默认chart样式 -->
+  <div id="klineChart" class="chart" style="height:600px"></div>
+</div>
+2. 回测K线图容器（择时回测页）
+<!-- 第160行左右，id="backtestArea" 内 -->
+<div class="card" style="background:#0d1117">
+  <!-- 回测K线图容器，显示买卖点标记 -->
+  <div id="btChartK" class="chart" style="height:380px"></div>
+</div>
+二、CSS 基础样式
+
+K线图继承通用图表样式，同时有内联高度覆盖：
+/* 第76行，所有图表基础样式 */
+.chart { width:100%; height:320px; }
+三、JavaScript 核心逻辑（最关键部分）
+
+1. 全局变量与工具函数
+// 第435行，主K线图实例与加载状态
+let klineChart;        // 图表实例
+let klineLoaded = false; // 是否已加载
+
+// 第439-472行，K线指标计算工具
+function calcMA(closeArr, n) { /* 计算MA均线 */ }
+function calcMACD(closeArr) { /* 计算MACD指标(DIF/DEA/MACD) */ }
+2. 主K线图渲染核心函数 loadKlineChart()
+
+位置：第475行开始，完整实现：
+
+• 调用 /api/kline 接口获取K线数据
+
+• 按日期对齐资金流数据
+
+• 计算MA5/MA10/MA20、MACD、成交量、主力净流入
+
+• 初始化ECharts实例，渲染4个联动面板（K线+成交量+MACD+主力净流入）
+
+• 绑定双击复位、窗口resize事件
+
+3. 回测K线图渲染
+
+位置：第770行开始（runBacktest()函数内），完整实现：
+
+• 复用主K线的缓存数据（无缓存则自动调用接口）
+
+• 计算买卖点信号（金▲买点、橙▼卖点）
+
+• 初始化独立ECharts实例 kChart
+
+• 渲染带买卖点标记的K线图
+
+四、关键交互与数据来源
+
+1. 触发方式：点击「加载K线」按钮或「跑回测」按钮自动触发
+
+2. 数据接口：/api/plugin/kline（反向代理到本地8180端口行情服务）
+
+3. 技术栈：基于 ECharts 5.4.3 渲染，使用Canvas渲染器提升性能
+
+4. 特色功能：4个面板十字光标联动、数据缩放、双击复位、资金流与K线日期对齐

@@ -168,7 +168,7 @@
 
 <script>
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick, watch, shallowRef, getCurrentInstance } from 'vue'
-import { init, registerIndicator, registerOverlay } from 'klinecharts'
+import { init, loadLocales, registerIndicator, registerOverlay } from 'klinecharts'
 import request from '@/utils/request'
 import ExchangeKlineWs from '@/utils/exchangeWs'
 import { usePyodide } from '@/services/pyodide/usePyodide'
@@ -267,6 +267,24 @@ export default {
         volEnsureRafId = null
         syncVolumePaneLayout()
       })
+    }
+
+    // 默认激活 4 个指标 (jzhu-quant 风格: K线+MA / 成交量 / MACD / 主力净流入)
+    let defaultIndicatorsEnsured = false
+    const ensureDefaultIndicators = () => {
+      if (defaultIndicatorsEnsured) return
+      if (!chartRef.value || typeof chartRef.value.createIndicator !== 'function') return
+      // 已经有同名指标(用户自定义或旧版残留)就跳过,避免叠加
+      const exists = activePresetIndicators.value.some(i => i && i.id)
+      if (exists) {
+        defaultIndicatorsEnsured = true
+        return
+      }
+      try { chartRef.value.createIndicator('MA', false, { id: 'candle_pane', calcParams: [5, 10, 20] }) } catch (e) {}
+      try { chartRef.value.createIndicator('VOL', false, { height: 96, minHeight: 52, dragEnabled: true }) } catch (e) {}
+      try { chartRef.value.createIndicator('MACD', false, { height: 96, minHeight: 52, dragEnabled: true }) } catch (e) {}
+      try { chartRef.value.createIndicator('NET_INFLOW', false, { height: 96, minHeight: 52, dragEnabled: true }) } catch (e) {}
+      defaultIndicatorsEnsured = true
     }
 
     const wmCanvasRef = ref(null)
@@ -772,6 +790,20 @@ export default {
 
     const handleIndicatorButtonClick = (indicator) => {
       if (!indicator || !indicator.id) return
+      const isActive = isIndicatorActive(indicator.id)
+      if (isActive) {
+        // Toggle off: remove ALL instances with this id (defensive cleanup for old bug residue that may have stacked duplicates)
+        const instances = activePresetIndicators.value.filter(i => i && i.id === indicator.id)
+        if (instances.length === 0) return
+        instances.forEach(inst => {
+          emit('indicator-toggle', {
+            action: 'remove',
+            indicator: { id: inst.id, instanceId: inst.instanceId || inst.id }
+          })
+        })
+        return
+      }
+      // Toggle on: add new instance
       const fallbackColor = getIndicatorColor(activePresetIndicators.value.length)
       const nextParams = pickNextDefaultParams(indicator, activePresetIndicators.value)
       emit('indicator-toggle', {
@@ -2403,6 +2435,39 @@ registerOverlay({
 
         // 设置主题样式
         updateChartTheme()
+        // 加载中文 locale (覆盖 KLineCharts 内置 tooltip / 周期按钮英文)
+        try {
+          const klinecharts = require('klinecharts')
+          if (klinecharts && typeof klinecharts.loadLocales === 'function') {
+            klinecharts.loadLocales({
+              'zh-CN': {
+                time: '时间',
+                open: '开盘',
+                high: '最高',
+                low: '最低',
+                close: '收盘',
+                volume: '成交量',
+                turnover: '成交额',
+                change: '涨跌幅',
+                changePercent: '涨跌幅',
+                amplitude: '振幅',
+                periods: {
+                  '1m': '1分', '5m': '5分', '15m': '15分', '30m': '30分',
+                  '1h': '1时', '2h': '2时', '4h': '4时', '12h': '12时',
+                  '1d': '1日', '1w': '1周', '1M': '1月', '1y': '1年'
+                },
+                indicators: {
+                  MA: '均线', EMA: '指数均线', VOL: '成交量', MACD: 'MACD',
+                  BOLL: '布林带', KDJ: 'KDJ', RSI: 'RSI'
+                }
+              }
+            })
+          }
+        } catch (e) {
+          // 静默失败,不影响图表渲染
+        }
+        // 延迟 100ms 等首根 K 线就绪后再默认激活 4 指标 (MA / VOL / MACD / NET_INFLOW)
+        setTimeout(() => { ensureDefaultIndicators() }, 100)
         nextTick(() => _ensureWmLayer())
 
         if (container && !shiftMeasurePointerDownHandler) {

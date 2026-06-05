@@ -312,6 +312,42 @@
                             </a-select-option>
                           </a-select>
                         </div>
+                        <div class="ide-toolbar-group ide-toolbar-group--global-search">
+                          <span class="ide-toolbar-label">{{ $t('indicatorIde.toolbar.globalSearch') }}</span>
+                          <a-popover
+                            trigger="focus"
+                            placement="bottomLeft"
+                            :get-popup-container="chartToolbarGetPopupContainer"
+                            :overlay-class-name="isDarkTheme ? 'ide-global-search-popover ide-global-search-popover--dark' : 'ide-global-search-popover'"
+                          >
+                            <template slot="content">
+                              <div class="ide-global-search-popover-content">
+                                <div v-if="globalSearching" class="ide-global-search-loading">搜索中...</div>
+                                <div v-else-if="!globalSearchResults.length" class="ide-global-search-empty">无匹配结果</div>
+                                <div v-else class="ide-global-search-list">
+                                  <div
+                                    v-for="g in globalSearchResults"
+                                    :key="`gsr-${g.market}-${g.symbol}`"
+                                    class="ide-global-search-row"
+                                    @click="handleWatchlistChange(`__gsr__:${g.market}:${g.symbol}`)"
+                                  >
+                                    <span class="wl-opt-tag" :class="'wl-mkt-' + (g.market || '').toLowerCase()">{{ marketLabel(g.market) }}</span>
+                                    <strong class="wl-opt-symbol">{{ g.symbol }}</strong>
+                                    <span v-if="g.name" class="wl-opt-name">{{ g.name }}</span>
+                                    <span class="wl-opt-badge">全市场</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </template>
+                            <a-input
+                              size="small"
+                              class="ide-toolbar-input ide-toolbar-input--global-search chart-panel-global-search"
+                              placeholder="🔍 全市场搜索 600519 / TSLA"
+                              style="width: 200px;"
+                              @input="onGlobalSearchInput"
+                            />
+                          </a-popover>
+                        </div>
                         <div class="ide-toolbar-group ide-toolbar-group--tf">
                           <span class="ide-toolbar-label">{{ $t('indicatorIde.toolbar.timeframe') }}</span>
                           <a-radio-group
