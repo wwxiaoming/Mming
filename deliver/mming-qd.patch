@@ -1,0 +1,291 @@
+From 95ae460906b5ff2b87a8b577d297f9279366ab8d Mon Sep 17 00:00:00 2001
+From: Mming <mming@example.com>
+Date: Fri, 5 Jun 2026 05:57:56 +0000
+Subject: [PATCH] =?UTF-8?q?feat:=20add=20=E4=B8=BB=E5=8A=9B=E5=87=80?=
+ =?UTF-8?q?=E6=B5=81=E5=85=A5=20indicator=20+=20=E5=85=A8=E5=B8=82?=
+ =?UTF-8?q?=E5=9C=BA=E6=90=9C=E7=B4=A2=20+=20=E9=BB=98=E8=AE=A4=E4=B8=AD?=
+ =?UTF-8?q?=E6=96=87?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ src/charts/indicators/netInflow.js            | 71 +++++++++++++
+ .../components/KlineChart.vue                 | 11 +++
+ src/views/indicator-ide/index.vue             | 99 ++++++++++++++++++-
+ 3 files changed, 176 insertions(+), 5 deletions(-)
+ create mode 100644 src/charts/indicators/netInflow.js
+
+diff --git a/src/charts/indicators/netInflow.js b/src/charts/indicators/netInflow.js
+new file mode 100644
+index 0000000..3bb4f4f
+--- /dev/null
++++ b/src/charts/indicators/netInflow.js
+@@ -0,0 +1,71 @@
++// 主力净流入 (Net Inflow) — 自定义 KLineCharts 指标
++//
++// 公式: net = volume * (close - open) / (high - low)
++//       当 high === low (一字板) 时返回 0
++//
++// 与 Mming 量化 / jzhu-quant 资金流向 tab 口径一致：
++//  - 收盘 > 开盘 (涨) → 净流入 > 0 → 红色柱
++//  - 收盘 < 开盘 (跌) → 净流入 < 0 → 绿色柱
++//
++// 图例: "主力净流入" / 数值格式化为 "X.X亿" (1e8)
++
++import { registerIndicator } from 'klinecharts'
++
++const NET_INFLOW_NAME = 'NET_INFLOW'
++const NET_INFLOW_SHORT = '主力净流入'
++
++function formatYi (value) {
++  // value 单位: 股(1)  vs  手(100)  vs  元(>0) — 后端返回的 volume 单位是"股"还是"手"由数据源决定
++  // 中文 A 股成交量通常是"手" (1手=100股), 1亿 = 1e8
++  if (value == null || isNaN(value)) return '--'
++  const yi = value / 1e8
++  if (Math.abs(yi) >= 1) return `${yi.toFixed(2)}亿`
++  const wan = value / 1e4
++  if (Math.abs(wan) >= 1) return `${wan.toFixed(2)}万`
++  return value.toFixed(0)
++}
++
++registerIndicator({
++  name: NET_INFLOW_NAME,
++  shortName: NET_INFLOW_SHORT,
++  description: '基于 (close-open)/(high-low) 估算的主力资金净流入',
++  // 1 周期:不需要参数
++  calcParams: [],
++  // 每个数据点计算出的数值数组
++  calc: (dataList) => {
++    return dataList.map((k) => {
++      const { open, close, high, low, volume } = k
++      if (high === low || !volume) return { net: 0 }
++      const net = (volume * (close - open)) / (high - low)
++      return { net }
++    })
++  },
++  // 柱状图
++  figures: [
++    {
++      key: 'net',
++      type: 'bar',
++      baseValue: 0,
++      // 涨红跌绿 (与 jzhu-quant 资金流向 tab 一致)
++      styles: (data, indicator, defaultStyles) => {
++        const v = data.net || 0
++        return {
++          color: v >= 0 ? '#ef4444' : '#10b981',
++          borderColor: v >= 0 ? '#ef4444' : '#10b981'
++        }
++      }
++    }
++  ],
++  // tooltip 数据源
++  createTooltipDataSource: ({ indicator }) => {
++    const data = indicator.result
++    return {
++      name: NET_INFLOW_SHORT,
++      calcParams: indicator.calcParams,
++      values: data.net == null ? [] : [{ title: NET_INFLOW_SHORT, value: formatYi(data.net), color: data.net >= 0 ? '#ef4444' : '#10b981' }]
++    }
++  }
++})
++
++export { NET_INFLOW_NAME, NET_INFLOW_SHORT, formatYi }
++export default NET_INFLOW_NAME
+diff --git a/src/views/indicator-analysis/components/KlineChart.vue b/src/views/indicator-analysis/components/KlineChart.vue
+index e4ec973..0a94457 100644
+--- a/src/views/indicator-analysis/components/KlineChart.vue
++++ b/src/views/indicator-analysis/components/KlineChart.vue
+@@ -172,6 +172,7 @@ import { init, registerIndicator, registerOverlay } from 'klinecharts'
+ import request from '@/utils/request'
+ import ExchangeKlineWs from '@/utils/exchangeWs'
+ import { usePyodide } from '@/services/pyodide/usePyodide'
++import '@/charts/indicators/netInflow' // 主力净流入 (NET_INFLOW) — jzhu-quant 风格
+ import {
+   calculateSMA,
+   calculateEMA,
+@@ -498,6 +499,16 @@ export default {
+           { key: 'k', labelKey: 'indicatorIde.editor.kSmoothing', type: 'number', min: 1, max: 20, step: 1 },
+           { key: 'd', labelKey: 'indicatorIde.editor.dSmoothing', type: 'number', min: 1, max: 20, step: 1 }
+         ]
++      },
++      // ===== 自定义指标 (jzhu-quant 风格) =====
++      {
++        id: 'NET_INFLOW',
++        name: '主力净流入',
++        shortName: '主力净流入',
++        type: 'bar',
++        custom: true,
++        defaultParams: {},
++        paramSchema: []
+       }
+     ])
+ 
+diff --git a/src/views/indicator-ide/index.vue b/src/views/indicator-ide/index.vue
+index 781477b..64f2c58 100644
+--- a/src/views/indicator-ide/index.vue
++++ b/src/views/indicator-ide/index.vue
+@@ -263,13 +263,15 @@
+                             size="small"
+                             show-search
+                             allow-clear
+-                            :filter-option="filterWatchlistOption"
++                            :filter-option="false"
+                             :dropdown-class-name="isDarkTheme ? 'ide-watchlist-dropdown ide-watchlist-dropdown--dark' : 'ide-watchlist-dropdown'"
+                             :get-popup-container="chartToolbarGetPopupContainer"
++                            @search="onGlobalSearchInput"
+                             @change="handleWatchlistChange"
+                           >
+                             <a-select-option
+                               v-for="w in watchlist"
++                              v-show="!globalSearchResults.length || !isInGlobalResults(w)"
+                               :key="`${w.market}:${w.symbol}`"
+                               :value="`${w.market}:${w.symbol}`"
+                             >
+@@ -282,6 +284,32 @@
+                                 <a-icon type="plus" /> {{ $t('backtest-center.config.addSymbol') }}
+                               </div>
+                             </a-select-option>
++                            <!-- 全市场搜索结果 (不限自选股) — jzhu-quant 风格 -->
++                            <a-select-option
++                              v-if="globalSearchResults.length > 0"
++                              key="__div__"
++                              disabled
++                              class="search-divider-option"
++                            >
++                              <span class="search-divider-label">— 全市场搜索结果 ({{ globalSearchResults.length }}) —</span>
++                            </a-select-option>
++                            <a-select-option
++                              v-for="g in globalSearchResults"
++                              :key="`__gsr__:${g.market}:${g.symbol}`"
++                              :value="`__gsr__:${g.market}:${g.symbol}`"
++                            >
++                              <span class="wl-opt-tag" :class="'wl-mkt-' + (g.market || '').toLowerCase()">{{ marketLabel(g.market) }}</span>
++                              <strong class="wl-opt-symbol">{{ g.symbol }}</strong>
++                              <span v-if="g.name" class="wl-opt-name">{{ g.name }}</span>
++                              <span class="wl-opt-badge">全市场</span>
++                            </a-select-option>
++                            <a-select-option
++                              v-if="globalSearching"
++                              key="__loading__"
++                              disabled
++                            >
++                              <span class="search-loading">搜索中…</span>
++                            </a-select-option>
+                           </a-select>
+                         </div>
+                         <div class="ide-toolbar-group ide-toolbar-group--tf">
+@@ -1623,6 +1651,11 @@ export default {
+       watchlist: [],
+       selectedWatchlistKey: 'Crypto:BTC/USDT',
+ 
++      // ===== 全市场搜索 (不限自选股) — jzhu-quant 风格 =====
++      globalSearchResults: [],
++      globalSearching: false,
++      globalSearchTimer: null,
++
+       initialCapital: 10000,
+       leverage: 1,
+       commission: 0.05,
+@@ -2285,6 +2318,16 @@ export default {
+     this.autoSelectFirstIndicator()
+   },
+   mounted () {
++    // 默认中文界面 (jzhu-quant 风格)
++    if (this.$i18n && this.$i18n.locale !== 'zh-CN') {
++      this.$i18n.locale = 'zh-CN'
++    }
++    try {
++      const kc = require('klinecharts')
++      if (kc && typeof kc.loadLocales === 'function') {
++        kc.loadLocales('zh-CN')
++      }
++    } catch (e) { /* klinecharts not required in IDE */ }
+     this._fullscreenListener = () => this.onGlobalFullscreenChange()
+     document.addEventListener('fullscreenchange', this._fullscreenListener)
+     document.addEventListener('webkitfullscreenchange', this._fullscreenListener)
+@@ -5097,6 +5140,47 @@ export default {
+       if (val === '__add__') return true
+       return val.includes(input.toLowerCase())
+     },
++    // 全市场搜索 — 不限自选股,跨 4 个市场并发查询
++    onGlobalSearchInput (value) {
++      clearTimeout(this.globalSearchTimer)
++      const kw = (value || '').trim()
++      if (!kw) {
++        this.globalSearchResults = []
++        this.globalSearching = false
++        return
++      }
++      this.globalSearching = true
++      this.globalSearchTimer = setTimeout(() => this.doGlobalSearch(kw), 350)
++    },
++    async doGlobalSearch (keyword) {
++      const markets = ['CNStock', 'USStock', 'HKStock', 'Crypto']
++      try {
++        const settled = await Promise.allSettled(
++          markets.map(m => searchSymbols({ market: m, keyword, limit: 10 }))
++        )
++        const out = []
++        const seen = new Set()
++        for (let i = 0; i < settled.length; i++) {
++          const r = settled[i]
++          if (r.status !== 'fulfilled' || !r.value || !Array.isArray(r.value.data)) continue
++          for (const item of r.value.data) {
++            const key = `${item.market}:${item.symbol}`
++            if (seen.has(key)) continue
++            seen.add(key)
++            out.push(item)
++          }
++        }
++        this.globalSearchResults = out
++      } catch (e) {
++        this.globalSearchResults = []
++      } finally {
++        this.globalSearching = false
++      }
++    },
++    isInGlobalResults (item) {
++      if (!item) return false
++      return this.globalSearchResults.some(x => x.market === item.market && x.symbol === item.symbol)
++    },
+     handleWatchlistChange (val) {
+       if (val === '__add__') {
+         this.showAddModal = true
+@@ -5104,23 +5188,28 @@ export default {
+         return
+       }
+       if (val) {
++        // 去掉 __gsr__: 前缀 (全市场搜索结果)
++        const rawVal = val.startsWith('__gsr__:') ? val.slice(8) : val
+         const row = (this.watchlist || []).find(
+-          w => w && w.market && w.symbol && `${w.market}:${w.symbol}` === val
++          w => w && w.market && w.symbol && `${w.market}:${w.symbol}` === rawVal
+         )
+         if (row) {
+           this.market = String(row.market)
+           this.symbol = String(row.symbol)
+         } else {
+-          const i = val.indexOf(':')
++          const i = rawVal.indexOf(':')
+           if (i > 0) {
+-            this.market = val.slice(0, i)
+-            this.symbol = val.slice(i + 1)
++            this.market = rawVal.slice(0, i)
++            this.symbol = rawVal.slice(i + 1)
+           }
+         }
+         this.qtSymbol = this.symbol
++        // 选完后清空搜索结果,避免再次打开下拉时残留
++        this.globalSearchResults = []
+       } else {
+         this.market = ''
+         this.symbol = ''
++        this.globalSearchResults = []
+       }
+     },
+     getMarketColor (m) {
+-- 
+2.43.0
+
