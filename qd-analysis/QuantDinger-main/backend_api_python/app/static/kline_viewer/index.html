@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>量化系统 · A 股 K 线视图</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+:root {
+  --bg: #0d1117;
+  --bg-2: #161b22;
+  --bg-3: #1f262e;
+  --fg: #e6edf3;
+  --fg-2: #8b949e;
+  --border: #30363d;
+  --accent: #1e88e5;
+  --accent-2: #7e57c2;
+  --pos: #4fc3f7;
+  --neg: #ff9800;
+  --red: #f44336;
+  --green: #26a69a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 14px; -webkit-tap-highlight-color: transparent; }
+body { min-height: 100vh; padding-bottom: 60px; }
+
+/* Header */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px; }
+.brand .logo {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.brand small { color: var(--fg-2); font-weight: 400; font-size: 11px; margin-left: 4px; }
+
+.search-box { flex: 1; min-width: 200px; max-width: 480px; position: relative; }
+.search-box input {
+  width: 100%; padding: 8px 12px 8px 32px;
+  background: var(--bg-3); color: var(--fg); border: 1px solid var(--border); border-radius: 6px;
+  font-size: 14px; outline: none;
+}
+.search-box input:focus { border-color: var(--accent); }
+.search-box::before {
+  content: "🔍"; position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 14px; pointer-events: none;
+}
+.search-result {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 6px;
+  max-height: 300px; overflow-y: auto; z-index: 200;
+  display: none;
+}
+.search-result.active { display: block; }
+.search-result .item {
+  padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between;
+}
+.search-result .item:hover { background: var(--bg-3); }
+.search-result .item:last-child { border-bottom: none; }
+.search-result .item .code { color: var(--fg-2); font-family: monospace; }
+
+.header-actions { display: flex; gap: 8px; align-items: center; }
+.btn {
+  background: var(--accent); color: white; border: none; padding: 7px 14px;
+  border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;
+  transition: background 0.2s;
+}
+.btn:hover { background: #1976d2; }
+.btn-ghost {
+  background: transparent; color: var(--fg); border: 1px solid var(--border);
+  padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;
+}
+.btn-ghost:hover { background: var(--bg-3); }
+.btn-ghost.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* Tabs */
+.tabs {
+  display: flex; gap: 4px; padding: 8px 16px 0;
+  border-bottom: 1px solid var(--border); background: var(--bg);
+  position: sticky; top: 53px; z-index: 99;
+}
+.tab {
+  padding: 10px 16px; cursor: pointer; color: var(--fg-2);
+  border-bottom: 2px solid transparent; transition: all 0.15s;
+  font-size: 13px; font-weight: 500;
+}
+.tab:hover { color: var(--fg); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Sections */
+.section { padding: 16px; }
+.section.hidden { display: none; }
+
+/* Cards */
+.card {
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; margin-bottom: 16px;
+}
+.card-title { font-size: 13px; color: var(--fg-2); margin-bottom: 12px; font-weight: 500; }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat {
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px;
+}
+.stat .label { font-size: 11px; color: var(--fg-2); margin-bottom: 4px; }
+.stat .value { font-size: 18px; font-weight: 600; }
+.stat .value.pos { color: var(--pos); }
+.stat .value.neg { color: var(--neg); }
+
+/* Toolbar */
+.toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.toolbar label { color: var(--fg-2); font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.toolbar input[type=number] {
+  background: var(--bg-3); color: var(--fg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 4px 8px; width: 70px; font-size: 13px;
+}
+.toolbar select {
+  background: var(--bg-3); color: var(--fg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 5px 8px; font-size: 13px;
+}
+
+/* Chart */
+.chart { width: 100%; }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--border); }
+th:first-child, td:first-child { text-align: left; }
+th { background: var(--bg-3); color: var(--fg-2); font-weight: 500; position: sticky; top: 0; }
+tbody tr:hover { background: var(--bg-3); }
+.pos { color: var(--pos); }
+.neg { color: var(--neg); }
+
+/* Notice */
+.notice {
+  padding: 10px 12px; border-radius: 6px; margin: 8px 0;
+  font-size: 12px; display: none;
+}
+.notice.active { display: block; }
+.notice-info { background: rgba(30,136,229,0.1); border: 1px solid rgba(30,136,229,0.3); color: #90caf9; }
+.notice-error { background: rgba(244,67,54,0.1); border: 1px solid rgba(244,67,54,0.3); color: #ef9a9a; }
+.notice-success { background: rgba(67,160,71,0.1); border: 1px solid rgba(67,160,71,0.3); color: #a5d6a7; }
+
+/* Watchlist */
+.watchlist-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 6px; margin-bottom: 6px; cursor: pointer;
+}
+.watchlist-item:hover { border-color: var(--accent); }
+.watchlist-item .info { display: flex; flex-direction: column; }
+.watchlist-item .info .name { font-weight: 500; }
+.watchlist-item .info .code { font-size: 11px; color: var(--fg-2); font-family: monospace; }
+.watchlist-item .remove { color: var(--neg); cursor: pointer; padding: 4px 8px; }
+
+/* Loading */
+.loading { text-align: center; padding: 20px; color: var(--fg-2); }
+
+/* Footer */
+.footer {
+  text-align: center; padding: 20px; color: var(--fg-2); font-size: 11px;
+  border-top: 1px solid var(--border); margin-top: 20px;
+}
+
+/* Pill / badge */
+.pill { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+.pill.in { background: rgba(79,195,247,0.2); color: var(--pos); }
+.pill.out { background: rgba(255,152,0,0.2); color: var(--neg); }
+
+/* iPad / mobile tweaks */
+@media (max-width: 768px) {
+  header { padding: 8px 12px; gap: 8px; }
+  .brand { font-size: 14px; }
+  .brand small { display: none; }
+  .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat .value { font-size: 15px; }
+  .section { padding: 12px; }
+  .tabs { top: 49px; }
+  .tab { padding: 8px 10px; font-size: 12px; }
+  table { font-size: 11px; }
+  th, td { padding: 6px 6px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">📈</div>
+    <span>量化系统 <small>· A 股 K 线视图</small></span>
+  </div>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="搜索股票:代码/名称 (例:600519、茅台、sh600519)" autocomplete="off">
+    <div class="search-result" id="searchResult"></div>
+  </div>
+  <div class="header-actions">
+    <button class="btn-ghost" id="backToQDBtn" title="返回 QuantDinger">⬅ QuantDinger</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-tab="kline">📊 K 线</div>
+  <div class="tab" data-tab="moneyflow">💰 资金流向</div>
+  <div class="tab" data-tab="backtest">🎯 买卖点回测</div>
+  <div class="tab" data-tab="watchlist">⭐ 自选股</div>
+</div>
+
+<!-- K线 Tab -->
+<div id="section-kline" class="section">
+  <div id="notice-kline" class="notice"></div>
+  <div class="card" id="currentStockCard" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:18px;font-weight:600" id="stockName">--</div>
+        <div style="font-size:11px;color:var(--fg-2);font-family:monospace" id="stockCode">--</div>
+      </div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <div>
+          <div style="font-size:11px;color:var(--fg-2)">最新价</div>
+          <div style="font-size:20px;font-weight:600" id="stockPrice">--</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--fg-2)">涨跌幅</div>
+          <div style="font-size:16px;font-weight:600" id="stockChange">--</div>
+        </div>
+        <button class="btn-ghost" id="addToWatchlistBtn">+ 加自选</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toolbar">
+      <label>周期:
+        <button class="btn-ghost active" data-tf="1D">1D</button>
+        <button class="btn-ghost" data-tf="1W">1W</button>
+        <button class="btn-ghost" data-tf="1M">1M</button>
+      </label>
+      <label>数量: <input type="number" id="limitInput" value="300" min="30" max="1000" step="10"></label>
+      <button class="btn" id="loadKlineBtn">🔄 刷新 K 线</button>
+      <button class="btn-ghost" id="goMoneyflowBtn">查看资金流向 →</button>
+    </div>
+    <div id="klineChart" class="chart" style="height:600px"></div>
+  </div>
+</div>
+
+<!-- 资金流向 Tab -->
+<div id="section-moneyflow" class="section hidden">
+  <div id="notice-mf" class="notice"></div>
+  <div class="card">
+    <div class="card-title">📅 日度资金流向明细(单位:万元)</div>
+    <div class="table-wrap" style="max-height:400px;overflow-y:auto">
+      <table id="mfTable">
+        <thead><tr>
+          <th>交易日期</th><th>主力净流入</th><th>特大单净</th><th>大单净</th>
+          <th>中单净</th><th>小单净</th><th>全单净流入</th><th>涨跌幅</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card">
+      <div class="card-title">💹 累计资金流向(单位:万元)</div>
+      <div id="mfBarChart" class="chart" style="height:300px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📈 主力净流入趋势</div>
+      <div id="mfLineChart" class="chart" style="height:300px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 买卖点回测 Tab -->
+<div id="section-backtest" class="section hidden">
+  <div id="notice-bt" class="notice"></div>
+  <div class="card">
+    <div class="toolbar">
+      <label>N(主力均线周期) <input type="number" id="btN" value="5" min="1" max="60"></label>
+      <label>初始资金 <input type="number" id="btCapital" value="100000" min="10000" step="10000"></label>
+      <button class="btn" id="btBtn">🚀 跑回测</button>
+      <span style="color:var(--fg-2);font-size:11px" id="btStatus">规则:主力 N 日均线 > 0 → 次日开盘满仓,否则空仓</span>
+    </div>
+    <div id="btStats" class="stats"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📊 K 线 + 买卖点</div>
+    <div id="btKChart" class="chart" style="height:500px"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">💼 收益曲线:策略 vs 持有基准</div>
+    <div id="btEqChart" class="chart" style="height:300px"></div>
+  </div>
+</div>
+
+<!-- 自选股 Tab -->
+<div id="section-watchlist" class="section hidden">
+  <div id="notice-wl" class="notice"></div>
+  <div class="card">
+    <div class="card-title">⭐ 我的自选股(点击跳到 K 线)</div>
+    <div id="watchlistContainer">
+      <div class="loading">加载中...</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  数据来自 QuantDinger 后端 / A 股实时行情 (Tencent / AKShare) · 仅供学习研究
+</div>
+
+<script>
+'use strict';
+
+// ───────── 配置 ─────────
+const API_BASE = '/api';  // 走 kline_viewer_proxy.py 代理
+let currentSymbol = null;   // sh600519 格式
+let currentStockName = null;
+let currentTf = '1D';
+let klineChart = null;
+let mfBarChart = null;
+let mfLineChart = null;
+let btKChart = null;
+let btEqChart = null;
+let cachedKlines = null;       // 缓存最近一次拉到的 K 线
+let cachedMoneyflow = null;    // 缓存资金流向
+
+// ───────── 工具 ─────────
+const $ = id => document.getElementById(id);
+const fmtNum = n => {
+  if (n === null || n === undefined || isNaN(n)) return '--';
+  const abs = Math.abs(n);
+  if (abs >= 1e8) return (n/1e8).toFixed(2) + '亿';
+  if (abs >= 1e4) return (n/1e4).toFixed(2) + '万';
+  return n.toFixed(2);
+};
+const compactToYmd = s => {
+  // "2025-09-03" -> "2025-09-03"(已经是)
+  // "20250903" -> "2025-09-03"
+  s = String(s || '').trim();
+  if (/^\d{8}$/.test(s)) return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
+  return s;
+};
+const notice = (section, msg, kind) => {
+  const n = $('notice-' + section);
+  n.className = 'notice notice-' + (kind || 'info') + ' active';
+  n.textContent = msg;
+  if (kind !== 'error') setTimeout(() => n.classList.remove('active'), 4000);
+};
+
+// ───────── API 包装 ─────────
+async function api(path, opts = {}) {
+  const url = API_BASE + path;
+  try {
+    const res = await fetch(url, {
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      ...opts,
+    });
+    const json = await res.json();
+    if (json.code === 1) return json.data;
+    throw new Error(json.msg || 'API 返回错误');
+  } catch (e) {
+    throw new Error('网络错误: ' + e.message);
+  }
+}
+
+// ───────── 指标计算 ─────────
+function calcMA(closeArr, n) {
+  const out = new Array(closeArr.length).fill(null);
+  let sum = 0;
+  for (let i = 0; i < closeArr.length; i++) {
+    sum += closeArr[i];
+    if (i >= n) sum -= closeArr[i - n];
+    if (i >= n - 1) out[i] = +(sum / n).toFixed(3);
+  }
+  return out;
+}
+function calcMACD(closeArr) {
+  const ema12 = [], ema26 = [], dif = [], dea = [], macd = [];
+  let e12 = null, e26 = null;
+  for (let i = 0; i < closeArr.length; i++) {
+    if (e12 === null) e12 = closeArr[i];
+    else e12 = e12 * 11/13 + closeArr[i] * 2/13;
+    if (e26 === null) e26 = closeArr[i];
+    else e26 = e26 * 25/27 + closeArr[i] * 2/27;
+    ema12.push(+e12.toFixed(4));
+    ema26.push(+e26.toFixed(4));
+    const d = +(e12 - e26).toFixed(4);
+    dif.push(d);
+    if (i === 0) dea.push(d);
+    else dea.push(+(dea[i-1] * 8/10 + d * 2/10).toFixed(4));
+    macd.push(+((dif[i] - dea[i]) * 2).toFixed(4));
+  }
+  return { dif, dea, macd };
+}
+
+// ───────── Tab 切换 ─────────
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => switchTab(t.dataset.tab));
+});
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  ['kline', 'moneyflow', 'backtest', 'watchlist'].forEach(n => {
+    $('section-' + n).classList.toggle('hidden', n !== name);
+  });
+  if (name === 'watchlist') loadWatchlist();
+  if (name === 'moneyflow' && currentSymbol) loadMoneyflow();
+  if (name === 'backtest' && currentSymbol) runBacktest();
+}
+
+// ───────── 股票搜索 ─────────
+let searchTimer = null;
+const searchInput = $('searchInput');
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  const q = searchInput.value.trim();
+  if (q.length < 1) {
+    $('searchResult').classList.remove('active');
+    return;
+  }
+  searchTimer = setTimeout(() => doSearch(q), 300);
+});
+searchInput.addEventListener('focus', () => {
+  if (searchInput.value.trim()) $('searchResult').classList.add('active');
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-box')) $('searchResult').classList.remove('active');
+});
+
+async function doSearch(q) {
+  try {
+    const data = await api(`/market/symbols/search?keyword=${encodeURIComponent(q)}&market=CNStock&limit=15`);
+    const list = Array.isArray(data) ? data : (data.items || data.symbols || []);
+    const box = $('searchResult');
+    if (!list.length) {
+      box.innerHTML = '<div class="item" style="color:var(--fg-2)">无结果,试试 600519 / 茅台 / sh600519</div>';
+    } else {
+      box.innerHTML = list.map(s => {
+        const code = s.symbol || s.code || s.value || '';
+        const name = s.name || s.label || s.display_name || code;
+        return `<div class="item" data-code="${code}" data-name="${name}">
+          <span>${name}</span><span class="code">${code}</span>
+        </div>`;
+      }).join('');
+      box.querySelectorAll('.item').forEach(item => {
+        if (item.dataset.code) {
+          item.addEventListener('click', () => {
+            const code = item.dataset.code;
+            const name = item.dataset.name;
+            selectStock(code, name);
+            box.classList.remove('active');
+            searchInput.value = '';
+          });
+        }
+      });
+    }
+    box.classList.add('active');
+  } catch (e) {
+    notice('kline', '搜索失败: ' + e.message, 'error');
+  }
+}
+
+async function selectStock(symbol, name) {
+  currentSymbol = symbol;
+  currentStockName = name;
+  $('currentStockCard').style.display = 'block';
+  $('stockName').textContent = name || symbol;
+  $('stockCode').textContent = symbol;
+  switchTab('kline');
+  await loadKline();
+}
+
+// ───────── 加载 K 线 ─────────
+async function loadKline() {
+  if (!currentSymbol) {
+    notice('kline', '请先在搜索框选一只股票', 'info');
+    return;
+  }
+  notice('kline', '加载 K 线中...', 'info');
+  try {
+    const limit = +$('limitInput').value || 300;
+    const data = await api(`/kline?market=CNStock&symbol=${encodeURIComponent(currentSymbol)}&timeframe=${currentTf}&limit=${limit}`);
+    const klines = Array.isArray(data) ? data : (data.klines || data.data || []);
+    if (!klines.length) throw new Error('后端返回空数据');
+    cachedKlines = klines;
+    renderKline(klines);
+
+    // 拉最新价
+    try {
+      const tk = await api(`/market/price?market=CNStock&symbol=${encodeURIComponent(currentSymbol)}`);
+      const t = tk.price || tk;
+      $('stockPrice').textContent = t.last ?? '--';
+      const cp = t.changePercent ?? 0;
+      const ch = $('stockChange');
+      ch.textContent = (cp >= 0 ? '+' : '') + cp.toFixed(2) + '%';
+      ch.className = cp >= 0 ? 'pos' : 'neg';
+      ch.style.fontWeight = '600';
+    } catch (e) { /* 价格拉不到不影响 K 线 */ }
+
+    notice('kline', `已加载 ${klines.length} 条 K 线 (${currentTf})`, 'success');
+  } catch (e) {
+    notice('kline', 'K 线加载失败: ' + e.message, 'error');
+  }
+}
+
+function renderKline(klines) {
+  const dates = klines.map(k => compactToYmd(k.time || k.date || k.timestamp || k.t));
+  const ohlc = klines.map(k => [+k.open, +k.close, +k.low, +k.high]);
+  const closeArr = klines.map(k => +k.close);
+  const ma5  = calcMA(closeArr, 5);
+  const ma10 = calcMA(closeArr, 10);
+  const ma20 = calcMA(closeArr, 20);
+  const volArr = klines.map(k => +k.volume);
+  const { dif, dea, macd } = calcMACD(closeArr);
+  const macdBars = macd.map(v => ({
+    value: v,
+    itemStyle: { color: v >= 0 ? '#f44336' : '#26a69a' }
+  }));
+
+  if (!klineChart) klineChart = echarts.init($('klineChart'), 'dark', { renderer: 'canvas' });
+  klineChart.setOption({
+    backgroundColor: 'transparent',
+    legend: {
+      data: ['K线', 'MA5', 'MA10', 'MA20', '成交量', 'MACD'],
+      textStyle: { color: '#8b949e' },
+      top: 5,
+    },
+    axisPointer: {
+      link: [{ xAxisIndex: 'all' }],
+      label: { backgroundColor: '#1e88e5' },
+    },
+    grid: [
+      { left: 50, right: 20, top: 40,  height: '50%' },  // K线
+      { left: 50, right: 20, top: '63%', height: '12%' },  // 成交量
+      { left: 50, right: 20, top: '78%', height: '10%' },  // MACD
+      { left: 50, right: 20, top: '91%', height: '7%'  },  // 主力净流入(暂时不用,留空)
+    ],
+    xAxis: [
+      { type: 'category', data: dates, scale: true, boundaryGap: false, axisLine:{lineStyle:{color:'#30363d'}}, axisLabel:{color:'#8b949e'} },
+      { type: 'category', data: dates, gridIndex: 1, scale: true, boundaryGap: false, axisLine:{lineStyle:{color:'#30363d'}}, axisLabel:{color:'#8b949e'} },
+      { type: 'category', data: dates, gridIndex: 2, scale: true, boundaryGap: false, axisLine:{lineStyle:{color:'#30363d'}}, axisLabel:{color:'#8b949e'} },
+      { type: 'category', data: dates, gridIndex: 3, scale: true, boundaryGap: false, axisLine:{lineStyle:{color:'#30363d'}}, axisLabel:{show:false} },
+    ],
+    yAxis: [
+      { scale: true, splitArea: { show: false }, axisLine:{lineStyle:{color:'#30363d'}}, axisLabel:{color:'#8b949e'}, splitLine:{lineStyle:{color:'#21262d'}} },
+      { scale: true, gridIndex: 1, axisLine:{lineStyle:{color:'#30363d'}}, axisLabel:{color:'#8b949e'}, splitLine:{lineStyle:{color:'#21262d'}} },
+      { scale: true, gridIndex: 2, axisLine:{lineStyle:{color:'#30363d'}}, axisLabel:{color:'#8b949e'}, splitLine:{lineStyle:{color:'#21262d'}} },
+      { scale: true, gridIndex: 3, axisLine:{lineStyle:{color:'#30363d'}}, axisLabel:{show:false}, splitLine:{lineStyle:{color:'#21262d'}} },
+    ],
+    dataZoom: [
+      { type: 'inside', xAxisIndex: [0,1,2,3], throttle: 50, zoomOnMouseWheel: true },
+      { type: 'slider', xAxisIndex: [0,1,2,3], height: 18, bottom: 5, textStyle: { color: '#8b949e' }, fillerColor: 'rgba(30,136,229,0.2)' },
+    ],
+    animation: false,
+    series: [
+      {
+        name: 'K线', type: 'candlestick', data: ohlc,
+        itemStyle: {
+          color: '#26a69a', color0: '#ef5350',
+          borderColor: '#26a69a', borderColor0: '#ef5350',
+        },
+      },
+      { name: 'MA5',  type: 'line', data: ma5,  smooth: true, lineStyle: { width: 1, color: '#ff9800' }, symbol: 'none' },
+      { name: 'MA10', type: 'line', data: ma10, smooth: true, lineStyle: { width: 1, color: '#1e88e5' }, symbol: 'none' },
+      { name: 'MA20', type: 'line', data: ma20, smooth: true, lineStyle: { width: 1, color: '#ab47bc' }, symbol: 'none' },
+      {
+        name: '成交量', type: 'bar', xAxisIndex: 1, yAxisIndex: 1,
+        data: volArr.map((v, i) => ({
+          value: v,
+          itemStyle: { color: closeArr[i] >= (i > 0 ? closeArr[i-1] : closeArr[i]) ? '#f44336' : '#26a69a' }
+        })),
+      },
+      { name: 'DIF', type: 'line', data: dif, xAxisIndex: 2, yAxisIndex: 2, lineStyle: { width: 1, color: '#ffeb3b' }, symbol: 'none' },
+      { name: 'DEA', type: 'line', data: dea, xAxisIndex: 2, yAxisIndex: 2, lineStyle: { width: 1, color: '#1e88e5' }, symbol: 'none' },
+      { name: 'MACD', type: 'bar', data: macdBars, xAxisIndex: 2, yAxisIndex: 2 },
+    ],
+  }, true);
+  klineChart.getDom().ondblclick = () => klineChart.dispatchAction({ type: 'dataZoom', start: 0, end: 100 });
+}
+
+// ───────── 资金流向 ─────────
+async function loadMoneyflow() {
+  if (!currentSymbol) { notice('mf', '请先选股票', 'info'); return; }
+  notice('mf', '加载资金流向...', 'info');
+  try {
+    const data = await api(`/market/cn-moneyflow?symbol=${encodeURIComponent(currentSymbol)}&days=60`);
+    const rows = data.rows || (Array.isArray(data) ? data : []);
+    if (!rows.length) {
+      notice('mf', '暂无资金流向数据(可能数据源未配置)', 'error');
+      return;
+    }
+    cachedMoneyflow = rows;
+    renderMoneyflowTable(rows);
+    renderMoneyflowCharts(rows);
+    notice('mf', `已加载 ${rows.length} 天资金流向`, 'success');
+  } catch (e) {
+    notice('mf', '资金流向加载失败: ' + e.message, 'error');
+  }
+}
+function renderMoneyflowTable(rows) {
+  const tb = $('mfTable').querySelector('tbody');
+  tb.innerHTML = rows.slice().reverse().map(r => `
+    <tr>
+      <td>${r.date}</td>
+      <td class="${r.main_net >= 0 ? 'pos' : 'neg'}">${fmtNum(r.main_net)}</td>
+      <td class="${r.super_net >= 0 ? 'pos' : 'neg'}">${fmtNum(r.super_net)}</td>
+      <td class="${r.big_net >= 0 ? 'pos' : 'neg'}">${fmtNum(r.big_net)}</td>
+      <td class="${r.mid_net >= 0 ? 'pos' : 'neg'}">${fmtNum(r.mid_net)}</td>
+      <td class="${r.small_net >= 0 ? 'pos' : 'neg'}">${fmtNum(r.small_net)}</td>
+      <td class="${r.total_net >= 0 ? 'pos' : 'neg'}">${fmtNum(r.total_net)}</td>
+      <td class="${(r.change_pct || 0) >= 0 ? 'pos' : 'neg'}">${(r.change_pct || 0).toFixed(2)}%</td>
+    </tr>
+  `).join('');
+}
+function renderMoneyflowCharts(rows) {
+  const dates = rows.map(r => r.date);
+  if (!mfBarChart) mfBarChart = echarts.init($('mfBarChart'), 'dark');
+  mfBarChart.setOption({
+    backgroundColor: 'transparent',
+    legend: { data: ['主力','特大','大单','中单','小单'], textStyle:{color:'#8b949e'}, top: 5 },
+    tooltip: { trigger: 'axis' },
+    grid: { left: 60, right: 20, top: 35, bottom: 30 },
+    xAxis: { type: 'category', data: dates, axisLabel: { color: '#8b949e' } },
+    yAxis: { type: 'value', axisLabel: { color: '#8b949e' }, splitLine:{lineStyle:{color:'#21262d'}} },
+    dataZoom: [{ type: 'inside', throttle: 50 }, { type: 'slider', height: 14, bottom: 5 }],
+    series: [
+      { name: '主力',   type: 'bar', data: rows.map(r => r.main_net),   itemStyle:{color:'#1e88e5'} },
+      { name: '特大',   type: 'bar', data: rows.map(r => r.super_net),  itemStyle:{color:'#7e57c2'} },
+      { name: '大单',   type: 'bar', data: rows.map(r => r.big_net),    itemStyle:{color:'#26a69a'} },
+      { name: '中单',   type: 'bar', data: rows.map(r => r.mid_net),    itemStyle:{color:'#ff9800'} },
+      { name: '小单',   type: 'bar', data: rows.map(r => r.small_net),  itemStyle:{color:'#ef5350'} },
+    ],
+  }, true);
+
+  if (!mfLineChart) mfLineChart = echarts.init($('mfLineChart'), 'dark');
+  mfLineChart.setOption({
+    backgroundColor: 'transparent',
+    legend: { data: ['主力净流入', '5日均线'], textStyle:{color:'#8b949e'}, top: 5 },
+    tooltip: { trigger: 'axis' },
+    grid: { left: 60, right: 20, top: 35, bottom: 30 },
+    xAxis: { type: 'category', data: dates, axisLabel: { color: '#8b949e' } },
+    yAxis: { type: 'value', axisLabel: { color: '#8b949e' }, splitLine:{lineStyle:{color:'#21262d'}} },
+    dataZoom: [{ type: 'inside', throttle: 50 }, { type: 'slider', height: 14, bottom: 5 }],
+    series: [
+      { name: '主力净流入', type: 'line', data: rows.map(r => r.main_net), smooth: true,
+        areaStyle: { color: 'rgba(30,136,229,0.3)' }, lineStyle: { color: '#1e88e5' }, symbol: 'none' },
+      { name: '5日均线', type: 'line', data: calcMA(rows.map(r => r.main_net), 5),
+        smooth: true, lineStyle: { color: '#ffeb3b', width: 1.5, type: 'dashed' }, symbol: 'none' },
+    ],
+  }, true);
+}
+
+// ───────── 买卖点回测 ─────────
+async function runBacktest() {
+  if (!currentSymbol) { notice('bt', '请先选股票', 'info'); return; }
+  if (!cachedKlines) { await loadKline(); if (!cachedKlines) return; }
+  if (!cachedMoneyflow) { await loadMoneyflow(); }
+
+  const N = +$('btN').value || 5;
+  const initCap = +$('btCapital').value || 100000;
+  notice('bt', '跑回测中...', 'info');
+
+  // 对齐 K 线和资金流的日期
+  const kmap = {};
+  cachedKlines.forEach(k => kmap[compactToYmd(k.time || k.date)] = k);
+  const mfmap = {};
+  (cachedMoneyflow || []).forEach(r => mfmap[r.date] = r);
+
+  const dates = cachedKlines.map(k => compactToYmd(k.time || k.date)).filter(d => mfmap[d] && kmap[d]);
+  if (dates.length < N + 5) { notice('bt', 'K 线和资金流日期对齐后数据不足', 'error'); return; }
+
+  // 计算主力 N 日均线
+  const mainArr = dates.map(d => mfmap[d].main_net || 0);
+  const maN = calcMA(mainArr, N);
+
+  // 仓位:第 i 天看 maN[i-1] (次日生效),i=0 仓位=0
+  const pos = new Array(dates.length).fill(0);
+  for (let i = 1; i < dates.length; i++) {
+    pos[i] = (maN[i-1] !== null && maN[i-1] > 0) ? 1 : 0;
+  }
+
+  // 收益
+  const stratRet = [0]; const benchRet = [0];
+  let stratEq = initCap, benchEq = initCap;
+  for (let i = 1; i < dates.length; i++) {
+    const today = kmap[dates[i]].close;
+    const yest  = kmap[dates[i-1]].close;
+    const dayRet = (today / yest) - 1;
+    const benchDay = dayRet;
+    const stratDay = pos[i] * dayRet;
+    stratEq *= (1 + stratDay);
+    benchEq *= (1 + benchDay);
+    stratRet.push((stratEq / initCap - 1) * 100);
+    benchRet.push((benchEq / initCap - 1) * 100);
+  }
+
+  // 统计
+  const totalDays = dates.length;
+  const totalStrat = stratRet[stratRet.length - 1];
+  const totalBench = benchRet[benchRet.length - 1];
+  const years = totalDays / 250;
+  const annStrat = years > 0 ? (Math.pow(1 + totalStrat/100, 1/years) - 1) * 100 : 0;
+  const annBench = years > 0 ? (Math.pow(1 + totalBench/100, 1/years) - 1) * 100 : 0;
+
+  // 最大回撤
+  function maxDD(arr) {
+    let peak = arr[0], maxDd = 0;
+    for (const v of arr) { peak = Math.max(peak, v); maxDd = Math.min(maxDd, v - peak); }
+    return maxDd;
+  }
+  const ddStrat = maxDD(stratRet);
+  const ddBench = maxDD(benchRet);
+
+  // 胜率:持仓日收益 > 0 的占比
+  let winDays = 0, holdDays = 0;
+  for (let i = 1; i < dates.length; i++) {
+    if (pos[i] === 1) {
+      holdDays++;
+      const today = kmap[dates[i]].close;
+      const yest  = kmap[dates[i-1]].close;
+      if (today > yest) winDays++;
+    }
+  }
+  const winRate = holdDays ? (winDays / holdDays * 100) : 0;
+
+  // 交易次数
+  let trades = 0;
+  for (let i = 1; i < dates.length; i++) {
+    if (pos[i] === 1 && pos[i-1] === 0) trades++;
+  }
+
+  $('btStats').innerHTML = `
+    <div class="stat"><div class="label">策略年化</div><div class="value ${annStrat>=0?'pos':'neg'}">${annStrat.toFixed(2)}%</div></div>
+    <div class="stat"><div class="label">基准年化</div><div class="value ${annBench>=0?'pos':'neg'}">${annBench.toFixed(2)}%</div></div>
+    <div class="stat"><div class="label">策略总收益</div><div class="value ${totalStrat>=0?'pos':'neg'}">${totalStrat.toFixed(2)}%</div></div>
+    <div class="stat"><div class="label">最大回撤</div><div class="value neg">${ddStrat.toFixed(2)}%</div></div>
+    <div class="stat"><div class="label">胜率</div><div class="value">${winRate.toFixed(2)}%</div></div>
+    <div class="stat"><div class="label">交易次数</div><div class="value">${trades}</div></div>
+    <div class="stat"><div class="label">回测天数</div><div class="value">${totalDays}</div></div>
+  `;
+
+  // K线 + 买卖点
+  // 修复:marker 画在信号触发日的前一日 K 线 i-1 上,价格 = kmap[dates[i-1]].close
+  const buyPoints = [], sellPoints = [];
+  for (let i = 1; i < dates.length; i++) {
+    if (pos[i] === 1 && pos[i-1] === 0) {
+      const prevK = kmap[dates[i-1]];
+      buyPoints.push({ coord: [dates[i-1], prevK.close], value: prevK.close });
+    }
+    if (pos[i] === 0 && pos[i-1] === 1) {
+      const prevK = kmap[dates[i-1]];
+      sellPoints.push({ coord: [dates[i-1], prevK.close], value: prevK.close });
+    }
+  }
+  const ohlc = dates.map(d => [+kmap[d].open, +kmap[d].close, +kmap[d].low, +kmap[d].high]);
+  const closeArr = dates.map(d => +kmap[d].close);
+
+  if (!btKChart) btKChart = echarts.init($('btKChart'), 'dark');
+  btKChart.setOption({
+    backgroundColor: 'transparent',
+    legend: { data: ['K线', 'MA20', '买点', '卖点'], textStyle: { color: '#8b949e' }, top: 5 },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+    grid: { left: 50, right: 20, top: 40, bottom: 50 },
+    xAxis: { type: 'category', data: dates, scale: true, boundaryGap: false, axisLabel: { color: '#8b949e' } },
+    yAxis: { scale: true, axisLabel: { color: '#8b949e' }, splitLine: { lineStyle: { color: '#21262d' } } },
+    dataZoom: [{ type: 'inside', throttle: 50 }, { type: 'slider', height: 18, bottom: 10 }],
+    animation: false,
+    series: [
+      { name: 'K线', type: 'candlestick', data: ohlc,
+        itemStyle: { color: '#26a69a', color0: '#ef5350', borderColor: '#26a69a', borderColor0: '#ef5350' } },
+      { name: 'MA20', type: 'line', data: calcMA(closeArr, 20), smooth: true,
+        lineStyle: { color: '#ab47bc', width: 1 }, symbol: 'none' },
+      { name: '买点', type: 'scatter', data: buyPoints, symbol: 'triangle',
+        symbolSize: 14, itemStyle: { color: '#ffeb3b' }, z: 10 },
+      { name: '卖点', type: 'scatter', data: sellPoints, symbol: 'triangle',
+        symbolSize: 14, symbolRotate: 180, itemStyle: { color: '#ff9800' }, z: 10 },
+    ],
+  }, true);
+
+  // 收益曲线
+  if (!btEqChart) btEqChart = echarts.init($('btEqChart'), 'dark');
+  btEqChart.setOption({
+    backgroundColor: 'transparent',
+    legend: { data: ['策略', '持有基准'], textStyle: { color: '#8b949e' }, top: 5 },
+    tooltip: { trigger: 'axis' },
+    grid: { left: 60, right: 20, top: 35, bottom: 30 },
+    xAxis: { type: 'category', data: dates, axisLabel: { color: '#8b949e' } },
+    yAxis: { type: 'value', axisLabel: { color: '#8b949e', formatter: '{value}%' }, splitLine: { lineStyle: { color: '#21262d' } } },
+    dataZoom: [{ type: 'inside', throttle: 50 }, { type: 'slider', height: 14, bottom: 5 }],
+    series: [
+      { name: '策略', type: 'line', data: stratRet, smooth: true,
+        lineStyle: { color: '#1e88e5', width: 2 }, symbol: 'none',
+        areaStyle: { color: 'rgba(30,136,229,0.2)' } },
+      { name: '持有基准', type: 'line', data: benchRet, smooth: true,
+        lineStyle: { color: '#8b949e', width: 1.5, type: 'dashed' }, symbol: 'none' },
+    ],
+  }, true);
+
+  notice('bt', `回测完成:策略 ${totalStrat.toFixed(2)}% vs 基准 ${totalBench.toFixed(2)}%`, 'success');
+}
+
+// ───────── 自选股 ─────────
+async function loadWatchlist() {
+  notice('wl', '加载自选股...', 'info');
+  try {
+    const data = await api('/market/watchlist/get');
+    const list = (data && (data.items || data.watchlist)) || (Array.isArray(data) ? data : []);
+    const box = $('watchlistContainer');
+    if (!list.length) {
+      box.innerHTML = '<div class="loading">还没有自选股,去 K 线 Tab 添加吧 ⭐</div>';
+      return;
+    }
+    box.innerHTML = list.map(s => {
+      const symbol = s.symbol || s.code;
+      const name = s.name || symbol;
+      return `<div class="watchlist-item" data-symbol="${symbol}" data-name="${name}">
+        <div class="info">
+          <div class="name">${name}</div>
+          <div class="code">${symbol} · ${s.market || 'CNStock'}</div>
+        </div>
+        <div class="remove" data-symbol="${symbol}">×</div>
+      </div>`;
+    }).join('');
+    box.querySelectorAll('.watchlist-item').forEach(el => {
+      el.addEventListener('click', e => {
+        if (e.target.classList.contains('remove')) return;
+        selectStock(el.dataset.symbol, el.dataset.name);
+      });
+    });
+    box.querySelectorAll('.remove').forEach(el => {
+      el.addEventListener('click', async e => {
+        e.stopPropagation();
+        if (!confirm('确定移除 ' + el.dataset.symbol + ' ?')) return;
+        try {
+          await api('/market/watchlist/remove', {
+            method: 'POST',
+            body: JSON.stringify({ market: 'CNStock', symbol: el.dataset.symbol }),
+          });
+          notice('wl', '已移除', 'success');
+          loadWatchlist();
+        } catch (e) { notice('wl', '移除失败: ' + e.message, 'error'); }
+      });
+    });
+    notice('wl', `已加载 ${list.length} 只自选股`, 'success');
+  } catch (e) {
+    notice('wl', '自选股加载失败: ' + e.message, 'error');
+  }
+}
+
+async function addCurrentToWatchlist() {
+  if (!currentSymbol) { notice('kline', '请先选股票', 'info'); return; }
+  try {
+    await api('/market/watchlist/add', {
+      method: 'POST',
+      body: JSON.stringify({ market: 'CNStock', symbol: currentSymbol, name: currentStockName }),
+    });
+    notice('kline', '✓ 已加入自选股', 'success');
+  } catch (e) { notice('kline', '加入失败: ' + e.message, 'error'); }
+}
+
+// ───────── 绑定 ─────────
+$('loadKlineBtn').addEventListener('click', loadKline);
+$('btBtn').addEventListener('click', runBacktest);
+$('goMoneyflowBtn').addEventListener('click', () => {
+  if (!currentSymbol) { notice('kline', '请先选股票', 'info'); return; }
+  switchTab('moneyflow');
+});
+$('addToWatchlistBtn').addEventListener('click', addCurrentToWatchlist);
+$('backToQDBtn').addEventListener('click', () => {
+  // 尝试跳到 QuantDinger (从 brand-config 拿 URL)
+  fetch(API_BASE + '/settings/brand-config')
+    .then(r => r.json())
+    .then(j => {
+      const k = j.data && j.data.kline_viewer;
+      // 优先回到 backend 根路径(QuantDinger 主页)
+      window.location.href = '/';
+    })
+    .catch(() => window.location.href = '/');
+});
+
+document.querySelectorAll('[data-tf]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('[data-tf]').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    currentTf = b.dataset.tf;
+    if (currentSymbol) loadKline();
+  });
+});
+
+// ───────── 响应式 ─────────
+window.addEventListener('resize', () => {
+  [klineChart, mfBarChart, mfLineChart, btKChart, btEqChart].forEach(c => c && c.resize());
+});
+
+// ───────── 启动 ─────────
+// 试着自动加载茅台(给个友好首屏)
+window.addEventListener('load', () => {
+  if (!currentSymbol) {
+    searchInput.placeholder = '🔍 试试 600519 / 茅台 / 平安银行 / 000001';
+  }
+});
+</script>
+
+</body>
+</html>
