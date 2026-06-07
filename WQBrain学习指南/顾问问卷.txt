@@ -1,0 +1,58 @@
+BRAIN Consultant 研究基础知识测试 ****本材料为保密资料，请勿分享给任何人，测试结果将直接决定您是否获得本次顾问审核资格，请严肃认真作答 **如没收到邮件邀请请勿填写此问卷，否则可能会导致之后无法填写
+
+*
+1.
+我了解：该测试的回答结果对我是否进入审核队列有重大影响
+(Required.)
+
+是, 我知道提交后无法再次修改
+
+否，请不要通过我的问卷，我放弃成为研究顾问的机会
+
+*
+2.
+User ID
+(Required.)
+
+
+*
+3.
+注册邮箱
+(Required.)
+
+
+*
+4.
+What is the difference between Matrix Data and Vector Data?
+(Required.)
+
+
+*
+5.
+什么是long count?什么是short count?如何使用long count和short count的信息探查数据字段的统计特征？请给出具体案例并阐述其数学原理?
+(Required.)
+
+
+*
+6.
+请查阅Learn页面的有关文档，结合文档谈谈您对中性化（neutralization）的理解及其计算过程。
+(Required.)
+
+
+*
+7.
+请查阅Learn的Alpha Example系列文章，选择其中一个进行复现，阐述您的理解，以及您做出的改进与提升，并提供具体思考过程和原因。
+(Required.)
+
+
+*
+8.
+请阐述如何通过 BRAIN 平台网页获取 Alpha ID？
+(Required.)
+
+
+*
+9.
+请详尽列举Genius计划各个级别的名称及其对应的季度奖金范围
+(Required.)
+
