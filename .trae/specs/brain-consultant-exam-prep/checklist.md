@@ -1,0 +1,22 @@
+# Checklist
+
+- [x] Matrix Data vs Vector Data 的官方定义已抓取
+- [x] Long/Short Count 的数学原理已整理
+- [x] Neutralization 的计算过程与 4 层级已整理
+- [x] Alpha Example 系列文章列表已抓取（至少 3 个）
+- [x] Feishu 基础测试速通教程要点已抓取
+- [x] Feishu Workday 教程要点已抓取
+- [x] Feishu 顾问协议签署教程要点已抓取
+- [x] IMA 知识库 5 个核心问答已整理
+- [x] 社区实战经验（CSDN/知乎/掘金）已搜索
+- [x] Q1-Q3（基础信息题）答题思路已整理
+- [x] Q4（Matrix vs Vector）核心概念 + 案例已整理
+- [x] Q5（Long/Short Count）数学原理 + 案例已整理
+- [x] Q6（Neutralization）计算过程 + 手算示例已整理
+- [x] Q7（Alpha Example）复现思路 + 改进方向已整理
+- [x] Q8（Alpha ID）完整操作步骤已整理
+- [x] Q9（Genius 计划）全等级 + 季度奖金已整理
+- [x] 每题包含"考点 / 概念 / 原理 / 案例 / 思路 / 避坑"6 段
+- [x] 文档语言通俗易懂，适合金融小白
+- [x] 文档**不包含可直接照抄的答案**（仅提供思路与原理）
+- [x] 最终文档输出到 `/workspace/WQBrain学习指南/问卷备考指南.md`
