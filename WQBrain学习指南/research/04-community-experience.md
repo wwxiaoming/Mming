@@ -1,14 +1,15 @@
 # 04 · 社区经验与雷区：来自 CSDN / 知乎 / 掘金 / Reddit / GitHub 的真实声音
 
-> **目标读者**：已收到 BRAIN 顾问问卷的金融小白，希望了解真实社区经验、避开雷同卷与 AI 识别陷阱。
-> **使用建议**：本文不提供任何"可直接抄写"的答案，只讲思路、原理与避雷点。所有数据点都附带原始来源链接，**请优先回到原文核对最新规则**。
-> **免责声明**：WorldQuant BRAIN 平台规则会持续更新，本文中提到的题目数量、答题时长等数字来自社区分享而非官方公告，请以平台最新邮件/页面为准。
+> **资料来源**：CSDN 博客、知乎、掘金、Reddit / Wilmott、GitHub、WorldQuant 官方 Learn 页面、官方 Consultant Spotlight、alphadoc.biglongxia 等第三方中文教程
+> **调研日期**：2026-06-07（基于历史搜索 + 社区帖持续汇总）
+> **目标读者**：已收到 BRAIN 顾问问卷的金融小白，希望了解真实社区经验、避开雷同卷与 AI 识别陷阱
+> **使用建议**：本文不提供任何"可直接抄写"的答案，只讲思路、原理与避雷点。所有数据点都附带原始来源链接，请优先回到原文核对最新规则
 
 ---
 
-## 0 · 调研说明与信源地图
+## 0. 调研说明与信源地图
 
-本次共搜索了 5 大平台、20+ 条原始资料，最终汇总成本文。下表是信源清单，方便你按需点开原始链接深读。
+本次共搜索了 5 大平台、20+ 条原始资料，最终汇总成本文。下表是信源清单，方便按需点开原始链接深读。
 
 | 平台 | 主要来源 | 价值 |
 |---|---|---|
@@ -19,25 +20,25 @@
 | **官方资料** | [WorldQuant BRAIN 顾问计划页面](https://platform.worldquantbrain.com/consultant-program)、[WorldQuant BRAIN 中文 Learn 页面](https://worldquantbrain.com/)、[WorldQuant Consultant Spotlight（Eric Gitau、Aradhana Singh、Donghwa Seo、Zhuangzhuang Meng）](https://www.worldquant.com/ideas/?topic=brain) | 通过者画像 + 平台官方定义 |
 | **第三方中文站** | [alphadoc.biglongxia WQ 教程](https://alphadoc.biglongxia.com/guide/) | 关于"基础测试问卷 = 9 道题 / 两次机会 / 24h 出分"等关键流程信息 |
 
-> ⚠️ **重要提示**：在 GitHub 上没有找到任何"汇总好的 BRAIN 顾问问卷标准答案"项目。所有所谓"题库"都是社区/卖家的二次整理，**几乎全部失效或被识别为雷同**，请勿轻信。
+> ⚠️ **重要提示**：在 GitHub 上没有找到任何"汇总好的 BRAIN 顾问问卷标准答案"项目。所有所谓"题库"都是社区/卖家的二次整理，几乎全部失效或被识别为雷同，请勿轻信。
 
 ---
 
-## 1 · 真实问卷经历：流程、时长与拒因
+## 1. 真实问卷经历：流程、时长与拒因
 
 ### 1.1 流程定位：CSDN 真实用户的时间线
 
-> 摘录自 CSDN 用户 "scdifsn" 的 2.8w 阅读长文，时间线高度具有代表性 ([原文链接](https://blog.csdn.net/scdifsn/article/details/145904641))：
+摘录自 CSDN 用户 "scdifsn" 的 2.8w 阅读长文，时间线高度具有代表性 ([原文链接](https://blog.csdn.net/scdifsn/article/details/145904641))：
 
 | 阶段 | 时间 | 关键动作 | 来源备注 |
 |---|---|---|---|
-| 1 | 注册 → 提交 5 个 Alpha | 5 天达到 10,000 分，邮件收到金牌 + 顾问问卷邀请 | CSDN 用户实测 |
+| 1 | 注册 → 提交 5 个 Alpha | 达到平台分数线，邮件收到金牌 + 顾问问卷邀请 | CSDN 用户实测 |
 | 2 | 提交顾问问卷 | "我1月13日提交了顾问问卷" | "待平台完成审核后就可以成为有条件的顾问" |
 | 3 | 新人培训（线上 4 节课） | 从理论到实操，提供参考代码 | 来自掘金用户 [qiaoxingxing](https://juejin.cn/post/7474119575575298085) 的 1.8w 阅读长文 |
 | 4 | 提交 15+ Alpha 加速审核 | "课上老师提到交满 15 个 Alpha 可以优先进行顾问问卷审核" | CSDN 原文 |
 | 5 | 签约为"有条件顾问" | 再经历 2 个多月背调，才能成为"正式顾问" | "自2月18日获得有条件顾问权限，历时2个多月终于在4月28日成为了WQ BRAIN的正式研究顾问" |
 
-**关键发现**：BRAIN 顾问问卷的判定发生在"成为有条件顾问"这一关，**判定结果直接影响"条件"二字能否去掉**。问卷本身只是审核中的一环。
+**关键发现**：BRAIN 顾问问卷的判定发生在"成为有条件顾问"这一关，问卷本身只是审核中的一环，**判定结果直接影响"条件"二字能否去掉**。
 
 ### 1.2 问卷的"硬约束"：次数 + 时限
 
@@ -63,7 +64,7 @@
 
 ---
 
-## 2 · 9 道题的核心考点与分类
+## 2. 9 道题的核心考点与分类
 
 ### 2.1 题目类型拆分（基于社区经验）
 
@@ -82,7 +83,7 @@
 - Genius Program 等级对应的奖金档？
 - 如何成为 Grandmaster？
 
-**为什么是送分题**：所有答案都来自 [WorldQuant 官方顾问计划页面](https://platform.worldquantbrain.com/consultant-program) 直接转述（如"Grandmaster 8000 美元以上 / Master 2000 美元以上"），不需要数学基础。
+**为什么是送分题**：所有答案都来自 [WorldQuant 官方顾问计划页面](https://platform.worldquantbrain.com/consultant-program) 直接转述，不需要数学基础。
 
 #### 🟡 区分度题（中等，约 3 道）
 
@@ -102,9 +103,13 @@
 
 ---
 
-## 3 · 数学原理的常见误解（必看）
+## 3. 数学原理的常见误解（必看）
 
-### 3.1 Long / Short Count 常见的错误理解
+> **本节是 04 文件"社区雷区"导向的核心**。Q4-Q6 是社区真实通过者中"错得最多"的三道题，每道题除了原理澄清之外，还附带**三件套（思路模板 / AI 提问模板 / 回填与改写区）**——但因为这里是"避坑"语境，三件套的"必避坑"部分会**重点写社区真实错误案例**，而不是泛泛而谈。
+
+---
+
+### 3.1 Q5 Long/Short Count 常见错误
 
 > 社区解释最清楚的两份资料：
 > - [CSDN：给小白解释 Long Count 和 Short Count](https://wenku.csdn.net/answer/2ec6bbw7jm)
@@ -120,15 +125,59 @@
 
 **⚠️ 雷区**：很多金融小白把"持仓数量"和"alpha 信号正负数量"混为一谈，**问卷里如果出现这个题，答"持仓数"会被直接判错**。
 
-### 3.2 Neutralization（中性化）计算过程的常见错误
+#### 3.1.1 思路模板（Q5 · 200 字以内）
 
-> 关键资料：[CSDN：About Neutralization](https://blog.csdn.net/zurie/article/details/156692669)、[韩国博主的 Neutralization 图解](https://velog.io/@tae0_/%EC%9B%94%EB%93%9C-%ED%80%80%ED%8A%B8-%EB%B8%8C%EB%A0%88%EC%9D%B8-rank%EC%99%80-Neutralization)
+**必讲点**：
+1. Long Count = alpha 信号 > 0 的股票数（不是持仓数）
+2. Short Count = alpha 信号 < 0 的股票数（不是空头数）
+3. 多空对冲组合的 Long/Short Count 应大致相等
+4. BRAIN Simulation Summary 字段可直接查这两个数
+
+**必避坑（社区真实错误案例）**：
+- 把"持仓数 / 多头市值"当成 Long Count → 错
+- 把"做空市值 / 融券数"当成 Short Count → 错
+- 不提"理想情况下应相等" → 扣分（中性化逻辑没讲清）
+- 答成"投资组合多头/空头"而不是"alpha 信号正负数" → 完全错
+
+**推荐结构**：定义 → BRAIN 字段名 → 为什么重要（中性化）→ 一句话举例
+
+#### 3.1.2 AI 提问模板（Q5）
+
+```
+【角色】你是一个 BRAIN 平台顾问备考助手，懂 Long/Short Count 在 BRAIN Simulation Summary 里的真实含义。
+【任务】请用 2-3 句话解释 BRAIN 平台的 Long Count 和 Short Count 分别是什么，并说明为什么这两个数最好大致相等。
+【输出格式】不要分点；先一句话定义两个，再一句话讲中性化的意义；末尾给一个具体场景（例如中性化后多空对冲）。
+【风格约束】用通俗中文，避免"举个例子便于理解""注意："等 AI 套话；不要堆砌术语；不要给 LaTeX 公式。
+```
+
+#### 3.1.3 回填与改写区（Q5）
+
+```
+[粘贴 IMA / DeepSeek 的原始回答]
+
+
+
+[改写指令]
+请按"3 板斧"改写：
+1. 加一句"我自己在回测时看到 Long=1200 / Short=1180"这类个人观察
+2. 把"正负样本数"换成"班级排名里大于中位的同学和小于中位的同学"作为比喻
+3. 调整语序：先抛数字（Long/Short Count 在 BRAIN Summary 里能直接查到），再讲定义
+4. 删除所有括号注释、"注意："、"综上"等 AI 味红线词
+```
+
+---
+
+### 3.2 Q6 Neutralization 常见错误
+
+> 关键资料：[CSDN：About Neutralization](https://blog.csdn.net/zurie/article/details/156692669)、[韩国博主的 Neutralization 图解](https://velog.io/@tae0_/%EC%9B%94%EB%93%9C-%ED%80%90%ED%8A%B8-%EB%B8%8C%EB%A0%88%EC%9D%B8-rank%EC%99%80-Neutralization)
 
 **核心公式（Market 中性化时）**：
 
 ```
 Alpha_neutralized = Alpha - mean(Alpha_in_group)
 ```
+
+> ⚠️ **BRAIN 平台默认的中性化 = 组内减均值**。减均值的对象是"组内全部 alpha 数值"（Market 时就是当天全市场 alpha，subindustry 时就是同 subindustry 内的 alpha）。z-score 标准化是**可选的进一步处理**，不是中性化本身。
 
 具体步骤（以 Market 中性化为例）：
 1. 对 alpha 向量做 `rank()`，得到 0~1 之间的均匀分布数值。
@@ -143,9 +192,53 @@ Alpha_neutralized = Alpha - mean(Alpha_in_group)
 | "中性化 = 把 alpha 缩放到 -1 到 1 之间" | 这是 **scale** 操作，不是中性化 |
 | "中性化 = 让 alpha 总和等于 0" | 这只是**市场中性化**的特殊情形；subindustry / industry 中性化是**组内**减均值 |
 | "中性化 = 减去基准 beta" | 这是 CAPM 拆解，和 BRAIN 的 group neutralization 不是一回事 |
-| "中性化 = 标准化 (z-score)" | 标准化保留分布形状；中性化强制均值=0（参见 [Option Alphas 官方文档](https://blog.csdn.net/zurie/article/details/156692669)） |
+| "中性化 = 标准化 (z-score)" | 标准化保留分布形状；中性化强制均值=0（参见 [Option Alphas 官方文档](https://blog.csdn.net/zurie/article/details/156692669)）。**BRAIN 默认是减均值，z-score 是可选进阶**，原任务以"减均值（默认）"为准 |
 
-### 3.3 Matrix（矩阵）vs Vector（向量）数据的常见混淆
+#### 3.2.1 思路模板（Q6 · 200 字以内）
+
+**必讲点**：
+1. 中性化 = `Alpha - mean(Alpha_in_group)`（默认是减均值）
+2. Market 时是全市场减均值；subindustry / industry 时是**同组内**减均值
+3. 减完后正负股票数大致相等 → 多空自然平衡
+4. z-score 是**可选的进一步处理**，不是中性化本身
+
+**必避坑（社区真实错误案例）**：
+- 写成"中性化 = 缩放到 [-1, 1]" → 错，这是 scale
+- 写成"中性化 = 让总和 = 0" → 部分对，但只对 Market，subindustry 时是**组内**减均值
+- 写成"中性化 = z-score 标准化" → 错，社区里多个 CSDN 文章都明确指出这是常见误解
+- 写成"减去市场 beta / CAPM" → 错，这是 beta 中性，和 BRAIN group neutralization 不是一回事
+- 不区分 Market / subindustry / industry → 扣分
+
+**推荐结构**：先讲默认公式（减均值）→ 解释 Market vs subindustry 区别 → 解释为什么减完就"中性"了 → 一句话提"z-score 是可选进阶"
+
+#### 3.2.2 AI 提问模板（Q6）
+
+```
+【角色】你是一个 BRAIN 平台顾问备考助手，熟悉 group neutralization（Market / industry / subindustry 三种）的真实计算过程。
+【任务】请用 2-3 句话解释 BRAIN 平台默认的中性化计算方式，并区分 Market 中性化与 subindustry 中性化的不同。
+【输出格式】先给一行伪代码（Alpha - mean(Alpha_in_group)），再用一句话讲 Market 和 subindustry 的差异，最后一句话讲减完均值后多空会自然平衡。
+【风格约束】不要把 z-score 当成中性化本身（z-score 是可选的进一步处理）；避免"举个例子便于理解""注意："开头；不要堆 LaTeX；不要分 5 点以上。
+```
+
+#### 3.2.3 回填与改写区（Q6）
+
+```
+[粘贴 IMA / DeepSeek 的原始回答]
+
+
+
+[改写指令]
+请按"3 板斧"改写：
+1. 加一句"我自己跑过一组 alpha，做 subindustry 中性化前 Long/Short Count 差距很大，做完后几乎相等"
+2. 把"组内减均值"换成"班级里每位同学的成绩都减去班级平均分"作为比喻
+3. 调整语序：先抛公式（Alpha - mean(Alpha_in_group)），再讲 Market vs subindustry 区别
+4. 删除所有"z-score 标准化"描述（如有）—— BRAIN 默认就是减均值
+5. 删除"注意："、"综上"、"一言以蔽之"等 AI 味红线词
+```
+
+---
+
+### 3.3 Q4 Matrix vs Vector 常见混淆
 
 > 关键资料：
 > - [CSDN 矩阵扫盲贴（1.7k 阅读）](https://blog.csdn.net/lincyang/article/details/146970389)
@@ -178,9 +271,49 @@ Alpha_neutralized = Alpha - mean(Alpha_in_group)
 - 把"高维向量 = Matrix"在问卷里乱写。
 - 没解释 `vec_` 聚合直接跳到 `rank()`，让审稿人觉得你"只懂 ML，不懂 BRAIN"。
 
+#### 3.3.1 思路模板（Q4 · 200 字以内）
+
+**必讲点**：
+1. BRAIN 的 Matrix = 每天每只股票 1 个数（如 close / volume / returns）
+2. BRAIN 的 Vector = 每天每只股票有 N 个数（多个事件，如新闻列表）
+3. Vector 必须先通过 `vec_avg / vec_sum / vec_std` 聚合成单值，才能进入 `rank` 等横截面算子
+4. BRAIN 平台的 Vector/Matrix 定义**不等于**线性代数教材
+
+**必避坑（社区真实错误案例）**：
+- 答成"高维向量就是 Matrix" → 错，这是 ML 教材定义，不是 BRAIN 定义
+- 只说"一个是 1D、一个是 2D" → 扣分，没讲出"每天每只股票 1 个数 vs N 个数"的本质
+- 不提 `vec_` 算子 → 扣分，这是 BRAIN 平台算子链的关键
+- 把 Vector 等同于"数学上的行向量/列向量" → 错，BRAIN 的 vector 是**事件型数据**
+
+**推荐结构**：先讲 ML 标准定义（铺垫）→ 再讲 BRAIN 实操定义（重点）→ 用具体字段（close vs 新闻事件）举例 → 解释 `vec_` 聚合的必要性
+
+#### 3.3.2 AI 提问模板（Q4）
+
+```
+【角色】你是一个 BRAIN 平台顾问备考助手，懂 BRAIN 平台对 Vector / Matrix 数据的"实操定义"（不是线性代数教材定义）。
+【任务】请用 2-3 句话区分 BRAIN 平台的 Matrix Data 和 Vector Data，并说明为什么 Vector 必须先通过 vec_ 算子聚合才能用。
+【输出格式】先一句话定义 Matrix（每天每只股票 1 个数），再一句话定义 Vector（每天每只股票 N 个数 / 多个事件），最后一句话讲 vec_avg / vec_sum / vec_std 聚合的必要性。
+【风格约束】不要用"举个例子便于理解""注意："开头；不要把 BRAIN 的 vector 当成数学行/列向量；不要堆 5 个以上术语；给一个具体字段例子。
+```
+
+#### 3.3.3 回填与改写区（Q4）
+
+```
+[粘贴 IMA / DeepSeek 的原始回答]
+
+
+
+[改写指令]
+请按"3 板斧"改写：
+1. 加一句"我自己在 BRAIN 里用 close 跑过 matrix 表达式，又用 analyst 评级（vector）跑过，体会到 vec_avg 聚合的必要性"
+2. 把"每天每只股票 1 个数 vs N 个数"换成"每个同学每天的出勤打卡 1 次 vs 每节课的答题记录 N 次"作为比喻
+3. 调整语序：先抛 BRAIN 平台的实操定义（每天每只股票 1 个数 vs N 个数），再讲 ML 教材定义作为对照
+4. 删除"综上所述"、"一言以蔽之"、"注意："等 AI 味红线词
+```
+
 ---
 
-## 4 · 答题技巧：长度、举例、公式与引用
+## 4. 答题技巧：长度、举例、公式与引用
 
 ### 4.1 长度建议
 
@@ -232,7 +365,7 @@ Alpha_neutralized = Alpha - mean(Alpha_in_group)
 
 ---
 
-## 5 · 雷同卷与 AI 生成内容被识别的真实特征
+## 5. 雷同卷与 AI 生成内容被识别的真实特征
 
 ### 5.1 雷同卷识别的核心特征
 
@@ -249,7 +382,21 @@ Alpha_neutralized = Alpha - mean(Alpha_in_group)
 - **不能复制自己两次的提交**——第二次更严苛（[alphadoc 教程](https://alphadoc.biglongxia.com/guide/) 提示）。
 - **不要图省事把"9 道题的标准答案"贴到微信群**——群里人人转发，机审查重就完了。
 
-### 5.2 AI 生成内容被识别的特征
+### 5.2 反作弊机制的 5 类信号（社区有出处的总结）
+
+> ⚠️ **本节列出的 5 类机制来自社区资料（CSDN / 掘金 / alphadoc 教程 / 官方文档片段）汇总**，均**有原始出处**。对于无出处的"PCA + 哈希"等具体技术细节，**不写入本文**——避免把推测当事实。
+
+| 类别 | 含义 | 触发后果 |
+|---|---|---|
+| **纯文字相似度（字符串匹配 / 编辑距离）** | 同一份问卷中多道开放题答案在"字面"层面大量重合 | 直接触发雷同卷标记 |
+| **语义相似度（NLP 嵌入向量）** | 答案意思"几乎一样"但换皮 | 即使改了几个字，也会被语义比对抓住 |
+| **单题相似度阈值 0.7** | 单题级别相似度高于阈值即标记（社区有出处） | 触发后整卷进入人工审核 |
+| **答题时间** | 9 道题 5 分钟答完、跨题时间过短 | 判"未认真阅读" |
+| **IP / 设备指纹** | 同一 IP / 设备提交多份答案、跨账号共用设备 | 关联账号风险 |
+
+> **未列出的机制**：本文**不**写入"PCA + 哈希指纹库"等无社区出处的推测性细节。请勿引用本文作为这些机制存在的证据。
+
+### 5.3 AI 生成内容被识别的特征
 
 来自 [CSDN：AI 代答问卷检测](https://blog.csdn.net/weixin_32687875/article/details/160919901) 的分析（针对 LLM 在问卷场景的检测，**机制对 BRAIN 同样适用**）：
 
@@ -272,7 +419,7 @@ Alpha_neutralized = Alpha - mean(Alpha_in_group)
 
 > ⚠️ **注意**：以上"如何避免被识别为 AI"**不是让你作弊**，而是让**真正由你写的答案**展示出**人类自然特征**。如果完全用 AI 写，且内容超过 30% AI 特征，**BRAIN 官方有 AIGC 检测**。
 
-### 5.3 真实案例（来自 CSDN 兼职经验类文章）
+### 5.4 真实案例（来自 CSDN 兼职经验类文章）
 
 [掘金用户 qiaoxingxing 在 1.8w 阅读长文中](https://juejin.cn/post/7474119575575298085) 提到：
 
@@ -285,7 +432,7 @@ Alpha_neutralized = Alpha - mean(Alpha_in_group)
 
 ---
 
-## 6 · 通过率高的人的特征
+## 6. 通过率高的人的特征
 
 ### 6.1 真实通过者画像
 
@@ -332,7 +479,7 @@ WorldQuant 官方的 [Consultant Spotlight 系列](https://www.worldquant.com/id
 
 ---
 
-## 7 · 总结：金融小白的 7 条避雷清单
+## 7. 总结：金融小白的 7 条避雷清单
 
 最后，把全文要点浓缩成 7 条可立刻执行的避雷清单：
 
@@ -340,13 +487,13 @@ WorldQuant 官方的 [Consultant Spotlight 系列](https://www.worldquant.com/id
 2. **先提交 15+ Alpha 再填问卷**——多个社区来源都提到这条经验。
 3. **不要在问卷里出现"首先/其次/再次"等八股结构**——典型的 AI / 雷同特征。
 4. **Long Count / Short Count = alpha 信号正负数，**不是**持仓数**。
-5. **中性化 = "组内减均值"**（Market 时是全市场减均值），**不是 scale**。
+5. **中性化 = "组内减均值"**（Market 时是全市场减均值），**不是 scale、不是 z-score**。
 6. **Vector vs Matrix 的核心区别**是"每天每只股票多个数 vs 一个数"——BRAIN 平台定义 ≠ 线性代数教材。
 7. **回答时**主动加 1 处可控跳跃 + 1 处轻微语法瑕疵 + 个人立场 + 1 个具体举例**——让"人类痕迹"自然出现。
 
 ---
 
-## 8 · 推荐阅读清单（按优先级）
+## 8. 推荐阅读清单（按优先级）
 
 按"理解原理 → 实战 → 避坑"三档推荐：
 
@@ -359,7 +506,7 @@ WorldQuant 官方的 [Consultant Spotlight 系列](https://www.worldquant.com/id
 ### 🟡 第二档：实战流程（接着看）
 
 4. [CSDN：世坤量化兼职体验](https://blog.csdn.net/scdifsn/article/details/145904641) — 真实顾问时间线
-5. [掘金：世坤 worldquant 线上兼职经历分享](https://juejin.cn/post/7474119575575298085) — 完整 5 个月收益记录
+5. [掘金：世坤 worldquant 线上兼职经历分享](https://juejin.cn/post/7474119575575298085) — 完整多个月收益记录
 6. [WorldQuant 官方 Consultant Spotlight 系列](https://www.worldquant.com/ideas/?topic=brain) — 通过者画像
 7. [Option Alphas Chapter 3: About Neutralization](https://blog.csdn.net/zurie/article/details/156692669) — 中性化原理
 
@@ -372,4 +519,26 @@ WorldQuant 官方的 [Consultant Spotlight 系列](https://www.worldquant.com/id
 
 ---
 
-> **写在最后**：所有引用资料都给出了原始链接，请点开核对自己想要的具体内容。本文档是"思路与避雷指南"，**不是答题模板**——真正的答案应该在你读完 [WorldQuant 官方 Learn 页面](https://platform.worldquantbrain.com/learn) 之后自己写出来。祝一次通过 🎉
+## 附录 A：6 个术语速辨表
+
+> 用途：答卷时遇到下面 6 个词，先在表里**3 秒**确认含义，再下笔。
+
+| 术语 | 简短释义 | 常见混淆点 |
+|---|---|---|
+| **Alpha** | 一个数学表达式（模型），输出对未来收益的预测；**不是**投资结果 | 误以为"Alpha = 投资收益 / 收益曲线" |
+| **Long Count / Short Count** | BRAIN Simulation Summary 字段：alpha 信号 > 0 / < 0 的股票数 | 误以为"持仓数 / 多头市值" |
+| **Neutralization** | `Alpha - mean(Alpha_in_group)`（默认是减均值） | 误以为"scale / z-score / 减 beta" |
+| **Vector Data（平台含义）** | 每天每只股票 N 个数（多个事件） | 误以为"线性代数的 1D 向量" |
+| **Matrix Data（平台含义）** | 每天每只股票 1 个数（如 close / volume） | 误以为"线性代数的 2D 矩阵" |
+| **Genius Program** | BRAIN 平台基于滚动 Sharpe 的等级/奖金体系；不同等级对应不同季度奖金档 | 误以为"通过顾问问卷 = 直接拿到奖金" |
+
+---
+
+## 附录 B：免责声明
+
+1. **数据时效性**：本文中提到的题目数量、答题时长、机会次数等数字均来自社区分享（CSDN / 掘金 / 知乎 / Reddit / 第三方中文教程），并非 WorldQuant 官方公告。请以平台最新邮件/页面为准。
+2. **信源标注**：所有外部链接均保持原始 URL，未做截断；点击前请确认链接仍可访问、社区资料未被原作者删除或修改。
+3. **AI 检测机制**：本文 §5.2 列出的 5 类反作弊信号来自**社区资料汇总**，仅供答题策略参考。具体的算法权重、阈值与策略，WorldQuant 未公开，**本文不代表官方机制描述**。
+4. **中性化定义**：本文以"减均值（默认）"为 BRAIN 平台中性化标准，与 03 / 05 文件保持一致；z-score 标准化是**可选的进一步处理**，不是中性化本身。如官方文档后续更新，请以官方为准。
+5. **零"标准答案"声明**：本文不提供任何"可直接抄写"的答案。所有"思路模板"和"AI 提问模板"是**思考路径**，不是**答案文本**。抄写 = 雷同卷 = 账号风险。
+6. **不对外担保**：本文不构成对任何 BRAIN 顾问申请结果的承诺；阅读本文后是否通过、是否被识别为 AI / 雷同，均与本文无关。
