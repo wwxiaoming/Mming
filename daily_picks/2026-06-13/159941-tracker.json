@@ -1,0 +1,34 @@
+{
+  "date": "2026-06-13",
+  "code": "159941",
+  "name": "纳指ETF广发",
+  "quote": {
+    "price": 1.598,
+    "open": 1.635,
+    "high": 1.636,
+    "low": 1.597,
+    "last_close": 1.576,
+    "change_amt": 0.022,
+    "change_pct": 1.4,
+    "turnover_pct": 7.01,
+    "amount_wan": 255272.0,
+    "pe_ttm": 0,
+    "pb": 0.0,
+    "mcap_yi": 359.06
+  },
+  "holdings": {
+    "shares": 700,
+    "cost": 1.55,
+    "market_value": 1118.6,
+    "cost_total": 1085.0,
+    "daily_pnl": 15.4,
+    "daily_pnl_pct": 1.4,
+    "cum_pnl": 33.6,
+    "cum_pnl_pct": 3.1
+  },
+  "us_overnight": {
+    "NDX_change_pct": 0,
+    "SOX_change_pct": 0,
+    "narrative": "美股纳指隔夜 +0.00%,费半 +0.00%;今日 ETF 跟涨/跌 +1.40%,关联度观察中"
+  }
+}
