@@ -1,7 +1,6 @@
 ---
 name: longbridge-intel
-description: |
-  市场情报：策略筛选器、热度排行、异动+新闻关联、行情异常、指数/ETF 成分股、早晨简报、自选股催化剂监控、事件驱动策略、ETF 资金流、板块轮动、市场微观结构、产业链分析、行业概览、ARK 式颠覆式创新分析。触发词：筛选、策略筛选、排行、热度、异动、成分股、晨报、早报、催化剂、事件驱动、ETF资金流、板块轮动、产业链、行业概览、ARK、颠覆式创新、screener、rank、anomaly、constituent、morning brief、catalyst、event strategy、ETF flow、sector rotation、supply chain。
+description: "市场情报：策略筛选器、热度排行、异动+新闻关联、行情异常、指数/ETF 成分股、早晨简报、自选股催化剂监控、事件驱动策略、ETF 资金流、板块轮动、市场微观结构、产业链分析、行业概览、ARK 式颠覆式创新分析。触发词：筛选、策略筛选、排行、热度、异动、成分股、晨报、早报、催化剂、事件驱动、ETF资金流、板块轮动、产业链、行业概览、ARK、颠覆式创新、screener、rank、anomaly、constituent、morning brief、catalyst、event strategy、ETF flow、sector rotation、supply chain。"
 license: MIT
 metadata:
   author: longbridge

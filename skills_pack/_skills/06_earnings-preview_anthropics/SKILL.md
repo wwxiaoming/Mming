@@ -1,7 +1,6 @@
 ---
 name: earnings-preview
-description: |
-  构建财报前分析：估值模型、情景框架、关键观察指标。在公司季报披露前用于：准备头寸备忘、搭建多/空情景、识别股价驱动因素。触发词：earnings preview、what to watch for [公司] earnings、pre-earnings、earnings setup、preview Q[X] for [公司]。
+description: "构建财报前分析：估值模型、情景框架、关键观察指标。在公司季报披露前用于：准备头寸备忘、搭建多/空情景、识别股价驱动因素。触发词：earnings preview、what to watch for [公司] earnings、pre-earnings、earnings setup、preview Q[X] for [公司]。"
 
 ---
 

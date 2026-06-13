@@ -1,7 +1,6 @@
 ---
 name: macro-calendar
-description: |
-  跟踪影响加密货币的宏观经济事件、美联储利率、CPI、经济指标。
+description: "跟踪影响加密货币的宏观经济事件、美联储利率、CPI、经济指标。"
 
 metadata: { "cryptoclaw": { "emoji": "📅", "always": true } }
 ---

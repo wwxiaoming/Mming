@@ -1,7 +1,6 @@
 ---
 name: longbridge-value-investing
-description: |
-  价值投资分析，基于格雷厄姆（NCAV/净流动资产/防御型投资者）与巴菲特（经济护城河/ROE/FCF）方法论。覆盖单股诊断与批量筛选，兼容格雷厄姆烟蒂与巴菲特优质复利两类标准，评分前先做跨报表对账。数据源优先 Longbridge CLI，失败回退 MCP，仍有缺口时方用 WebSearch。触发词：格雷厄姆、巴菲特、捡烟蒂、烟蒂股、NCAV、净流动资产、护城河、价值投资、安全边际、深度价值、Graham、Buffett、cigar butt、net-net、NCAV screen、moat、value investing、margin of safety、deep value、quality compounder。
+description: "价值投资分析，基于格雷厄姆（NCAV/净流动资产/防御型投资者）与巴菲特（经济护城河/ROE/FCF）方法论。覆盖单股诊断与批量筛选，兼容格雷厄姆烟蒂与巴菲特优质复利两类标准，评分前先做跨报表对账。数据源优先 Longbridge CLI，失败回退 MCP，仍有缺口时方用 WebSearch。触发词：格雷厄姆、巴菲特、捡烟蒂、烟蒂股、NCAV、净流动资产、护城河、价值投资、安全边际、深度价值、Graham、Buffett、cigar butt、net-net、NCAV screen、moat、value investing、margin of safety、deep value、quality compounder。"
 license: MIT
 metadata:
   author: longbridge

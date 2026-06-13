@@ -1,7 +1,6 @@
 ---
 name: longbridge-content
-description: |
-  最新新闻文章、监管申报、上市公司社区讨论话题、SEC EDGAR 申报分析（10-K/10-Q/8-K/委托书/Form 4），通过 Longbridge。触发词：新闻、公告、资讯、话题、社区讨论、SEC、10-K、10-Q、8-K、Form 4、news、filing、announcement、community、SEC filing、annual report、quarterly report、proxy、insider filing、监管规则、涨跌停、T+1、熔断、circuit breaker、保证金。
+description: "最新新闻文章、监管申报、上市公司社区讨论话题、SEC EDGAR 申报分析（10-K/10-Q/8-K/委托书/Form 4），通过 Longbridge。触发词：新闻、公告、资讯、话题、社区讨论、SEC、10-K、10-Q、8-K、Form 4、news、filing、announcement、community、SEC filing、annual report、quarterly report、proxy、insider filing、监管规则、涨跌停、T+1、熔断、circuit breaker、保证金。"
 license: MIT
 metadata:
   author: longbridge

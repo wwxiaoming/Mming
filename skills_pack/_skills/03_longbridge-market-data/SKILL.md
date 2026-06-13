@@ -1,7 +1,6 @@
 ---
 name: longbridge-market-data
-description: |
-  实时行情、K线、盘口、逐笔成交、盘中资金流、市场情绪温度、交易时段、证券列表、汇率、IPO 日历（港/美/A/新），基于 Longbridge。也覆盖 ADR 溢价与外汇套息框架。触发词：股价、行情、K线、走势、盘口、资金流、市场温度、汇率、IPO、打新、隔夜股、ADR溢价、外汇套息、现在多少钱、stock price、quote、kline、chart、depth、orderbook、capital flow、market sentiment、exchange rate、IPO calendar、security list、ADR premium、fx carry、market open、trading hours、开市、溢价。
+description: "实时行情、K线、盘口、逐笔成交、盘中资金流、市场情绪温度、交易时段、证券列表、汇率、IPO 日历（港/美/A/新），基于 Longbridge。也覆盖 ADR 溢价与外汇套息框架。触发词：股价、行情、K线、走势、盘口、资金流、市场温度、汇率、IPO、打新、隔夜股、ADR溢价、外汇套息、现在多少钱、stock price、quote、kline、chart、depth、orderbook、capital flow、market sentiment、exchange rate、IPO calendar、security list、ADR premium、fx carry、market open、trading hours、开市、溢价。"
 license: MIT
 metadata:
   author: longbridge

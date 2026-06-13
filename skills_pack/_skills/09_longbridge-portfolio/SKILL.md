@@ -1,7 +1,6 @@
 ---
 name: longbridge-portfolio
-description: |
-  账户资产、股票/基金持仓、盈亏、现金流记录、对账单、保证金率、购买力估算、订单管理、定投（DCA），通过 Longbridge（多数需 Trade 权限）。框架：组合诊断、再平衡、资产配置、风险分析（VaR/CVaR）、绩效归因、税损收割。触发词：持仓、账户、盈亏、资产、对账单、下单、买入、卖出、撤单、定投、组合诊断、再平衡、资产配置、风险分析、绩效归因、税损收割、positions、portfolio、P&L、order、buy、sell、DCA、statement。
+description: "账户资产、股票/基金持仓、盈亏、现金流记录、对账单、保证金率、购买力估算、订单管理、定投（DCA），通过 Longbridge（多数需 Trade 权限）。框架：组合诊断、再平衡、资产配置、风险分析（VaR/CVaR）、绩效归因、税损收割。触发词：持仓、账户、盈亏、资产、对账单、下单、买入、卖出、撤单、定投、组合诊断、再平衡、资产配置、风险分析、绩效归因、税损收割、positions、portfolio、P&L、order、buy、sell、DCA、statement。"
 license: MIT
 metadata:
   author: longbridge

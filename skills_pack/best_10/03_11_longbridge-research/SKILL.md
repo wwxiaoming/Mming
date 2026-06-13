@@ -1,7 +1,6 @@
 ---
 name: longbridge-research
-description: |
-  机构评级、一致目标价、EPS/营收预测、财报日历、股东数据、基金持仓、内部人交易（SEC Form 4）、空头持仓、行业排名、同业组分析，通过 Longbridge。框架：投资提案、首次覆盖、股票研究、竞争分析、财务规划、DeFi/链上分析。触发词：机构评级、目标价、一致预期、EPS预测、内部人交易、空头、行业排名、投资提案、首次覆盖、竞争格局、财务规划、DeFi收益、链上数据、analyst rating、price target、consensus、insider trades、short interest、coverage initiation、DeFi yield、on-chain、财报日历、FOMC、非农。
+description: "机构评级、一致目标价、EPS/营收预测、财报日历、股东数据、基金持仓、内部人交易（SEC Form 4）、空头持仓、行业排名、同业组分析，通过 Longbridge。框架：投资提案、首次覆盖、股票研究、竞争分析、财务规划、DeFi/链上分析。触发词：机构评级、目标价、一致预期、EPS预测、内部人交易、空头、行业排名、投资提案、首次覆盖、竞争格局、财务规划、DeFi收益、链上数据、analyst rating、price target、consensus、insider trades、short interest、coverage initiation、DeFi yield、on-chain、财报日历、FOMC、非农。"
 license: MIT
 metadata:
   author: longbridge

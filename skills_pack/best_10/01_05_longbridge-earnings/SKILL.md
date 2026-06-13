@@ -1,8 +1,7 @@
 ---
 name: longbridge-earnings
-description: |
-  财报分析——业绩前瞻 + 业绩回顾。前瞻：复盘上季度指引、追踪近期事件、梳理上次电话会 Q&A，并给出本期'关注要点'框架。回顾分两层：快速聊天摘要卡（默认）与完整 Markdown 研究报告（按需生成）。覆盖 beat/miss、分部、利润率、指引、预测、估值，适用美/港/A 股。触发词：earnings update、quarterly results、Q1/Q2/Q3/Q4 results、earnings report、post-earnings analysis、beat/miss、guidance update、earnings preview、pre-earnings、what to watch this earnings、before earnings、财报分析、业绩更新、季度业绩、季报、年报、盈利分析、财报点评、财报前瞻、业绩前瞻、财报预览。
-  "年報", "財報點評", "財報前瞻", "業績前瞻", "財報預覽".
+description: "财报分析——业绩前瞻 + 业绩回顾。前瞻：复盘上季度指引、追踪近期事件、梳理上次电话会 Q&A，并给出本期'关注要点'框架。回顾分两层：快速聊天摘要卡（默认）与完整 Markdown 研究报告（按需生成）。覆盖 beat/miss、分部、利润率、指引、预测、估值，适用美/港/A 股。响应语言匹配用户输入（简中/繁中/英文）。触发词：earnings update、quarterly results、Q1/Q2/Q3/Q4 results、earnings report、post-earnings analysis、beat/miss、guidance update、earnings preview、pre-earnings、what to watch this earnings、before earnings、财报分析、业绩更新、季度业绩、季报、年报、盈利分析、财报点评、财报前瞻、业绩前瞻、财报预览。"
+
 ---
 
 # Earnings Update Skill

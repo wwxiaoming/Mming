@@ -1,7 +1,6 @@
 ---
 name: fred-macro
-description: |
-  美联储免费 API (FRED)：840K+ 宏观数据序列（GDP、CPI、利率、就业、M2、VIX、美债）。
+description: "美联储免费 API (FRED)：840K+ 宏观数据序列（GDP、CPI、利率、就业、M2、VIX、美债）。"
 
 license: MIT
 metadata:

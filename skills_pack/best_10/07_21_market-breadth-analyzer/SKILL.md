@@ -1,7 +1,6 @@
 ---
 name: market-breadth-analyzer
-description: |
-  用 TraderMonty 公开 CSV 数据量化市场广度健康度。生成 0-100 综合分（100=健康），6 个分项组成，无需 API key。当用户询问市场广度、参与率、涨跌家数健康度、行情是否普涨，或一般市场健康评估时使用。
+description: "用 TraderMonty 公开 CSV 数据量化市场广度健康度。生成 0-100 综合分（100=健康），6 个分项组成，无需 API key。当用户询问市场广度、参与率、涨跌家数健康度、行情是否普涨，或一般市场健康评估时使用。"
 
 ---
 

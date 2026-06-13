@@ -1,7 +1,6 @@
 ---
 name: longbridge-watchlist
-description: |
-  自选股分组管理（列/创建/重命名/删除/添加/移除标的）、价格提醒（列/添加/删除）、社区股票清单（sharelist：列/详情/创建/删除/管理），通过 Longbridge。变更操作需用户明确确认（dry-run 协议）。触发词：自选股、添加自选、删除自选、创建分组、价格提醒、股票清单、watchlist、add to watchlist、create group、rename group、price alert、sharelist、community list。
+description: "自选股分组管理（列/创建/重命名/删除/添加/移除标的）、价格提醒（列/添加/删除）、社区股票清单（sharelist：列/详情/创建/删除/管理），通过 Longbridge。变更操作需用户明确确认（dry-run 协议）。触发词：自选股、添加自选、删除自选、创建分组、价格提醒、股票清单、watchlist、add to watchlist、create group、rename group、price alert、sharelist、community list。"
 license: MIT
 metadata:
   author: longbridge

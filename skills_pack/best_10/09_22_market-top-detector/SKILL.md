@@ -1,7 +1,6 @@
 ---
 name: market-top-detector
-description: |
-  用 O'Neil Distribution Days、Minervini Leading Stock Deterioration、Monty Defensive Sector Rotation 三种方法检测市场见顶概率。生成 0-100 综合分 + 风险区分类。当用户询问市场见顶风险、分发日、防御板块轮动、龙头股恶化、是否减仓时使用。专注 2-8 周战术择时信号，针对 10-20% 调整。
+description: "用 O'Neil Distribution Days、Minervini Leading Stock Deterioration、Monty Defensive Sector Rotation 三种方法检测市场见顶概率。生成 0-100 综合分 + 风险区分类。当用户询问市场见顶风险、分发日、防御板块轮动、龙头股恶化、是否减仓时使用。专注 2-8 周战术择时信号，针对 10-20% 调整。"
 
 ---
 

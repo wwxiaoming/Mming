@@ -1,7 +1,6 @@
 ---
 name: commodities-quote
-description: |
-  通过 Octagon MCP 实时获取大宗商品行情报价。用于查询当前大宗商品价格、分析日内区间、与均线对比、跟踪贵金属、能源、农产品价格。
+description: "通过 Octagon MCP 实时获取大宗商品行情报价。用于查询当前大宗商品价格、分析日内区间、与均线对比、跟踪贵金属、能源、农产品价格。"
 
 ---
 
