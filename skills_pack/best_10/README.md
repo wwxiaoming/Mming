@@ -47,3 +47,27 @@ cd zips && for z in *.zip; do unzip -o "$z" -d ~/.claude/skills/; done
 - 海外：#4 akshare
 - 情绪：#8/#9 广度+见顶
 - 商品：#10 大宗报价
+
+---
+
+## ⚡ A 股增强包（6 个 A 股替代）
+
+> 6 个 best_10 中的 skill（#4/#5/#6/#7/#9/#10）是美股向工具。本包精选 1 对 1 A 股替代。
+
+| # | A 股 Skill | 替代 | 用途 |
+|---|-----------|------|------|
+| A01 | `a-share-analysis` | #4 | A 股估值（DCF/同业/SOTP，T+1/涨跌停/北向） |
+| A02 | `sector-rotation-detector` | #5 | 申万/中证板块轮动 |
+| A03 | `china-macro-analyst` | #6 | 中国 GDP/CPI/PPI/PMI/社融/LPR |
+| A04 | `limit-up-pool-analyzer` | #7 | 涨停池+连板梯队+炸板率+广度分 |
+| A05 | `equity-pledge-risk-monitor` | #9 | 股权质押+平仓线+见顶预警 |
+| A06 | `fund-screener` | #10 | 公募基金筛选+smart money |
+
+**总包**：[`ashare_bundle.zip`](ashare_bundle.zip) (76.5 KB)
+**详细文档**：[`ASHARE_README.md`](ASHARE_README.md)
+**独立 zip**：[`zips_ashare/`](zips_ashare/) 6 个
+
+```bash
+# 整包安装
+unzip ashare_bundle.zip -d ~/.claude/skills/
+```

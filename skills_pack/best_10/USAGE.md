@@ -813,6 +813,15 @@ best_10/
 │   ├── 08_24_commodities-quote_octagonai.zip
 │   ├── 09_22_market-top-detector.zip
 │   └── 10_07_institutional-flow-tracker.zip
+├── zips_ashare/                  ← 6 个 A 股增强 zip
+│   ├── A01_a-share-analysis.zip
+│   ├── A02_sector-rotation-detector.zip
+│   ├── A03_china-macro-analyst.zip
+│   ├── A04_limit-up-pool-analyzer.zip
+│   ├── A05_equity-pledge-risk-monitor.zip
+│   └── A06_fund-screener.zip
+├── ashare_bundle.zip             ← A 股增强总包 76.5 KB
+├── ASHARE_README.md              ← A 股增强包说明
 └── 01_05_longbridge-earnings/  ← 解压后的目录
     ├── SKILL.md
     ├── commands/
@@ -822,5 +831,25 @@ best_10/
 
 ---
 
+## 附录 F：A 股专属路由
+
+> best_10 中 6 个美股向 skill 的 A 股替代，详见 [`ASHARE_README.md`](ASHARE_README.md)
+
+| A 股问题 | 召唤（best_10） | 召唤（A 股增强包） |
+|---------|----------------|------------------|
+| "比亚迪 DCF 估值" | `04_company-valuation` (yfinance 仅美股) | **`A01_a-share-analysis`** ✅ |
+| "申万一级行业轮动" | `05_sector-analyst` (US ETF) | **`A02_sector-rotation-detector`** ✅ |
+| "中国 PMI 怎么看" | `06_macro-rates-monitor` (LSEG 美债) | **`A03_china-macro-analyst`** ✅ |
+| "今天涨停家数" | `07_market-breadth-analyzer` (S&P 500) | **`A04_limit-up-pool-analyzer`** ✅ |
+| "股权质押爆仓风险" | `09_market-top-detector` (S&P) | **`A05_equity-pledge-risk-monitor`** ✅ |
+| "易方达最近加仓什么" | `10_institutional-flow-tracker` (13F 仅美股) | **`A06_fund-screener`** ✅ |
+
+**安装 A 股增强包**：
+```bash
+unzip /workspace/skills_pack/best_10/ashare_bundle.zip -d ~/.claude/skills/
+```
+
+---
+
 **版本**：v1.0 / 2026-06-13
-**配套**：`EXPLAINER.md`（项目背景）/ `README.md`（排行速查）/ `USAGE.md`（本文）
+**配套**：`EXPLAINER.md`（项目背景）/ `README.md`（排行速查）/ `USAGE.md`（本文）/ `ASHARE_README.md`（A 股增强包）
