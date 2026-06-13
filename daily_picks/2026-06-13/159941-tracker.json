@@ -18,13 +18,13 @@
   },
   "holdings": {
     "shares": 700,
-    "cost": 1.55,
+    "cost": 1.623,
     "market_value": 1118.6,
-    "cost_total": 1085.0,
+    "cost_total": 1136.1,
     "daily_pnl": 15.4,
     "daily_pnl_pct": 1.4,
-    "cum_pnl": 33.6,
-    "cum_pnl_pct": 3.1
+    "cum_pnl": -17.5,
+    "cum_pnl_pct": -1.54
   },
   "us_overnight": {
     "NDX_change_pct": 0,

@@ -242,9 +242,9 @@ def strategy_7_buffett_moat() -> list[dict]:
     return out[:5]
 
 def strategy_8_best5() -> list[dict]:
-    """策略 8: 最佳 5 选(三引擎加权 = 资金 0.4 + 情绪 0.3 + 政策 0.3 + 美股 0.15)"""
-    log("策略 8: 🔮 最佳 5 选(三引擎加权)…")
-    # 读 us_market.json(美股隔夜 0.15)
+    """策略 8: 明日最可能涨的 TOP 3(v1.6.1: 美股权重 0.10,资金 0.40,情绪 0.30,政策 0.20)"""
+    log("策略 8: 🔮 明日最可能涨的 TOP 3…")
+    # 读 us_market.json(美股隔夜,新权重 0.10)
     today = date.today().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
     ndx_pct = us["summary"]["NDX"] if us else 0
@@ -263,8 +263,8 @@ def strategy_8_best5() -> list[dict]:
         # 政策面(用涨跌幅稳定度,这里用 PB 估值底近似)
         pb = q.get("pb", 0)
         policy_score = 1.0 if (0 < pb < 2) else -1.0 if pb > 8 else 0.0
-        # 加权
-        total = 0.4 * fund_score + 0.3 * mood_score + 0.3 * policy_score + 0.15 * us_score
+        # 加权(v1.6.1:资金 0.40 + 情绪 0.30 + 政策 0.20 + 美股隔夜 0.10)
+        total = 0.40 * fund_score + 0.30 * mood_score + 0.20 * policy_score + 0.10 * us_score
         if total > 0.2:  # 阈值过滤
             out.append({
                 "code": code,
@@ -275,14 +275,14 @@ def strategy_8_best5() -> list[dict]:
                 "pb": q["pb"],
                 "score": round(total, 3),
                 "breakdown": {
-                    "fund(0.4)":   round(fund_score, 2),
-                    "mood(0.3)":   round(mood_score, 2),
-                    "policy(0.3)": round(policy_score, 2),
-                    "us(0.15)":    round(us_score, 2),
+                    "fund(0.40)":   round(fund_score, 2),
+                    "mood(0.30)":   round(mood_score, 2),
+                    "policy(0.20)": round(policy_score, 2),
+                    "us(0.10)":     round(us_score, 2),
                 },
             })
     out.sort(key=lambda r: r["score"], reverse=True)
-    return out[:5]
+    return out[:3]   # ← v1.6.1: TOP 3(只选最可能涨的 3 支)
 
 def main():
     parser = argparse.ArgumentParser()

@@ -8,7 +8,7 @@ cd /workspace
 # ── 用户配置 ──
 HOLDINGS_CODE="159941"
 HOLDINGS_SHARES="700"
-HOLDINGS_COST="1.55"     # 改成你的真实平均成本
+HOLDINGS_COST="1.623"     # 真实平均成本(2026-06-09 早上买入)
 
 echo "═══════════════════════════════════════════════"
 echo "  v1.6 每日选股 — $(date '+%Y-%m-%d %H:%M:%S')"
