@@ -1,0 +1,8 @@
+{
+  "name": "Quant Trading",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "forwardPorts": [8180],
+  "postCreateCommand": "docker --version && echo 'Ready'"
+}
