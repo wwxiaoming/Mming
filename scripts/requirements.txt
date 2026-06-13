@@ -1,0 +1,13 @@
+# 早盘潜力股自动化 — Python 依赖
+# 严格匹配 /workspace/选股手册.md v2.0 数据源策略
+
+# 行情层（不封 IP）
+mootdx>=0.10        # TCP 直连通达信 7709（K线/五档/财务/F10）
+
+# HTTP 层
+requests>=2.28      # 所有 eastmoney.com / 同花顺 / 巨潮 / 新浪 / 腾讯 调用
+pandas>=1.5         # 行业排名 / 热点股 DataFrame 处理
+stockstats>=0.6     # 备用：技术指标计算（RSI/MACD/BOLL）
+
+# 可选：节假日判断
+# holidays>=0.40    # is_trading_day() 生产化用
