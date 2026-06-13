@@ -1,0 +1,448 @@
+{
+  "date": "2026-06-13",
+  "generated_at": "2026-06-13 15:54:20",
+  "version": "x1.0",
+  "x1_meta": {
+    "version": "x1.0",
+    "fused_from": [
+      "N1.0_v1.0",
+      "v1.7.0"
+    ],
+    "environment_grade": "A",
+    "position_desc": "轻仓试错",
+    "skip_stock_pick": false,
+    "candidates_count": 5,
+    "exclusion_stats": {
+      "E_NO_THEME": 79,
+      "E_HIGH_RISE": 5,
+      "E_HIGH_GAP": 2,
+      "E_LOW_VOL": 1
+    },
+    "conclusions": [
+      {
+        "code": "688163",
+        "name": "赛伦生物",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "301323",
+        "name": "新莱福",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "300377",
+        "name": "赢时胜",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "301176",
+        "name": "逸豪新材",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "688010",
+        "name": "福光股份",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      }
+    ]
+  },
+  "us_overnight": {
+    "NDX": 0,
+    "IXIC": 0,
+    "SPX": 0,
+    "DJI": 0,
+    "SOX": 0
+  },
+  "holdings_159941": {
+    "name": "纳指ETF广发",
+    "price": 1.598,
+    "change_pct": 1.4,
+    "shares": 700,
+    "cost": 1.623,
+    "daily_pnl": 15.4,
+    "cum_pnl": -17.5,
+    "cum_pnl_pct": -1.54
+  },
+  "top_picks": {
+    "momentum": [
+      {
+        "code": "688163",
+        "name": "赛伦生物",
+        "change_pct": 20.011,
+        "turnover_pct": 5.11,
+        "amount_yi": 0.0,
+        "reason": "抗蛇毒血清+独家品种"
+      },
+      {
+        "code": "301323",
+        "name": "新莱福",
+        "change_pct": 20.005,
+        "turnover_pct": 10.58,
+        "amount_yi": 0.0,
+        "reason": "重组并购+钐铁氮+芯片电感"
+      },
+      {
+        "code": "300377",
+        "name": "赢时胜",
+        "change_pct": 20,
+        "turnover_pct": 12.43,
+        "amount_yi": 0.0,
+        "reason": "金融科技+AI应用+信创+资产托管"
+      },
+      {
+        "code": "301176",
+        "name": "逸豪新材",
+        "change_pct": 19.992,
+        "turnover_pct": 9.37,
+        "amount_yi": 0.0,
+        "reason": "PCB铜箔+AI算力+产能扩张"
+      },
+      {
+        "code": "688010",
+        "name": "福光股份",
+        "change_pct": 19.99,
+        "turnover_pct": 14.79,
+        "amount_yi": 0.0,
+        "reason": "商业航天+特种光学镜头+增持"
+      }
+    ],
+    "fund_flow": [
+      {
+        "code": "000630",
+        "name": "铜陵有色",
+        "price": 7.1,
+        "change_pct": 10.08,
+        "main_net_5d_yi": 0.009
+      },
+      {
+        "code": "300377",
+        "name": "赢时胜",
+        "price": 14.88,
+        "change_pct": 20.0,
+        "main_net_5d_yi": 0.004
+      },
+      {
+        "code": "688010",
+        "name": "福光股份",
+        "price": 47.84,
+        "change_pct": 19.99,
+        "main_net_5d_yi": 0.003
+      },
+      {
+        "code": "301323",
+        "name": "新莱福",
+        "price": 103.78,
+        "change_pct": 20.0,
+        "main_net_5d_yi": 0.002
+      },
+      {
+        "code": "301176",
+        "name": "逸豪新材",
+        "price": 56.6,
+        "change_pct": 19.99,
+        "main_net_5d_yi": 0.002
+      }
+    ],
+    "value": [
+      {
+        "code": "601186",
+        "name": "中国铁建",
+        "price": 6.41,
+        "pe_ttm": 4.94,
+        "pb": 0.31,
+        "change_pct": 1.58,
+        "mcap_yi": 737.36
+      },
+      {
+        "code": "000001",
+        "name": "平安银行",
+        "price": 11.24,
+        "pe_ttm": 5.07,
+        "pb": 0.48,
+        "change_pct": 2.74,
+        "mcap_yi": 2181.19
+      },
+      {
+        "code": "601166",
+        "name": "XD兴业银",
+        "price": 18.61,
+        "pe_ttm": 5.08,
+        "pb": 0.48,
+        "change_pct": 1.75,
+        "mcap_yi": 3938.41
+      },
+      {
+        "code": "601668",
+        "name": "中国建筑",
+        "price": 4.77,
+        "pe_ttm": 5.2,
+        "pb": 0.4,
+        "change_pct": 0.63,
+        "mcap_yi": 1970.98
+      },
+      {
+        "code": "601390",
+        "name": "中国中铁",
+        "price": 4.57,
+        "pe_ttm": 5.32,
+        "pb": 0.35,
+        "change_pct": 2.47,
+        "mcap_yi": 935.88
+      }
+    ],
+    "potential5": [
+      {
+        "code": "688163",
+        "name": "赛伦生物",
+        "price": 45.04,
+        "change_pct": 20.01,
+        "pe_ttm": 100.3,
+        "pb": 4.49,
+        "turnover_pct": 5.11,
+        "vol_ratio": 2.98,
+        "amplitude_pct": 22.09,
+        "score": 0.37,
+        "breakdown": {
+          "position(0.20)": -0.5,
+          "valuation(0.15)": -0.2,
+          "fund(0.30)": 1.0,
+          "theme(0.20)": 1.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": true,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false,
+        "reason": "抗蛇毒血清+独家品种"
+      },
+      {
+        "code": "301323",
+        "name": "新莱福",
+        "price": 103.78,
+        "change_pct": 20.0,
+        "pe_ttm": 73.76,
+        "pb": 4.87,
+        "turnover_pct": 10.58,
+        "vol_ratio": 2.18,
+        "amplitude_pct": 19.69,
+        "score": 0.28,
+        "breakdown": {
+          "position(0.20)": -0.5,
+          "valuation(0.15)": -0.2,
+          "fund(0.30)": 0.7,
+          "theme(0.20)": 1.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": true,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false,
+        "reason": "重组并购+钐铁氮+芯片电感"
+      },
+      {
+        "code": "300377",
+        "name": "赢时胜",
+        "price": 14.88,
+        "change_pct": 20.0,
+        "pe_ttm": -481.09,
+        "pb": 4.64,
+        "turnover_pct": 12.43,
+        "vol_ratio": 3.64,
+        "amplitude_pct": 19.27,
+        "score": 0.325,
+        "breakdown": {
+          "position(0.20)": -0.5,
+          "valuation(0.15)": 0.1,
+          "fund(0.30)": 0.7,
+          "theme(0.20)": 1.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": true,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false,
+        "reason": "金融科技+AI应用+信创+资产托管"
+      },
+      {
+        "code": "301176",
+        "name": "逸豪新材",
+        "price": 56.6,
+        "change_pct": 19.99,
+        "pe_ttm": -200.65,
+        "pb": 6.43,
+        "turnover_pct": 9.37,
+        "vol_ratio": 1.45,
+        "amplitude_pct": 19.59,
+        "score": 0.25,
+        "breakdown": {
+          "position(0.20)": -0.5,
+          "valuation(0.15)": 0.0,
+          "fund(0.30)": 0.5,
+          "theme(0.20)": 1.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": true,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false,
+        "reason": "PCB铜箔+AI算力+产能扩张"
+      },
+      {
+        "code": "688010",
+        "name": "福光股份",
+        "price": 47.84,
+        "change_pct": 19.99,
+        "pe_ttm": 530.86,
+        "pb": 4.48,
+        "turnover_pct": 14.79,
+        "vol_ratio": 3.25,
+        "amplitude_pct": 17.16,
+        "score": 0.28,
+        "breakdown": {
+          "position(0.20)": -0.5,
+          "valuation(0.15)": -0.2,
+          "fund(0.30)": 0.7,
+          "theme(0.20)": 1.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": true,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false,
+        "reason": "商业航天+特种光学镜头+增持"
+      }
+    ],
+    "serenity_chain": [
+      {
+        "theme": "半导体",
+        "hits": 9,
+        "logic": "近期 9 只强势股 reason 包含 半导体"
+      },
+      {
+        "theme": "机器人",
+        "hits": 7,
+        "logic": "近期 7 只强势股 reason 包含 机器人"
+      },
+      {
+        "theme": "算力",
+        "hits": 6,
+        "logic": "近期 6 只强势股 reason 包含 算力"
+      },
+      {
+        "theme": "商业航天",
+        "hits": 6,
+        "logic": "近期 6 只强势股 reason 包含 商业航天"
+      },
+      {
+        "theme": "固态电池",
+        "hits": 5,
+        "logic": "近期 5 只强势股 reason 包含 固态电池"
+      }
+    ],
+    "buffett_moat": [
+      {
+        "code": "601899",
+        "name": "紫金矿业",
+        "pe_ttm": 12.54,
+        "pb": 3.92,
+        "roe_est": 31.3,
+        "price": 29.09
+      },
+      {
+        "code": "600519",
+        "name": "贵州茅台",
+        "pe_ttm": 19.52,
+        "pb": 6.03,
+        "roe_est": 30.9,
+        "price": 1291.91
+      },
+      {
+        "code": "000895",
+        "name": "双汇发展",
+        "pe_ttm": 15.92,
+        "pb": 4.21,
+        "roe_est": 26.4,
+        "price": 24.17
+      },
+      {
+        "code": "600809",
+        "name": "山西汾酒",
+        "pe_ttm": 13.17,
+        "pb": 3.21,
+        "roe_est": 24.4,
+        "price": 118.54
+      },
+      {
+        "code": "300750",
+        "name": "宁德时代",
+        "pe_ttm": 23.13,
+        "pb": 5.59,
+        "roe_est": 24.2,
+        "price": 394.85
+      }
+    ]
+  },
+  "news": [
+    {
+      "title": "东田微：目前公司光通信类滤光片订单饱满 产能爬坡与订单交付同步推进",
+      "summary": "【东田微：目前公司光通信类滤光片订单饱满 产能爬坡与订单交付同步推进】东田微近日在业绩说明会上表示，公司滤光片产品定价综合考虑原材料成本、市场供需等多重因素，不排除根据成本变化合理调整价格的可能性。目前公司光通信类滤光片订单饱满，产能爬坡与订单交付同步推进。",
+      "time": "2026-06-13 22:20:00"
+    },
+    {
+      "title": "全球首条百万片级体全息光波导自动化产线在天津投产",
+      "summary": "【全球首条百万片级体全息光波导自动化产线在天津投产】全球首条百万片级体全息光波导自动化产线13日在天津投产，标志着中国在消费级AR(增强现实)核心显示技术领域实现规模化量产突破，为高性价比AR眼镜和车载AR-HUD(增强现实抬头显示系统)进入大众市场打通关键一环。该产线由尼卡光学(天津)有限公司设计",
+      "time": "2026-06-13 21:59:23"
+    },
+    {
+      "title": "徐工机械：预计今年国内新能源工程机械市场规模达800亿元 行业渗透率超15%",
+      "summary": "【徐工机械：预计今年国内新能源工程机械市场规模达800亿元 行业渗透率超15%】徐工机械副总裁、总工程师单增海在今天举行的2026工程机械行业科技节上表示，2026年国内新能源工程机械市场规模预计快速增长至800亿元左右，行业渗透率加速提升有望突破至15%~20%，正式进入规模化应用。细分领域来看，",
+      "time": "2026-06-13 21:41:01"
+    },
+    {
+      "title": "十项促进两岸交流合作的政策措施对接签约会在厦门举行",
+      "summary": "【十项促进两岸交流合作的政策措施对接签约会在厦门举行】十项促进两岸交流合作的政策措施对接签约会13日在厦门举行。大陆企业与来自台湾多地的企业和商协会进行签约，采购台湾台东、云林、南投等县市凤梨释迦、文旦柚、茶叶等特色农渔产品。",
+      "time": "2026-06-13 19:44:13"
+    },
+    {
+      "title": "今年前5月中国铁路发送旅客人次同比增长5.7%",
+      "summary": "【今年前5月中国铁路发送旅客人次同比增长5.7%】记者13日从中国国家铁路集团有限公司获悉，1至5月，全国铁路发送旅客19.69亿人次、同比增长5.7%，创历史同期新高。数据显示，1至5月，全国铁路日均开行旅客列车11541列、同比增长5.9%，其中，5月1日发送旅客2484.4万人次，创单日旅客发",
+      "time": "2026-06-13 17:50:00"
+    }
+  ],
+  "etf_active": [
+    {
+      "code": "159915",
+      "name": "创业板ETF易方达",
+      "price": 3.846,
+      "change_pct": 0.42,
+      "turnover_pct": 11.69,
+      "amount_wan": 486154.0
+    },
+    {
+      "code": "159941",
+      "name": "纳指ETF广发",
+      "price": 1.598,
+      "change_pct": 1.4,
+      "turnover_pct": 7.01,
+      "amount_wan": 255272.0
+    },
+    {
+      "code": "159995",
+      "name": "芯片ETF华夏",
+      "price": 2.383,
+      "change_pct": -0.67,
+      "turnover_pct": 4.64,
+      "amount_wan": 120404.0
+    }
+  ]
+}

@@ -244,12 +244,14 @@ def main():
     md.append("---\n")
     md.append(section_environment_gate(x1_meta))
     md.append("---\n")
+    # x1.0 第 18 章: 159941 持仓必须在 TOP 5 之前同报告出现
+    md.append(section_159941(t159))
+    md.append("---\n")
     md.append(section_potential5_summary(picks))
     md.append("---\n")
     md.append(section_per_stock_analysis(analyses))
     md.append("---\n")
     md.append(section_us(us))
-    md.append(section_159941(t159))
     md.append(section_risks(picks, us, t159, analyses))
 
     md.append("\n---\n")
