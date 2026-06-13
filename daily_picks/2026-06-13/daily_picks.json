@@ -1,0 +1,131 @@
+{
+  "x1_meta": {
+    "version": "x1.0",
+    "fused_from": [
+      "N1.0_v1.0",
+      "v1.7.0"
+    ],
+    "environment_grade": "C",
+    "position_desc": "以观察为主",
+    "skip_stock_pick": false
+  },
+  "9_us_overnight": {
+    "NDX": 0,
+    "IXIC": 0,
+    "SPX": 0,
+    "DJI": 0,
+    "SOX": 0
+  },
+  "weekend_pick": [
+    {
+      "code": "002415",
+      "name": "海康威视",
+      "price": 30.24,
+      "change_pct": 0.87,
+      "pe_ttm": 18.55,
+      "pb": 3.5,
+      "score": 0.15,
+      "breakdown": {
+        "industry(0.30)": 0.0,
+        "valuation(0.15)": 1.0,
+        "fund(0.30)": 0.0,
+        "us(0.15)": 0.0,
+        "news(0.10)": 0.0
+      },
+      "flow_5d": 0.0,
+      "flow_20d": 0.0,
+      "conclusion": "明确不买",
+      "conclusion_emoji": "🔴",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "300059",
+      "name": "东方财富",
+      "price": 18.0,
+      "change_pct": 3.69,
+      "pe_ttm": 21.73,
+      "pb": 2.97,
+      "score": 0.15,
+      "breakdown": {
+        "industry(0.30)": 0.0,
+        "valuation(0.15)": 1.0,
+        "fund(0.30)": 0.0,
+        "us(0.15)": 0.0,
+        "news(0.10)": 0.0
+      },
+      "flow_5d": 0.0,
+      "flow_20d": 0.0,
+      "conclusion": "明确不买",
+      "conclusion_emoji": "🔴",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "603501",
+      "name": "豪威集团",
+      "price": 86.01,
+      "change_pct": 0.99,
+      "pe_ttm": 29.46,
+      "pb": 3.32,
+      "score": 0.15,
+      "breakdown": {
+        "industry(0.30)": 0.0,
+        "valuation(0.15)": 1.0,
+        "fund(0.30)": 0.0,
+        "us(0.15)": 0.0,
+        "news(0.10)": 0.0
+      },
+      "flow_5d": 0.0,
+      "flow_20d": 0.0,
+      "conclusion": "明确不买",
+      "conclusion_emoji": "🔴",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "300750",
+      "name": "宁德时代",
+      "price": 394.85,
+      "change_pct": 3.31,
+      "pe_ttm": 23.13,
+      "pb": 5.59,
+      "score": 0.15,
+      "breakdown": {
+        "industry(0.30)": 0.0,
+        "valuation(0.15)": 1.0,
+        "fund(0.30)": 0.0,
+        "us(0.15)": 0.0,
+        "news(0.10)": 0.0
+      },
+      "flow_5d": 0.0,
+      "flow_20d": 0.0,
+      "conclusion": "明确不买",
+      "conclusion_emoji": "🔴",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "300014",
+      "name": "亿纬锂能",
+      "price": 57.67,
+      "change_pct": 4.66,
+      "pe_ttm": 27.98,
+      "pb": 2.9,
+      "score": 0.15,
+      "breakdown": {
+        "industry(0.30)": 0.0,
+        "valuation(0.15)": 1.0,
+        "fund(0.30)": 0.0,
+        "us(0.15)": 0.0,
+        "news(0.10)": 0.0
+      },
+      "flow_5d": 0.0,
+      "flow_20d": 0.0,
+      "conclusion": "明确不买",
+      "conclusion_emoji": "🔴",
+      "condition_trigger": "",
+      "edge_flag": false
+    }
+  ]
+}

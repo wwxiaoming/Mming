@@ -1,0 +1,42 @@
+{
+  "date": "2026-06-13",
+  "generated_at": "2026-06-13 14:46:31",
+  "version": "x1.0",
+  "x1_meta": {
+    "version": "x1.0",
+    "fused_from": [
+      "N1.0_v1.0",
+      "v1.7.0"
+    ],
+    "environment_grade": "C",
+    "position_desc": "以观察为主",
+    "skip_stock_pick": false
+  },
+  "us_overnight": {
+    "NDX": 0,
+    "IXIC": 0,
+    "SPX": 0,
+    "DJI": 0,
+    "SOX": 0
+  },
+  "holdings_159941": {
+    "name": "纳指ETF广发",
+    "price": 1.598,
+    "change_pct": 1.4,
+    "shares": 700,
+    "cost": 1.623,
+    "daily_pnl": 15.4,
+    "cum_pnl": -17.5,
+    "cum_pnl_pct": -1.54
+  },
+  "top_picks": {
+    "momentum": [],
+    "fund_flow": [],
+    "value": [],
+    "potential5": [],
+    "serenity_chain": [],
+    "buffett_moat": []
+  },
+  "news": [],
+  "etf_active": []
+}
