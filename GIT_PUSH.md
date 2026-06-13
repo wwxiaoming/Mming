@@ -1,66 +1,134 @@
-# 上传到 Git 仓库
+# 📦 v1.7.0 stock-trader 上传 Git 指南
 
-## 方式 1:新建空仓库(推荐)
-```bash
-cd <你的本地路径>
-unzip v1.6-stock-trader.zip
-cd v1.6-stock-trader
-git init
-git add .
-git commit -m "init: v1.6 stock-trader-agent automation"
-git branch -M main
-git remote add origin https://github.com/<你的用户名>/<repo>.git
-git push -u origin main
+## 一、本次更新(v1.6.1 → v1.7.0 重大升级)
+
+| 改动点 | 旧(v1.6.1) | 新(v1.7.0) |
+|--------|-----|-----|
+| 执行时间 | 工作日 07:00(盘前) | **工作日 09:30(开盘时)** |
+| 输出数量 | TOP 3 | **TOP 5** |
+| 选股逻辑 | 追强势股(资金+情绪+政策+美股) | **挖潜力股**(位置+估值+资金+题材+美股,**不追高**) |
+| 分析深度 | 只输出评分表 | **每只 TOP 5 独立深度分析**(财务/技术/资金/题材/美股/风险/建议) |
+| 调用方法学 | 无 | **a-share-analysis + consulting-analysis 双框架** |
+| 周末展望 | ❌ | ✅ **周日晚 22:00 跑一次**,基于 7×24 资讯+行业+资金+美股周五,选周一潜力股 |
+| 报告章节 | 4 章节 | **5 章节 + 5 独立分析小节**(每只股票 1 份) |
+| 报告文件大小 | 2.2 KB | **~10 KB(含 5 只股票深度分析)** |
+
+## 二、文件清单(14 个核心文件)
+
+```
+v1.7-stock-trader/
+├── scripts/
+│   ├── _common.py                              # 公共:腾讯/东财/同花顺/news + 限流
+│   ├── us_market_fetcher.py                    # 美股 5 指数 + 7 巨头 + 半导体 + 中概
+│   ├── strategy_holdings_tracker.py            # 159941 持仓跟踪
+│   ├── daily_stock_pick.py                     # 9 策略并行 + 策略 8b 深度分析 + 周末模式
+│   ├── post_report.py                          # 工作日报告(TOP 5 + 5 独立分析)
+│   ├── post_report_weekend.py                  # 周末报告(周一展望)
+│   ├── auto_publish.py                         # 6 通道自动写出
+│   ├── run_daily.sh                            # 工作日主调度(09:30 跑)
+│   ├── run_weekend.sh                          # 周末主调度(周日晚 22:00 跑)
+│   └── README.md                               # 使用说明
+├── STOCK_CONTEXT.md                            # 上下文(自动更新)
+├── POSITIONS.md                                # 持仓表(自动更新)
+├── DAILY_LOG.md                                # 日志(自动追加)
+└── GIT_PUSH.md                                 # 本文件
 ```
 
-## 方式 2:加到已有仓库
+## 三、Git 操作步骤
+
 ```bash
-cd <已有仓库>
-unzip -o /path/to/v1.6-stock-trader.zip
+# 1. 解压
+cd /workspace
+unzip v1.7-stock-trader.zip
+
+# 2. 进 git 仓库
+cd /path/to/your-git-repo
+cp -r /workspace/v1.7-stock-trader/* .
+
+# 3. 提交
 git add scripts/ STOCK_CONTEXT.md POSITIONS.md DAILY_LOG.md
-git commit -m "feat: add v1.6 stock-trader-agent daily automation"
-git push
+git commit -m "v1.7.0: 09:30 开盘时 + 潜力股 TOP 5 + 深度分析 + 周末展望"
+
+# 4. 推送
+git push origin main
 ```
 
-## 启用前要做的 3 件事
+## 四、Trae IDE 调度任务(已自动建好)
 
-1. **改真实成本价**:编辑 `scripts/run_daily.sh`,把 `HOLDINGS_COST="1.55"` 改成你的真实平均成本
-2. **加 cron 自动化**(可选,Trae IDE 里更方便):
-   - 频率:工作日 07:00
-   - 命令:`bash /workspace/scripts/run_daily.sh`
-3. **挂飞书 Webhook**(可选):
-   ```bash
-   export FEISHU_WEBHOOK="https://open.feishu.cn/open-apis/bot/v2/hook/xxx"
-   ```
+| 任务 | ID | 频率 | 时区 | 状态 |
+|------|-----|------|------|------|
+| v1.7 工作日 09:30 | `8HBXYCBRO9_Y55` | `30 9 * * 1-5` | Asia/Shanghai | Active |
+| v1.7 周末 22:00 | `Z54UKZQHEQYOIE` | `0 22 * * 0` | Asia/Shanghai | Active |
 
-## 验证
+## 五、验证方式
+
 ```bash
+cd /workspace
+
+# 工作日跑一次
 bash scripts/run_daily.sh
-# 应该输出 6 通道文件:
-ls -la daily_picks/$(date +%F).md
-ls -la POSITIONS.md DAILY_LOG.md STOCK_CONTEXT.md
+cat daily_picks/latest.md
+
+# 周末跑一次
+bash scripts/run_weekend.sh
+cat daily_picks/latest_weekend.md
+
+# 看持仓
+cat POSITIONS.md
+cat DAILY_LOG.md
 ```
 
-## 文件清单
-| 文件 | 大小 | 作用 |
-|---|---|---|
-| scripts/_common.py | 8 KB | 公共基础(腾讯/东财/同花顺/news + 限流) |
-| scripts/us_market_fetcher.py | 4 KB | 拉美股 5 指数 + 7 巨头 + 半导体 + 中概 |
-| scripts/strategy_holdings_tracker.py | 4 KB | 159941 持仓跟踪 |
-| scripts/daily_stock_pick.py | 16 KB | 9 策略并行 |
-| scripts/post_report.py | 16 KB | 拼 Markdown 14+1 章节 |
-| scripts/auto_publish.py | 20 KB | 6 通道自动写出 |
-| scripts/run_daily.sh | 2 KB | 主调度 |
-| scripts/README.md | 4 KB | 使用说明 |
-| STOCK_CONTEXT.md | <1 KB | 上下文(自动更新) |
-| POSITIONS.md | <1 KB | 持仓表(自动更新) |
-| DAILY_LOG.md | 2 KB | 日志(自动追加) |
+## 六、报告样例(2026-06-13,工作日 + 周末)
 
-**总计 ~70 KB,11 个文件**
+### 工作日 — 明日潜力股 TOP 5
+| # | 代码 | 名称 | 现价 | PE | **总分** |
+|---|------|------|------|-----|----------|
+| 1 | 601688 | 华泰证券 | 19.97 | 10.28 | **0.51** |
+| 2 | 000977 | 浪潮信息 | 57.86 | 33.25 | **0.482** |
+| 3 | 300059 | 东方财富 | 18.00 | 21.73 | **0.48** |
+| 4 | 300014 | 亿纬锂能 | 57.67 | 27.98 | **0.473** |
+| 5 | 600030 | 中信证券 | 26.29 | 11.57 | **0.466** |
 
-## 数据源
-- 腾讯财经 qt.gtimg.cn(不封 IP)
-- 同花顺热点 zx.10jqka.com.cn(零鉴权)
-- 东财 np-weblist.eastmoney.com(已加 em_throttle 限流)
+每只独立章节:基本信息 / 财务评估 / 技术评估 / 资金评估 / 题材 / 美股联动 / 风险 / 建议
 
-**零 API key,零依赖,纯 HTTP 直连。**
+### 周末 — 周一潜力股 TOP 5
+1. 中国联通(600050) — 行业+资讯 0.175
+2. 海康威视(002415) — 0.15
+3. 东方财富(300059) — 0.15
+4. 豪威集团(603501) — 0.15
+5. 宁德时代(300750) — 0.15
+
+## 七、核心算法升级
+
+### 策略 8: 明日潜力股(五引擎 v1.7.0)
+
+```
+总分 = 0.20 × 位置 + 0.15 × 估值 + 0.30 × 资金 + 0.20 × 题材 + 0.15 × 美股
+
+位置: 涨跌幅 -3% ~ +3%(温和,未暴涨)
+估值: PE 0~30, PB 1~5
+资金: 换手 1.5%~8%(主力建仓) + vol_ratio > 1(放量)
+题材: 同花顺热点 reason 命中
+美股: 科技股看 NDX/SOX 同向
+```
+
+### 策略 8b: 深度分析(对每只 TOP 5)
+
+调用 **a-share-analysis** 框架,输出 7 维度:
+- 基本信息
+- 财务(PE/PB 评分)
+- 技术(涨跌幅/振幅)
+- 资金(换手/量比/5日+20日主力净流入)
+- 题材(7×24 资讯匹配)
+- 美股隔夜联动(科技股加权)
+- 风险点 + 投资建议
+
+### 周末策略(周一展望)
+
+```
+总分 = 0.30 × 行业 + 0.15 × 估值 + 0.30 × 资金 + 0.15 × 美股 + 0.10 × 资讯
+
+行业: industry_top 前 5 板块匹配股票名
+资金: 5日+20日主力净流入
+资讯: 7×24 全球资讯匹配股票名(周末题材催化)
+```

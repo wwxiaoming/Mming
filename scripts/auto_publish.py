@@ -113,7 +113,7 @@ def write_state_json(today: str, us: dict, picks: dict, t159: dict):
             "momentum": picks.get("1_momentum", [])[:5],
             "fund_flow": picks.get("2_fund_flow", [])[:5],
             "value": picks.get("3_value", [])[:5],
-            "best5": picks.get("8_best5", [])[:5],
+            "potential5": picks.get("8_potential5", [])[:5],
             "serenity_chain": picks.get("6_serenity_chain", [])[:5],
             "buffett_moat": picks.get("7_buffett_moat", [])[:5],
         },
@@ -310,16 +310,16 @@ def build_context_snapshot(today: str, us: dict, picks: dict, t159: dict) -> str
     spx = us["summary"].get("SPX", 0) if us else 0
     cum_pct = t159["holdings"].get("cum_pnl_pct", 0) if t159 else 0
     cum = t159["holdings"].get("cum_pnl", 0) if t159 else 0
-    best5 = picks.get("8_best5", [])[:3]
+    potential5 = picks.get("8_potential5", [])[:3]
 
     lines = ["## 最近一次更新\n"]
     lines.append(f"- **时间**:{now_iso()}({today})")
     lines.append(f"- **美股隔夜**:NDX {ndx:+.2f}%  SPX {spx:+.2f}%  SOX {sox:+.2f}%")
     if t159:
         lines.append(f"- **持仓汇总**:159941 现价 {t159['quote']['price']:.3f} | 累计 {cum_pct:+.2f}% ({cum:+.2f}元)")
-    if best5:
-        names = "、".join(f"{r['name']}({r['code']})" for r in best5)
-        lines.append(f"- **最佳 3 选**:{names}")
+    if potential5:
+        names = "、".join(f"{r['name']}({r['code']})" for r in potential5)
+        lines.append(f"- **明日潜力 TOP 3**:{names}")
     lines.append(f"- **核心结论**:" + derive_conclusion(ndx, cum_pct, picks))
     return "\n".join(lines)
 

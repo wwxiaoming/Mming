@@ -1,55 +1,53 @@
 #!/usr/bin/env bash
-# run_daily.sh — v1.7.0 每日潜力股主调度(集成 auto_publish)
-# 用法: ./run_daily.sh
-# 时间: 工作日 09:30(A 股开盘时执行,可吸收最新美股隔夜 + 7×24 资讯)
-# Trae Schedule ID: 8HBXYCBRO9_Y55
+# run_weekend.sh — v1.7.0 周末模式(周日晚 22:00 跑,选周一开盘潜力股)
+# 流程:
+#   1. 美股周五收盘(us_market_fetcher)
+#   2. 周末选股(daily_stock_pick.py --mode=weekend)
+#   3. 拼周末报告(post_report_weekend.py)
+#   4. 6 通道写出(auto_publish.py)
 set -e
 cd /workspace
 
-# ── 用户配置 ──
+# ── 用户配置(与 run_daily.sh 保持一致)──
 HOLDINGS_CODE="159941"
 HOLDINGS_SHARES="700"
-HOLDINGS_COST="1.623"     # 真实平均成本(2026-06-09 早上买入)
+HOLDINGS_COST="1.623"
 
 echo "═══════════════════════════════════════════════"
-echo "  v1.6 每日选股 — $(date '+%Y-%m-%d %H:%M:%S')"
+echo "  v1.7.0 周末展望 — $(date '+%Y-%m-%d %H:%M:%S')"
 echo "═══════════════════════════════════════════════"
 echo "  持仓: ${HOLDINGS_CODE} × ${HOLDINGS_SHARES}股 @ ${HOLDINGS_COST}"
+echo "  模式: 🌙 周一潜力股 TOP 5(行业+资金+美股周五+7×24 资讯)"
 echo
 
-# ── 1. 美股隔夜 ──
-echo "[1/5] 拉美股隔夜数据…"
+# ── 1. 美股周五收盘 ──
+echo "[1/4] 拉美股周五收盘…"
 python3 scripts/us_market_fetcher.py
 
-# ── 2. 持仓跟踪 ──
+# ── 2. 159941 持仓跟踪(虽然周末没行情,但记录周五收盘)──
 echo
-echo "[2/5] 跟踪 ${HOLDINGS_CODE} 持仓…"
+echo "[2/4] 跟踪 ${HOLDINGS_CODE} 持仓…"
 python3 scripts/strategy_holdings_tracker.py \
   --code="${HOLDINGS_CODE}" \
   --shares="${HOLDINGS_SHARES}" \
   --cost="${HOLDINGS_COST}"
 
-# ── 3. 9 策略并行 ──
+# ── 3. 周末选股(行业+资金+美股+资讯)──
 echo
-echo "[3/5] 9 策略并行选股…"
-python3 scripts/daily_stock_pick.py --mode=all
+echo "[3/4] 周末选股(周一潜力股 TOP 5)…"
+python3 scripts/daily_stock_pick.py --mode=weekend
 
-# ── 4. 拼 Markdown 报告 ──
+# ── 4. 拼周末报告 ──
 echo
-echo "[4/5] 生成 Markdown 报告…"
-python3 scripts/post_report.py
-
-# ── 5. 自动写出 6 通道 ──
-echo
-echo "[5/5] 自动写出 6 通道…"
+echo "[4/4] 生成周末报告 + 6 通道写出…"
+python3 scripts/post_report_weekend.py
 python3 scripts/auto_publish.py
 
 echo
 echo "═══════════════════════════════════════════════"
-echo "  ✅ 全部完成"
-echo "  📊 报告:  /workspace/daily_picks/$(date '+%Y-%m-%d').md"
+echo "  ✅ 周末展望完成"
+echo "  📊 报告:  /workspace/daily_picks/$(date '+%Y-%m-%d')/weekend_preview.md"
 echo "  📋 摘要:  /workspace/daily_picks/$(date '+%Y-%m-%d')/summary.txt"
 echo "  📈 持仓:  /workspace/POSITIONS.md"
 echo "  📝 日志:  /workspace/DAILY_LOG.md"
-echo "  📚 上下文:/workspace/STOCK_CONTEXT.md"
 echo "═══════════════════════════════════════════════"

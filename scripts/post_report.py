@@ -1,12 +1,14 @@
 """
-post_report.py — 把 JSON 报告拼成 Markdown(14+1 章节)
-章节:
-  1-5  : 5 大数据策略(强势/资金/价值/ETF/新闻)
-  6-7  : Serenity 产业链 + Buffett 护城河
-  8    : 最佳 5 选
-  9-10 : 美股隔夜 + 159941 持仓
-  11-14: consulting 4 章(行业地位/竞争格局/财务亮点/风险点)
-  +1   : chart-visualization 1 张对比图(ASCII 表格版)
+post_report.py — v1.7.0 报告
+  1. 🎯 明日潜力股 TOP 5(主菜,五引擎加权)
+  2. 📊 每只 TOP 5 独立深度分析(财务/技术/资金/题材/美股联动/风险/建议)
+  3. 🌙 美股隔夜
+  4. 📈 159941 持仓跟踪
+  5. ⚠️ 风险点
+
+调用方法学:
+  - a-share-analysis 框架: 财务/技术/资金/政策/风险/建议 6 维
+  - consulting-analysis 框架: 主题-维度-数据-洞察
 """
 import sys, json
 from pathlib import Path
@@ -19,108 +21,93 @@ def fmt_emoji(pct: float) -> str:
     if pct < -0.5: return "🔴"
     return "⚪"
 
-def section_1_momentum(picks: dict) -> str:
-    rows = picks.get("1_momentum", [])
+# ── 1. 明日潜力股 TOP 5 总览表 ──
+def section_potential5_summary(picks: dict) -> str:
+    rows = picks.get("8_potential5", [])
     if not rows:
-        return "### 1️⃣ 当日强势股 TOP 5\n(无数据)\n"
-    out = ["### 1️⃣ 当日强势股 TOP 5(同花顺热点 + 题材归因)\n"]
-    out.append("| # | 代码 | 名称 | 涨幅% | 换手% | 成交额(亿) | 题材归因 |")
-    out.append("|---|------|------|-------|-------|-----------|---------|")
+        return "### 🎯 明日潜力股 TOP 5\n(无候选股 — 阈值过滤后无符合标的)\n"
+    out = ["### 🎯 明日潜力股 TOP 5 — 评分表(位置 0.20 + 估值 0.15 + 资金 0.30 + 题材 0.20 + 美股 0.15)\n"]
+    out.append("| # | 代码 | 名称 | 现价 | 涨跌% | PE | PB | 换手% | 量比 | **总分** | 位置 | 估值 | 资金 | 题材 | 美股 | 热点 |")
+    out.append("|---|------|------|------|-------|-----|----|------|-----|----------|------|------|------|------|------|------|")
     for i, r in enumerate(rows, 1):
-        out.append(f"| {i} | {r['code']} | {r['name']} | {r['change_pct']:+.2f} | {r['turnover_pct']:.2f} | {r['amount_yi']:.2f} | {r['reason']} |")
-    out.append("")
+        b = r.get("breakdown", {})
+        hot_mark = "🔥" if r.get("in_hot") else ""
+        out.append(
+            f"| {i} | {r['code']} | {r['name']} | {r['price']:.2f} | {r['change_pct']:+.2f} "
+            f"| {r['pe_ttm']:.2f} | {r['pb']:.2f} | {r['turnover_pct']:.2f} | {r.get('vol_ratio',1):.2f} "
+            f"| **{r['score']}** "
+            f"| {b.get('position(0.20)',0)} | {b.get('valuation(0.15)',0)} | {b.get('fund(0.30)',0)} "
+            f"| {b.get('theme(0.20)',0)} | {b.get('us(0.15)',0)} | {hot_mark} |"
+        )
+    out.append("\n> **核心思路**:不追已涨强势股,而是挖**低位+资金流入+题材催化**的潜力股。\n")
     return "\n".join(out)
 
-def section_2_fund(picks: dict) -> str:
-    rows = picks.get("2_fund_flow", [])
-    if not rows:
-        return "### 2️⃣ 主力资金净流入 TOP 5\n(无数据)\n"
-    out = ["### 2️⃣ 主力资金净流入 TOP 5(东财 120 日资金流)\n"]
-    out.append("| # | 代码 | 名称 | 现价 | 涨跌% | 5 日主力净流入(亿) |")
-    out.append("|---|------|------|------|-------|------------------|")
-    for i, r in enumerate(rows, 1):
-        out.append(f"| {i} | {r['code']} | {r['name']} | {r['price']:.2f} | {r['change_pct']:+.2f} | {r['main_net_5d_yi']:+.3f} |")
-    out.append("")
+# ── 2. 每只股票独立深度分析 ──
+def section_per_stock_analysis(analyses: list[dict]) -> str:
+    if not analyses:
+        return "### 📊 深度潜力分析\n(无数据)\n"
+    out = ["### 📊 深度潜力分析(对 TOP 5 每只调用 a-share-analysis 框架)\n"]
+    for a in analyses:
+        s = a.get("summary", {})
+        fund = a.get("fundamental", {})
+        tech = a.get("technical", {})
+        ff = a.get("fund_flow", {})
+        tp = a.get("theme_policy", {})
+        risks = a.get("risks", [])
+        news_list = tp.get("matched_news", [])
+
+        out.append(f"#### 🏷️ {a['name']}({a['code']}) — 综合评分 **{s.get('score',0)}**")
+        out.append("")
+        # 基本信息
+        out.append("**基本信息**")
+        out.append(f"- 现价 **{s.get('price',0):.2f}**  涨跌 **{s.get('change_pct',0):+.2f}%**  PE **{s.get('pe_ttm',0):.2f}**  PB **{s.get('pb',0):.2f}**  换手 **{s.get('turnover_pct',0):.2f}%**")
+        out.append("")
+        # 财务
+        out.append(f"**财务评估** {fund.get('score_emoji','⚪')} — {fund.get('quality','?')}")
+        out.append(f"- PE: {fund.get('pe',0):.2f} | PB: {fund.get('pb',0):.2f}")
+        out.append("")
+        # 技术
+        out.append(f"**技术评估** {tech.get('score_emoji','⚪')} — {tech.get('state','?')}")
+        out.append(f"- 涨跌 {tech.get('change_pct',0):+.2f}% | 振幅 {tech.get('amplitude_pct',0):.2f}%")
+        out.append("")
+        # 资金
+        out.append(f"**资金评估** {ff.get('score_emoji','⚪')} — {ff.get('state','?')}")
+        out.append(f"- 换手 {ff.get('turnover_pct',0):.2f}% | 量比 {ff.get('vol_ratio',0):.2f}")
+        out.append(f"- 5日主力净流入 **{ff.get('5d_net_yi',0):+.3f} 亿** | 20日 **{ff.get('20d_net_yi',0):+.3f} 亿**")
+        out.append(f"- 资金趋势: {ff.get('trend','?')}")
+        out.append("")
+        # 题材
+        out.append(f"**题材/政策** {tp.get('score_emoji','⚪')} — {tp.get('state','?')}")
+        if news_list:
+            for n in news_list:
+                out.append(f"  - 📰 [{n.get('time','')}] {n.get('title','')}")
+                if n.get("summary"):
+                    out.append(f"    > {n['summary'][:200]}")
+        else:
+            out.append("  - (暂无匹配的 7×24 资讯)")
+        out.append("")
+        # 美股隔夜联动
+        out.append(f"**美股隔夜联动** — {a.get('us_overnight_link','?')}")
+        out.append("")
+        # 风险
+        out.append("**风险点**")
+        for r in risks:
+            out.append(f"- {r}")
+        out.append("")
+        # 建议
+        out.append(f"**投资建议** — {a.get('suggestion','?')}")
+        out.append("")
+        out.append("---")
+        out.append("")
     return "\n".join(out)
 
-def section_3_value(picks: dict) -> str:
-    rows = picks.get("3_value", [])
-    if not rows:
-        return "### 3️⃣ 价值股 TOP 5\n(无数据)\n"
-    out = ["### 3️⃣ 价值股 TOP 5(PE<20 & PB<2)\n"]
-    out.append("| # | 代码 | 名称 | 现价 | PE(TTM) | PB | 市值(亿) |")
-    out.append("|---|------|------|------|--------|----|----------|")
-    for i, r in enumerate(rows, 1):
-        out.append(f"| {i} | {r['code']} | {r['name']} | {r['price']:.2f} | {r['pe_ttm']:.2f} | {r['pb']:.2f} | {r['mcap_yi']:.0f} |")
-    out.append("")
-    return "\n".join(out)
-
-def section_4_etf(picks: dict) -> str:
-    rows = picks.get("4_etf_premium", [])
-    if not rows:
-        return "### 4️⃣ ETF 折溢价 TOP 5\n(无数据)\n"
-    out = ["### 4️⃣ ETF 折溢价 TOP 5(按换手率活跃度)\n"]
-    out.append("| # | 代码 | 名称 | 现价 | 涨跌% | 换手% |")
-    out.append("|---|------|------|------|-------|-------|")
-    for i, r in enumerate(rows, 1):
-        out.append(f"| {i} | {r['code']} | {r['name']} | {r['price']:.3f} | {r['change_pct']:+.2f} | {r.get('turnover_pct',0):.2f} |")
-    out.append("")
-    return "\n".join(out)
-
-def section_5_news(picks: dict) -> str:
-    rows = picks.get("5_news", [])
-    if not rows:
-        return "### 5️⃣ 公告/新闻异动 TOP 5\n(无数据)\n"
-    out = ["### 5️⃣ 公告/新闻异动 TOP 5(东财 7×24 资讯)\n"]
-    for i, r in enumerate(rows, 1):
-        out.append(f"**{i}. [{r['time']}] {r['title']}**")
-        if r.get("summary"):
-            out.append(f"  > {r['summary']}")
-    out.append("")
-    return "\n".join(out)
-
-def section_6_serenity(picks: dict) -> str:
-    rows = picks.get("6_serenity_chain", [])
-    if not rows:
-        return "### 6️⃣ Serenity 产业链瓶颈 TOP 5\n(无数据)\n"
-    out = ["### 6️⃣ Serenity 产业链瓶颈 TOP 5(同花顺热点 reason 词频)\n"]
-    out.append("| # | 主题 | 命中次数 | 产业链逻辑 |")
-    out.append("|---|------|---------|-----------|")
-    for i, r in enumerate(rows, 1):
-        out.append(f"| {i} | **{r['theme']}** | {r['hits']} | {r['logic']} |")
-    out.append("\n> 完整瓶颈分析请调 serenity-skill 与 serenity-stock-choke。\n")
-    return "\n".join(out)
-
-def section_7_buffett(picks: dict) -> str:
-    rows = picks.get("7_buffett_moat", [])
-    if not rows:
-        return "### 7️⃣ Buffett 护城河 TOP 5\n(无数据)\n"
-    out = ["### 7️⃣ Buffett 护城河 TOP 5(PE 5~25 + ROE>12 估算)\n"]
-    out.append("| # | 代码 | 名称 | 现价 | PE | PB | ROE 估算% |")
-    out.append("|---|------|------|------|-----|----|----------|")
-    for i, r in enumerate(rows, 1):
-        out.append(f"| {i} | {r['code']} | {r['name']} | {r['price']:.2f} | {r['pe_ttm']:.2f} | {r['pb']:.2f} | {r['roe_est']:.1f} |")
-    out.append("\n> 真实 ROE 请以年报/同花顺 F10 为准,这里 PB/PE 仅作粗略估算。\n")
-    return "\n".join(out)
-
-def section_8_best5(picks: dict) -> str:
-    rows = picks.get("8_best5", [])
-    if not rows:
-        return "### 8️⃣ 🔮 最佳 5 选(三维加权)\n(无数据)\n"
-    out = ["### 8️⃣ 🔮 最佳 5 选(资金 0.4 + 情绪 0.3 + 政策 0.3 + 美股 0.15)\n"]
-    out.append("| # | 代码 | 名称 | 现价 | 涨跌% | PE | PB | **总分** | 资金 | 情绪 | 政策 | 美股 |")
-    out.append("|---|------|------|------|-------|-----|----|----------|------|------|------|------|")
-    for i, r in enumerate(rows, 1):
-        b = r["breakdown"]
-        out.append(f"| {i} | {r['code']} | {r['name']} | {r['price']:.2f} | {r['change_pct']:+.2f} | {r['pe_ttm']:.2f} | {r['pb']:.2f} | **{r['score']}** | {b['fund(0.4)']} | {b['mood(0.3)']} | {b['policy(0.3)']} | {b['us(0.15)']} |")
-    out.append("\n> 综合评分 = `0.4×资金 + 0.3×情绪 + 0.3×政策 + 0.15×美股隔夜`。详见 consulting-analysis 的财务亮点章节。\n")
-    return "\n".join(out)
-
-def section_9_us(us: dict) -> str:
+# ── 3. 美股隔夜 ──
+def section_us(us: dict) -> str:
     if not us:
-        return "### 9️⃣ 🌙 美股隔夜表现\n(无数据)\n"
+        return "### 🌙 美股隔夜\n(无数据)\n"
     s = us["summary"]
-    out = [f"### 9️⃣ 🌙 美股隔夜表现({us['date']})\n"]
+    out = [f"### 🌙 美股隔夜({us['date']})\n"]
+    out.append("**5 大指数**\n")
     out.append("| 指数 | 涨跌% | 状态 |")
     out.append("|------|-------|------|")
     for k, label in [("NDX", "纳斯达克100"), ("IXIC", "纳斯达克综合"),
@@ -128,21 +115,23 @@ def section_9_us(us: dict) -> str:
         v = s.get(k, 0)
         out.append(f"| {label} | {v:+.2f} | {fmt_emoji(v)} |")
     out.append("")
-    # 七巨头
-    out.append("**七巨头表现**\n")
-    out.append("| 名称 | 现价 | 涨跌% |")
-    out.append("|------|------|-------|")
-    for r in us.get("magnificent7", []):
-        out.append(f"| {r.get('name','?')[:8]} | {r.get('price',0):.2f} | {r.get('change_pct',0):+.2f} |")
-    out.append("")
+    mag7 = us.get("magnificent7", [])
+    if mag7:
+        out.append("**七巨头**\n")
+        out.append("| 名称 | 现价 | 涨跌% |")
+        out.append("|------|------|-------|")
+        for r in mag7:
+            out.append(f"| {r.get('name','?')[:8]} | {r.get('price',0):.2f} | {r.get('change_pct',0):+.2f} |")
+        out.append("")
     return "\n".join(out)
 
-def section_10_159941(t159: dict) -> str:
+# ── 4. 159941 持仓跟踪 ──
+def section_159941(t159: dict) -> str:
     if not t159:
-        return "### 🔟 📈 159941 纳指 ETF 跟踪\n(无数据)\n"
+        return "### 📈 159941 持仓跟踪\n(无数据)\n"
     h = t159["holdings"]
     q = t159["quote"]
-    out = [f"### 🔟 📈 159941({t159['name']}) 持仓跟踪\n"]
+    out = [f"### 📈 159941({t159['name']}) 持仓跟踪\n"]
     out.append("**实时行情**\n")
     out.append(f"- 现价 **{q['price']:.3f}**  涨跌 **{q['change_pct']:+.2f}%**  成交额 **{q['amount_wan']/1e4:.2f} 亿**")
     out.append(f"- 今开 {q['open']:.3f}  最高 {q['high']:.3f}  最低 {q['low']:.3f}  昨收 {q['last_close']:.3f}")
@@ -150,115 +139,43 @@ def section_10_159941(t159: dict) -> str:
     out.append("")
     out.append("**持仓盈亏**\n")
     out.append(f"- 持仓 **{h['shares']} 股** × 成本 **{h['cost']:.3f}**")
-    out.append(f"- 持仓市值 **{h['market_value']:.2f} 元** (成本 {h['cost_total']:.2f})")
-    out.append(f"- 当日盈亏 **{h['daily_pnl']:+.2f} 元** ({h['daily_pnl_pct']:+.2f}%)")
-    out.append(f"- 累计盈亏 **{h['cum_pnl']:+.2f} 元** ({h['cum_pnl_pct']:+.2f}%)")
-    out.append("")
+    out.append(f"- 持仓市值 **{h['market_value']:.2f} 元**(成本 {h['cost_total']:.2f})")
+    out.append(f"- 当日盈亏 **{h['daily_pnl']:+.2f} 元**({h['daily_pnl_pct']:+.2f}%)")
+    out.append(f"- 累计盈亏 **{h['cum_pnl']:+.2f} 元**({h['cum_pnl_pct']:+.2f}%)\n")
     out.append(f"**美股隔夜联动**\n> {t159['us_overnight'].get('narrative','')}\n")
     return "\n".join(out)
 
-def section_11_to_14_consulting(picks: dict, us: dict, t159: dict) -> str:
-    """consulting-analysis 4 章节(行业地位/竞争格局/财务亮点/风险点)"""
-    best5 = picks.get("8_best5", [])
-    serenity_top = picks.get("6_serenity_chain", [])
-    out = ["## 📊 咨询级深度分析(consulting-analysis)\n"]
-    # 11 行业地位
-    out.append("### 1️⃣1️⃣ 行业地位 — 候选股在所属板块中的位置\n")
-    if best5:
-        out.append("| 标的 | 行业地位评估(基于热度+资金) |")
-        out.append("|------|---------------------------|")
-        for r in best5:
-            score = r["score"]
-            rank = "龙头" if score > 0.6 else "二线" if score > 0.4 else "尾部"
-            out.append(f"| {r['name']}({r['code']}) | 三维评分 {score} → **{rank}** |")
-    out.append("")
-    # 12 竞争格局
-    out.append("### 1️⃣2️⃣ 竞争格局 — 产业链中竞争烈度\n")
-    if serenity_top:
-        out.append("| 主题 | 竞争烈度 | 投资位置 |")
-        out.append("|------|---------|---------|")
-        for r in serenity_top:
-            hits = r['hits']
-            intensity = "白热化" if hits > 5 else "中等" if hits > 2 else "蓝海"
-            position = "选龙头" if hits > 5 else "选第二" if hits > 2 else "选唯一"
-            out.append(f"| {r['theme']} | {intensity}({hits}只) | {position} |")
-    out.append("")
-    # 13 财务亮点
-    out.append("### 1️⃣3️⃣ 财务亮点 — 候选股财务质量\n")
-    if best5:
-        out.append("| 标的 | PE | PB | 财务质量 |")
-        out.append("|------|-----|----|---------|")
-        for r in best5:
-            pe = r["pe_ttm"]
-            pb = r["pb"]
-            quality = "低估" if 0 < pe < 15 and pb < 2 else "合理" if 0 < pe < 30 else "高估"
-            out.append(f"| {r['name']}({r['code']}) | {pe:.2f} | {pb:.2f} | {quality} |")
-    out.append("")
-    # 14 风险点
-    out.append("### 1️⃣4️⃣ ⚠️ 风险点 — 当日最大风险\n")
+# ── 5. 风险点 ──
+def section_risks(picks: dict, us: dict, t159: dict, analyses: list[dict]) -> str:
     risks = []
     if us:
         ndx = us["summary"].get("NDX", 0)
+        sox = us["summary"].get("SOX", 0)
         if ndx < -1.5:
-            risks.append(f"🔴 美股纳指隔夜大跌 {ndx:.2f}%,A 股开盘承压")
-        if ndx > 2:
+            risks.append(f"🔴 美股纳指隔夜大跌 {ndx:.2f}%,A 股科技股开盘承压(美股权重 0.15,影响有限但需警惕)")
+        elif ndx > 2:
             risks.append(f"🟢 美股大涨 {ndx:.2f}%,A 股有跟涨动力(注意高开低走)")
+        if sox < -2:
+            risks.append(f"🔴 费城半导体隔夜大跌 {sox:.2f}%,科技股承压")
     if t159:
         cum = t159["holdings"]["cum_pnl_pct"]
         if cum < -10:
             risks.append(f"🔴 159941 累计亏损 {cum:.1f}%,建议补仓前评估")
         elif cum > 20:
             risks.append(f"🟢 159941 累计盈利 {cum:.1f}%,建议分批止盈")
+    # 来自 8b 分析的聚合风险
+    high_risk_count = 0
+    for a in analyses:
+        if any("🔴" in r for r in a.get("risks", [])):
+            high_risk_count += 1
+    if high_risk_count > 0:
+        risks.append(f"🟡 TOP 5 中有 {high_risk_count} 只存在 🔴 高风险信号(详见个股分析)")
     if not risks:
         risks.append("⚪ 暂无显著风险信号")
+    out = ["### ⚠️ 风险点\n"]
     for r in risks:
         out.append(f"- {r}")
     out.append("")
-    return "\n".join(out)
-
-def section_chart(picks: dict) -> str:
-    """+1 章节:chart-visualization 对比图(ASCII 表 + 评分条)"""
-    best5 = picks.get("8_best5", [])
-    if not best5:
-        return "### 📊 对比图\n(无数据)\n"
-    out = ["### 📊 最佳 5 选对比图(chart-visualization)\n"]
-    out.append("**综合评分条形图(0~1)\n**")
-    out.append("```")
-    for r in best5:
-        score = r["score"]
-        bar_len = int(score * 30)
-        bar = "█" * bar_len + "░" * (30 - bar_len)
-        chg = r["change_pct"]
-        out.append(f"  {r['name']:8s} {r['code']} |{bar}| {score:.3f} ({chg:+.2f}%)")
-    out.append("```\n")
-    out.append("**评分公式**:`0.4×资金 + 0.3×情绪 + 0.3×政策 + 0.15×美股`\n")
-    return "\n".join(out)
-
-def section_159941_kline(t159: dict) -> str:
-    """+1 章节:159941 简易 K 线描述(ASCII,实际生产用 chart-visualization)"""
-    if not t159:
-        return "### 📈 159941 K 线(简化)\n(无数据)\n"
-    q = t159["quote"]
-    out = ["### 📈 159941 行情(简化版,实际生产用 chart-visualization 出 PNG)\n"]
-    out.append("```")
-    out.append(f"  昨收 {q['last_close']:.3f}  →  今开 {q['open']:.3f}  →  最高 {q['high']:.3f}  →  最低 {q['low']:.3f}  →  收 {q['price']:.3f}")
-    out.append(f"  涨跌 {q['change_amt']:+.3f} 元  涨跌幅 {q['change_pct']:+.2f}%")
-    # 简易 K 线形状
-    open_p = q["open"]
-    close_p = q["price"]
-    high_p = q["high"]
-    low_p = q["low"]
-    last_p = q["last_close"]
-    # 极简:画一个区间
-    if high_p > low_p:
-        rng = high_p - low_p
-        body = "█" * max(1, int(abs(close_p - open_p) / rng * 30))
-        out.append(f"  ┌─── {high_p:.3f}")
-        out.append(f"  │   {body} (实体)")
-        out.append(f"  ├─── {max(open_p, close_p):.3f} (上沿)")
-        out.append(f"  ├─── {min(open_p, close_p):.3f} (下沿)")
-        out.append(f"  └─── {low_p:.3f}")
-    out.append("```\n")
     return "\n".join(out)
 
 def main():
@@ -268,38 +185,27 @@ def main():
         log(f"❌ {out_dir} 不存在,先跑 run_daily.sh")
         sys.exit(1)
 
-    log("读 JSON 数据并拼 Markdown…")
+    log("读 JSON 数据并拼 Markdown(v1.7.0 潜力股 + 深度分析)…")
     us      = load_json(out_dir / "us_market.json")
     picks   = load_json(out_dir / "daily_picks.json")
     t159    = load_json(out_dir / "159941-tracker.json")
+    analyses = picks.get("8b_analysis", [])
 
     md = []
     md.append(f"# 📊 每日选股报告 — {today}\n")
-    md.append("> 由 stock-trader-agent v1.6 自动化生成(9 策略 + 美股隔夜 + 159941 跟踪)")
-    md.append(f"> 数据时间: {today} 07:00 (A 股开盘前 2.5 小时)")
-    md.append(f"> 核心哲学: A 股买「筹码」不是买公司 — 三维信号(资金 0.4 + 情绪 0.3 + 政策 0.3) + 美股隔夜 0.15\n")
+    md.append("> 由 stock-trader-agent v1.7.0 自动化生成(潜力股 TOP 5 + 深度分析)")
+    md.append(f"> 数据时间: {today} 09:30(A 股开盘时执行,可吸收最新美股隔夜 + 7×24 资讯)")
+    md.append("> 评分公式: 位置 0.20 + 估值 0.15 + 资金 0.30 + 题材 0.20 + 美股 0.15")
+    md.append("> 方法学: a-share-analysis + consulting-analysis 双框架\n")
 
-    md.append("## 📈 数据驱动 TOP 5(5 个)\n")
-    md.append(section_1_momentum(picks))
-    md.append(section_2_fund(picks))
-    md.append(section_3_value(picks))
-    md.append(section_4_etf(picks))
-    md.append(section_5_news(picks))
-
-    md.append("## 🧠 方法驱动 TOP 5(2 个)\n")
-    md.append(section_6_serenity(picks))
-    md.append(section_7_buffett(picks))
-
-    md.append("## 🔮 综合 + 关联(3 个)\n")
-    md.append(section_8_best5(picks))
-    md.append(section_9_us(us))
-    md.append(section_10_159941(t159))
-
-    md.append(section_11_to_14_consulting(picks, us, t159))
-
-    md.append("## 📊 可视化(2 张)\n")
-    md.append(section_chart(picks))
-    md.append(section_159941_kline(t159))
+    md.append("---\n")
+    md.append(section_potential5_summary(picks))
+    md.append("---\n")
+    md.append(section_per_stock_analysis(analyses))
+    md.append("---\n")
+    md.append(section_us(us))
+    md.append(section_159941(t159))
+    md.append(section_risks(picks, us, t159, analyses))
 
     md.append("\n---\n")
     md.append("> ⚠️ **风险声明**:本报告仅供参考,不构成投资建议。市场有风险,投资需谨慎。")
