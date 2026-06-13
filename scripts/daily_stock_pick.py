@@ -1,14 +1,15 @@
 """
-daily_stock_pick.py — 9 策略并行选股(每个策略返回 TOP 5)
-策略清单(资金 0.4 / 情绪 0.3 / 政策 0.3 = 三维评分;美股隔夜 +0.15 加成):
+daily_stock_pick.py — 9 策略并行选股(v1.7.0 潜力股版)
+策略清单:
   1. 当日强势股(同花顺热点,情绪 0.3)
-  2. 主力资金净流入(东财 push2 资金流 120 日,资金 0.4)
-  3. 价值股(PE/PB 低,政策 0.3 — 政策底)
+  2. 主力资金净流入(东财 120 日,资金 0.4)
+  3. 价值股(PE/PB 低,估值底)
   4. ETF 折溢价(数据驱动)
-  5. 公告/新闻异动(东财全球资讯 7×24,政策 0.3)
-  6. Serenity 产业链瓶颈(调 serenity-skill 思路:叙事→环节→标的)
+  5. 公告/新闻异动(东财 7×24,政策 0.3)
+  6. Serenity 产业链瓶颈(调 serenity-skill:叙事→环节→标的)
   7. Buffett 护城河(ROE 持续 + FCF,价值 0.4)
-  8. 🔮 最佳 5 选(三引擎加权 = 资金 0.4 + 情绪 0.3 + 政策 0.3 + 美股隔夜 0.15)
+  8. 🌱 明日潜力股 TOP 5(五引擎:位置 0.20 + 估值 0.15 + 资金 0.30 + 题材 0.20 + 美股 0.15)
+  8b. 📊 深度潜力分析(对 TOP 5 每只:财务/技术/资金/政策/风险/建议)
   9. 🌙 美股隔夜表现(由 us_market_fetcher 提供)
 """
 import sys, json, urllib.request, argparse
@@ -241,53 +242,458 @@ def strategy_7_buffett_moat() -> list[dict]:
     out.sort(key=lambda r: r["roe_est"], reverse=True)
     return out[:5]
 
-def strategy_8_best5() -> list[dict]:
-    """策略 8: 明日最可能涨的 TOP 3(v1.6.1: 美股权重 0.10,资金 0.40,情绪 0.30,政策 0.20)"""
-    log("策略 8: 🔮 明日最可能涨的 TOP 3…")
-    # 读 us_market.json(美股隔夜,新权重 0.10)
+def strategy_8_potential5() -> list[dict]:
+    """策略 8 v1.7.0: 明日潜力股 TOP 5(不追高,挖低位+资金流入+题材催化)
+    评分公式(五引擎):
+      position 位置(0.20): 当日涨跌幅 -3% ~ +3%(温和,未暴涨)
+      valuation 估值(0.15): PE 0~30, PB 1~5(非破净非高估)
+      fund 资金(0.30): 换手 1.5%~8%(主力建仓区间) + vol_ratio > 1(放量)
+      theme 题材(0.20): 同花顺热点 reason 命中
+      us 美股隔夜(0.15): 科技股看 NDX/SOX 同向
+    """
+    log("策略 8: 🌱 明日潜力股 TOP 5(挖低位+资金流入+题材催化)…")
     today = date.today().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
-    ndx_pct = us["summary"]["NDX"] if us else 0
-    sox_pct = us["summary"]["SOX"] if us else 0
-    us_score = 1.0 if (ndx_pct > 0.5 or sox_pct > 0.5) else -1.0 if (ndx_pct < -0.5 or sox_pct < -0.5) else 0.0
+    ndx_pct = us["summary"].get("NDX", 0) if us else 0
+    sox_pct = us["summary"].get("SOX", 0) if us else 0
+    us_bullish = ndx_pct > 0.3 or sox_pct > 0.3
+    us_bearish = ndx_pct < -0.3 or sox_pct < -0.3
+    us_score = 0.5 if us_bullish else -0.5 if us_bearish else 0.0  # 弱化美股影响
+
+    # 拉同花顺热点,提取题材命中集合
+    try:
+        hot_rows = ths_hot_reason(today)
+        hot_codes = {r["code"] for r in hot_rows}
+        hot_themes = []
+        for r in hot_rows:
+            if r.get("reason"):
+                hot_themes.append((r["code"], r["reason"]))
+    except Exception as e:
+        log(f"  ⚠️ ths_hot_reason 失败: {e}")
+        hot_codes = set()
+        hot_themes = []
 
     quotes = tencent_quote(WATCH_UNIVERSE)
     out = []
     for code, q in quotes.items():
-        # 资金面(用换手率近似)
-        turnover = q.get("turnover_pct", 0)
-        fund_score = min(turnover / 5, 1.0)  # 换手 5% 满分
-        # 情绪面(涨幅)
         chg = q.get("change_pct", 0)
-        mood_score = max(min(chg / 5, 1.0), -1.0)
-        # 政策面(用涨跌幅稳定度,这里用 PB 估值底近似)
-        pb = q.get("pb", 0)
-        policy_score = 1.0 if (0 < pb < 2) else -1.0 if pb > 8 else 0.0
-        # 加权(v1.6.1:资金 0.40 + 情绪 0.30 + 政策 0.20 + 美股隔夜 0.10)
-        total = 0.40 * fund_score + 0.30 * mood_score + 0.20 * policy_score + 0.10 * us_score
-        if total > 0.2:  # 阈值过滤
+        pe  = q.get("pe_ttm", 0)
+        pb  = q.get("pb", 0)
+        turnover = q.get("turnover_pct", 0)
+        amplitude = q.get("amplitude_pct", 0)
+        vol_ratio = q.get("vol_ratio", 1)
+
+        # 1) 位置(温和,未暴涨)
+        if -3.0 <= chg <= 3.0:
+            position_score = 1.0 - abs(chg) / 3.0  # 越接近 0 越高
+        elif 3.0 < chg <= 6.0:
+            position_score = 0.3  # 涨幅 3-6% 仍可接受(刚启动)
+        else:
+            position_score = -0.5  # 涨幅>6% 已透支,不进 TOP 5
+
+        # 2) 估值
+        if pe < 0:
+            valuation_score = 0.0  # 亏损股,中性(不否也不加分)
+        elif 0 < pe <= 15:
+            valuation_score = 1.0  # 深度低估
+        elif 15 < pe <= 30:
+            valuation_score = 0.7
+        elif 30 < pe <= 50:
+            valuation_score = 0.3
+        else:
+            valuation_score = -0.3  # 高估
+
+        # 估值还要结合 PB
+        if 0 < pb < 1:
+            valuation_score -= 0.3  # 破净
+        elif 1 <= pb <= 5:
+            valuation_score += 0.1  # 健康区间
+        elif pb > 8:
+            valuation_score -= 0.3
+        valuation_score = max(min(valuation_score, 1.0), -1.0)
+
+        # 3) 资金(换手 + 量比)
+        if 1.5 <= turnover <= 8.0:
+            fund_score = 1.0 - abs(turnover - 4) / 4  # 4% 最理想
+        elif 0.5 <= turnover < 1.5:
+            fund_score = 0.3  # 偏低
+        elif turnover > 8:
+            fund_score = 0.4  # 过高(可能是出货)
+        else:
+            fund_score = -0.5  # 死水
+
+        # 量比加成
+        if vol_ratio > 1.5:
+            fund_score += 0.3
+        elif vol_ratio > 1.0:
+            fund_score += 0.1
+        fund_score = max(min(fund_score, 1.0), -1.0)
+
+        # 4) 题材(同花顺热点命中)
+        theme_score = 1.0 if code in hot_codes else 0.0
+        # 题材 reason 加成
+        for c, reason in hot_themes:
+            if c == code and reason:
+                theme_score = 1.0
+                break
+
+        # 5) 美股隔夜(权重低,只做微调)
+        # 科技/半导体板块联动更强 — 用 688/300 开头粗略判断
+        is_tech = code.startswith(("688", "300", "002")) or code in WATCH_UNIVERSE[:20]
+        us_local = us_score * 2.0 if is_tech else us_score * 0.5  # 科技股受美股影响更大
+        us_local = max(min(us_local, 1.0), -1.0)
+
+        # 加权
+        total = (0.20 * position_score
+                 + 0.15 * valuation_score
+                 + 0.30 * fund_score
+                 + 0.20 * theme_score
+                 + 0.15 * us_local)
+
+        if total > 0.25:  # 阈值过滤
             out.append({
                 "code": code,
                 "name": q["name"],
                 "price": q["price"],
-                "change_pct": q["change_pct"],
-                "pe_ttm": q["pe_ttm"],
-                "pb": q["pb"],
+                "change_pct": chg,
+                "pe_ttm": pe,
+                "pb": pb,
+                "turnover_pct": turnover,
+                "amplitude_pct": amplitude,
+                "vol_ratio": vol_ratio,
                 "score": round(total, 3),
                 "breakdown": {
-                    "fund(0.40)":   round(fund_score, 2),
-                    "mood(0.30)":   round(mood_score, 2),
-                    "policy(0.20)": round(policy_score, 2),
-                    "us(0.10)":     round(us_score, 2),
+                    "position(0.20)": round(position_score, 2),
+                    "valuation(0.15)": round(valuation_score, 2),
+                    "fund(0.30)":      round(fund_score, 2),
+                    "theme(0.20)":     round(theme_score, 2),
+                    "us(0.15)":        round(us_local, 2),
                 },
+                "in_hot": code in hot_codes,
             })
     out.sort(key=lambda r: r["score"], reverse=True)
-    return out[:3]   # ← v1.6.1: TOP 3(只选最可能涨的 3 支)
+    log(f"  → 候选 {len(out)} 支,选 TOP 5")
+    return out[:5]   # v1.7.0: 明日潜力股 TOP 5
+
+def strategy_8b_potential_analysis(top5: list[dict]) -> list[dict]:
+    """策略 8b: 深度潜力分析(对 TOP 5 每只输出 a-share-analysis 框架)
+    框架: 基本信息 / 财务 / 技术 / 资金 / 政策 / 风险 / 建议
+    """
+    log("策略 8b: 📊 深度潜力分析(对 TOP 5 调用 a-share-analysis 框架)…")
+    today = date.today().strftime("%Y-%m-%d")
+    us = load_json(DAILY_DIR / today / "us_market.json")
+    ndx_pct = us["summary"].get("NDX", 0) if us else 0
+    sox_pct = us["summary"].get("SOX", 0) if us else 0
+
+    # 拉 7×24 资讯,匹配个股相关新闻
+    try:
+        news = eastmoney_global_news(30)
+    except Exception as e:
+        log(f"  ⚠️ eastmoney_global_news 失败: {e}")
+        news = []
+
+    out = []
+    for stock in top5:
+        code = stock["code"]
+        name = stock["name"]
+
+        # 匹配新闻(标题或摘要含股票名)
+        matched_news = []
+        for n in news:
+            if name in n.get("title", "") or code in n.get("title", ""):
+                matched_news.append(n)
+            elif name in n.get("summary", ""):
+                matched_news.append(n)
+
+        # 拉 120 日资金流,算近 5 日 / 20 日累计
+        try:
+            flows = stock_fund_flow_120d(code)
+            flow_5d = sum(d["main_net"] for d in flows[-5:]) if len(flows) >= 5 else 0
+            flow_20d = sum(d["main_net"] for d in flows[-20:]) if len(flows) >= 20 else 0
+        except Exception as e:
+            log(f"  ⚠️ stock_fund_flow_120d({code}) 失败: {e}")
+            flow_5d = flow_20d = 0
+
+        # ── 财务评估 ──
+        pe = stock["pe_ttm"]
+        pb = stock["pb"]
+        if pe < 0:
+            fin_quality = "亏损股(暂无 PE)"
+            fin_score = "⚪"
+        elif pe < 15:
+            fin_quality = "深度低估"
+            fin_score = "🟢"
+        elif pe < 30:
+            fin_quality = "合理"
+            fin_score = "🟢"
+        elif pe < 50:
+            fin_quality = "偏高"
+            fin_score = "🟡"
+        else:
+            fin_quality = "高估"
+            fin_score = "🔴"
+
+        # ── 技术评估 ──
+        chg = stock["change_pct"]
+        amp = stock["amplitude_pct"]
+        if -2.0 <= chg <= 2.0 and amp < 5:
+            tech_state = "窄幅整理(蓄势)"
+            tech_score = "🟢"
+        elif chg > 5:
+            tech_state = "短期超买(谨慎追高)"
+            tech_score = "🔴"
+        elif chg < -5:
+            tech_state = "深度回调(超跌反弹机会)"
+            tech_score = "🟡"
+        else:
+            tech_state = "温和波动(健康)"
+            tech_score = "🟢"
+
+        # ── 资金评估 ──
+        turnover = stock["turnover_pct"]
+        vol_ratio = stock["vol_ratio"]
+        if 2.0 <= turnover <= 6.0 and vol_ratio > 1.2:
+            fund_state = "主力建仓(放量)"
+            fund_score = "🟢"
+        elif turnover > 8:
+            fund_state = "换手过高(警惕出货)"
+            fund_score = "🔴"
+        elif turnover < 0.5:
+            fund_state = "缺乏关注(死水)"
+            fund_score = "⚪"
+        else:
+            fund_state = "正常换手"
+            fund_score = "🟡"
+
+        # 资金流方向
+        if flow_5d > 0 and flow_20d > 0:
+            fund_trend = "5日+20日双双净流入 ✅"
+        elif flow_5d > 0:
+            fund_trend = "5日净流入(短线关注) ⚡"
+        elif flow_20d > 0:
+            fund_trend = "20日净流入(中长期看好) 📈"
+        else:
+            fund_trend = "近期资金流出(谨慎) ⚠️"
+
+        # ── 政策/题材评估 ──
+        if stock["in_hot"]:
+            theme_state = "🔥 当日同花顺热点命中(题材催化)"
+            theme_score = "🟢"
+        else:
+            theme_state = "无当日热点(题材催化弱)"
+            theme_score = "⚪"
+
+        # ── 美股隔夜联动 ──
+        is_tech = code.startswith(("688", "300", "002")) or code in WATCH_UNIVERSE[:20]
+        if is_tech:
+            if sox_pct > 0.5 or ndx_pct > 0.5:
+                us_link = f"美股纳指/费半隔夜 {ndx_pct:+.2f}%/{sox_pct:+.2f}%,科技股跟涨动能 🟢"
+            elif sox_pct < -0.5 or ndx_pct < -0.5:
+                us_link = f"美股纳指/费半隔夜 {ndx_pct:+.2f}%/{sox_pct:+.2f}%,科技股开盘承压 🔴"
+            else:
+                us_link = f"美股纳指/费半隔夜 {ndx_pct:+.2f}%/{sox_pct:+.2f}%,中性 ⚪"
+        else:
+            us_link = f"美股隔夜对非科技板块影响有限(纳指 {ndx_pct:+.2f}%)"
+
+        # ── 风险点 ──
+        risks = []
+        if pe < 0:
+            risks.append("🔴 净利润为负(亏损),业绩风险")
+        if chg > 5:
+            risks.append("🟡 当日涨幅>5%,明日有回吐风险")
+        if turnover > 8:
+            risks.append("🟡 换手率>8%,警惕主力出货")
+        if stock["pb"] < 1 and stock["pb"] > 0:
+            risks.append("🟡 PB<1 破净,可能存在基本面问题")
+        if not stock["in_hot"]:
+            risks.append("⚪ 暂无题材催化,需后续新闻触发")
+        if ndx_pct < -1.5 and is_tech:
+            risks.append(f"🔴 美股纳指大跌 {ndx_pct:.2f}%,科技股明日开盘承压")
+
+        # ── 投资建议 ──
+        score = stock["score"]
+        if score > 0.7:
+            suggestion = f"**强烈关注** — 综合评分 {score},五引擎共振,符合潜力股模型"
+        elif score > 0.5:
+            suggestion = f"**可建仓** — 综合评分 {score},基本面+资金面配合较好"
+        elif score > 0.3:
+            suggestion = f"**观望** — 综合评分 {score},等更明确信号"
+        else:
+            suggestion = f"**回避** — 综合评分 {score},引擎分化"
+
+        out.append({
+            "code": code,
+            "name": name,
+            "summary": {
+                "price": stock["price"],
+                "change_pct": chg,
+                "pe_ttm": pe,
+                "pb": pb,
+                "turnover_pct": turnover,
+                "score": score,
+            },
+            "fundamental": {
+                "pe": pe, "pb": pb,
+                "quality": fin_quality,
+                "score_emoji": fin_score,
+            },
+            "technical": {
+                "change_pct": chg,
+                "amplitude_pct": amp,
+                "state": tech_state,
+                "score_emoji": tech_score,
+            },
+            "fund_flow": {
+                "turnover_pct": turnover,
+                "vol_ratio": vol_ratio,
+                "5d_net_yi":   round(flow_5d / 1e8, 3),
+                "20d_net_yi":  round(flow_20d / 1e8, 3),
+                "state": fund_state,
+                "trend": fund_trend,
+                "score_emoji": fund_score,
+            },
+            "theme_policy": {
+                "in_hot": stock["in_hot"],
+                "state": theme_state,
+                "score_emoji": theme_score,
+                "matched_news": matched_news[:3],  # 最多 3 条
+            },
+            "us_overnight_link": us_link,
+            "risks": risks if risks else ["⚪ 暂无显著风险"],
+            "suggestion": suggestion,
+        })
+    log(f"  → 完成 {len(out)} 只深度分析")
+    return out
+
+def strategy_weekend_pick() -> list[dict]:
+    """周末模式:基于 7×24 资讯 + 行业板块 + 资金流 + 美股周五收盘,选周一潜力股 TOP 5
+    评分公式(四引擎,周末没有盘中数据):
+      industry 行业强度(0.30): 该股所属行业是否在 industry_top 前 5
+      valuation 估值(0.15): PE 0~30, PB 1~5
+      fund 资金(0.30): 5日 + 20日主力净流入
+      us 美股周五收盘(0.15): NDX/SOX 周五涨跌幅
+      news 题材新闻(0.10): 7×24 资讯中匹配股票名
+    """
+    log("周末策略: 🌙 周一潜力股 TOP 5(基于行业+资金+美股周五+7×24 资讯)…")
+    today = date.today().strftime("%Y-%m-%d")
+    us = load_json(DAILY_DIR / today / "us_market.json")
+    ndx_pct = us["summary"].get("NDX", 0) if us else 0
+    sox_pct = us["summary"].get("SOX", 0) if us else 0
+    us_bullish = ndx_pct > 0.3 or sox_pct > 0.3
+    us_bearish = ndx_pct < -0.3 or sox_pct < -0.3
+    us_score = 1.0 if us_bullish else -1.0 if us_bearish else 0.0
+
+    # 行业板块 top
+    try:
+        industries = industry_top(10)
+        top_industries = {ind["name"]: ind["change_pct"] for ind in industries[:5]}
+    except Exception as e:
+        log(f"  ⚠️ industry_top 失败: {e}")
+        top_industries = {}
+
+    # 7×24 资讯,提取可能命中股票
+    try:
+        news = eastmoney_global_news(50)
+    except Exception as e:
+        log(f"  ⚠️ eastmoney_global_news 失败: {e}")
+        news = []
+
+    quotes = tencent_quote(WATCH_UNIVERSE)
+    out = []
+    for code, q in quotes.items():
+        pe = q.get("pe_ttm", 0)
+        pb = q.get("pb", 0)
+
+        # 1) 行业强度(用板块名截取关键词匹配股票名)
+        industry_score = 0.0
+        for ind_name, ind_pct in top_industries.items():
+            # 板块名截取前 2 字(如"通信设备" → "通信")
+            for keyword in [ind_name, ind_name[:2], ind_name[:3]]:
+                if keyword and keyword in q.get("name", ""):
+                    industry_score = ind_pct / 3  # 归一化
+                    break
+            if industry_score != 0:
+                break
+        industry_score = max(min(industry_score, 1.0), -1.0)
+        if not top_industries:
+            industry_score = 0.0  # 拿不到数据
+
+        # 2) 估值
+        if pe < 0:
+            valuation_score = 0.0
+        elif 0 < pe <= 30:
+            valuation_score = 1.0
+        elif 30 < pe <= 50:
+            valuation_score = 0.3
+        else:
+            valuation_score = -0.3
+        if 0 < pb < 1:
+            valuation_score -= 0.3
+        elif 1 <= pb <= 5:
+            valuation_score += 0.1
+        elif pb > 8:
+            valuation_score -= 0.3
+        valuation_score = max(min(valuation_score, 1.0), -1.0)
+
+        # 3) 资金流(5日 + 20日)
+        try:
+            flows = stock_fund_flow_120d(code)
+            flow_5d = sum(d["main_net"] for d in flows[-5:]) if len(flows) >= 5 else 0
+            flow_20d = sum(d["main_net"] for d in flows[-20:]) if len(flows) >= 20 else 0
+        except Exception:
+            flow_5d = flow_20d = 0
+        # 归一化: 5亿 = 1.0, -5亿 = -1.0
+        fund_score = max(min((flow_5d * 0.6 + flow_20d * 0.4) / 5e8, 1.0), -1.0)
+
+        # 4) 美股(科技股加权)
+        is_tech = code.startswith(("688", "300", "002")) or code in WATCH_UNIVERSE[:20]
+        us_local = us_score * 1.5 if is_tech else us_score * 0.5
+        us_local = max(min(us_local, 1.0), -1.0)
+
+        # 5) 题材新闻(在 7×24 中匹配股票名)
+        news_score = 0.0
+        for n in news:
+            if q.get("name", "") in n.get("title", ""):
+                news_score = 1.0
+                break
+            elif q.get("name", "") in n.get("summary", ""):
+                news_score = max(news_score, 0.7)
+        news_score = max(min(news_score, 1.0), 0.0)
+
+        # 加权
+        total = (0.30 * industry_score
+                 + 0.15 * valuation_score
+                 + 0.30 * fund_score
+                 + 0.15 * us_local
+                 + 0.10 * news_score)
+
+        if total > 0.10:  # 阈值(周末数据稀疏,放宽)
+            out.append({
+                "code": code,
+                "name": q["name"],
+                "price": q["price"],
+                "change_pct": q.get("change_pct", 0),
+                "pe_ttm": pe,
+                "pb": pb,
+                "score": round(total, 3),
+                "breakdown": {
+                    "industry(0.30)": round(industry_score, 2),
+                    "valuation(0.15)": round(valuation_score, 2),
+                    "fund(0.30)":      round(fund_score, 2),
+                    "us(0.15)":        round(us_local, 2),
+                    "news(0.10)":      round(news_score, 2),
+                },
+                "flow_5d":  round(flow_5d / 1e8, 3),
+                "flow_20d": round(flow_20d / 1e8, 3),
+            })
+    out.sort(key=lambda r: r["score"], reverse=True)
+    log(f"  → 周末候选 {len(out)} 支,选 TOP 5")
+    return out[:5]
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", default="all",
-                        choices=["all","1","2","3","4","5","6","7","8","9"])
+                        choices=["all","1","2","3","4","5","6","7","8","8b","9","weekend"])
     parser.add_argument("--date", default=None)
     args = parser.parse_args()
 
@@ -295,10 +701,16 @@ def main():
     out_dir = DAILY_DIR / today
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    log(f"=== 9 策略选股({today})===")
+    log(f"=== 9 策略选股 v1.7.0({today})===")
     all_results = {}
 
-    if args.mode in ("all", "1"):
+    if args.mode == "weekend":
+        # 周末模式:只跑美股隔夜 + 周末选股(基于行业+资金+美股周五+7×24 资讯)
+        log("周末模式: 🌙 选周一潜力股 TOP 5")
+        us = load_json(out_dir / "us_market.json")
+        all_results["9_us_overnight"] = us["summary"] if us else {}
+        all_results["weekend_pick"] = strategy_weekend_pick()
+    elif args.mode in ("all", "1"):
         all_results["1_momentum"] = strategy_1_momentum()
     if args.mode in ("all", "2"):
         all_results["2_fund_flow"] = strategy_2_fund_flow()
@@ -313,7 +725,12 @@ def main():
     if args.mode in ("all", "7"):
         all_results["7_buffett_moat"] = strategy_7_buffett_moat()
     if args.mode in ("all", "8"):
-        all_results["8_best5"] = strategy_8_best5()
+        all_results["8_potential5"] = strategy_8_potential5()
+    # 策略 8b: 深度潜力分析(依赖 8 的输出)
+    if args.mode in ("all", "8b"):
+        if "8_potential5" not in all_results:
+            all_results["8_potential5"] = strategy_8_potential5()
+        all_results["8b_analysis"] = strategy_8b_potential_analysis(all_results["8_potential5"])
     # 策略 9 = 美股隔夜(由 us_market_fetcher 提供,这里只是引用)
     if args.mode in ("all", "9"):
         us = load_json(out_dir / "us_market.json")
