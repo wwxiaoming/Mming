@@ -1,8 +1,7 @@
 ---
 name: longbridge-content
 description: |
-  Latest news articles, regulatory filings, community discussion topics for listed stocks, and SEC EDGAR filing analysis (10-K/10-Q/8-K/proxy/Form 4) via Longbridge.
-  Triggers: "新闻", "公告", "资讯", "话题", "社区讨论", "SEC", "10-K", "10-Q", "8-K", "Form 4", "新聞", "公告", "資訊", "話題", "社區討論", "news", "filing", "announcement", "topic", "community", "SEC filing", "annual report", "quarterly report", "proxy", "insider filing", "regulatory rules", "监管规则", "涨跌停", "漲跌停", "T+1", "PDT rule", "熔断", "熔斷", "circuit breaker", "margin rules", "保证金", "保證金", "監管規則"
+  最新新闻文章、监管申报、上市公司社区讨论话题、SEC EDGAR 申报分析（10-K/10-Q/8-K/委托书/Form 4），通过 Longbridge。触发词：新闻、公告、资讯、话题、社区讨论、SEC、10-K、10-Q、8-K、Form 4、news、filing、announcement、community、SEC filing、annual report、quarterly report、proxy、insider filing、监管规则、涨跌停、T+1、熔断、circuit breaker、保证金。
 license: MIT
 metadata:
   author: longbridge

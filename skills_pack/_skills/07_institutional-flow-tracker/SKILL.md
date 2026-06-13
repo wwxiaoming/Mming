@@ -1,6 +1,8 @@
 ---
 name: institutional-flow-tracker
-description: Use this skill to track institutional investor ownership changes and portfolio flows using 13F filings data. Analyzes hedge funds, mutual funds, and other institutional holders to identify stocks with significant smart money accumulation or distribution. Helps discover stocks before major moves by following where sophisticated investors are deploying capital.
+description: |
+  用 13F 申报数据跟踪机构投资者持仓变化与组合资金流。分析对冲基金、共同基金及其他机构持有人，识别出现显著 smart money 累积或派发的股票。跟随老练投资者的资金部署方向，可在重大行情前发现先机。
+
 ---
 
 # Institutional Flow Tracker

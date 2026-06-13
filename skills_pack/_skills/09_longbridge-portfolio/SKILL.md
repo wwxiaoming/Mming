@@ -1,8 +1,7 @@
 ---
 name: longbridge-portfolio
 description: |
-  Account assets, equity and fund positions, P&L, cash flow records, account statements, margin ratios, buy-power estimates, order management, and DCA recurring investments via Longbridge (most require Trade permission). Frameworks: portfolio diagnosis, rebalancing, asset allocation, risk analysis (VaR/CVaR), performance attribution, and tax-loss harvesting.
-  Triggers: "持仓", "账户", "盈亏", "资产", "对账单", "下单", "买入", "卖出", "撤单", "定投", "组合诊断", "再平衡", "资产配置", "风险分析", "绩效归因", "税损收割", "持倉", "賬戶", "盈虧", "對賬單", "下單", "買入", "賣出", "組合診斷", "再平衡", "稅損收割", "positions", "portfolio", "P&L", "order", "buy", "sell", "DCA", "statement", "risk analysis", "rebalancing", "tax harvesting", "我的风险", "持仓风险", "风险敞口", "資產", "資產配置", "風險分析", "績效歸因", "撤單"
+  账户资产、股票/基金持仓、盈亏、现金流记录、对账单、保证金率、购买力估算、订单管理、定投（DCA），通过 Longbridge（多数需 Trade 权限）。框架：组合诊断、再平衡、资产配置、风险分析（VaR/CVaR）、绩效归因、税损收割。触发词：持仓、账户、盈亏、资产、对账单、下单、买入、卖出、撤单、定投、组合诊断、再平衡、资产配置、风险分析、绩效归因、税损收割、positions、portfolio、P&L、order、buy、sell、DCA、statement。
 license: MIT
 metadata:
   author: longbridge

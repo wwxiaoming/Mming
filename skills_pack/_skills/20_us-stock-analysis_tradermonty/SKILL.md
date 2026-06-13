@@ -1,6 +1,8 @@
 ---
 name: us-stock-analysis
-description: Comprehensive US stock analysis including fundamental analysis (financial metrics, business quality, valuation), technical analysis (indicators, chart patterns, support/resistance), stock comparisons, and investment report generation. Use when user requests analysis of US stock tickers (e.g., "analyze AAPL", "compare TSLA vs NVDA", "give me a report on Microsoft"), evaluation of financial metrics, technical chart analysis, or investment recommendations for American stocks.
+description: |
+  全面的美股分析：基本面（财务指标、商业质量、估值）、技术面（指标、形态、支撑/阻力）、股票对比、投资报告生成。当用户要求分析美股代码（如'分析 AAPL'、'TSLA 对比 NVDA'、'给我一份微软的报告'），或评估美股财务指标、图表技术分析、投资建议时使用。
+
 ---
 
 # US Stock Analysis

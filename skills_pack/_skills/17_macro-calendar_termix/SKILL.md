@@ -1,6 +1,8 @@
 ---
 name: macro-calendar
-description: Track macroeconomic events, Fed rates, CPI, and economic indicators affecting crypto.
+description: |
+  跟踪影响加密货币的宏观经济事件、美联储利率、CPI、经济指标。
+
 metadata: { "cryptoclaw": { "emoji": "📅", "always": true } }
 ---
 

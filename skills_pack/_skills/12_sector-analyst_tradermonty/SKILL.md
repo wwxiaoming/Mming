@@ -1,6 +1,8 @@
 ---
 name: sector-analyst
-description: This skill should be used when analyzing sector rotation patterns and market cycle positioning. It fetches sector uptrend data from CSV (no API key required) and optionally accepts chart images for supplementary analysis. Use this skill when the user requests sector rotation analysis, cyclical vs defensive assessment, overbought/oversold identification, or market cycle phase estimation. All analysis and output are conducted in English.
+description: |
+  用于分析板块轮动模式与市场周期定位。从 CSV 抓取板块上涨趋势数据（无需 API key），可选接收图表作为辅助分析。触发词：板块轮动分析、周期 vs 防御评估、超买/超卖识别、市场周期阶段判断。所有分析与输出以中文呈现。
+
 ---
 
 # Sector Analyst

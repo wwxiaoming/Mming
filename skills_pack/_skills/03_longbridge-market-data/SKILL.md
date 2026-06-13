@@ -1,8 +1,7 @@
 ---
 name: longbridge-market-data
 description: |
-  Real-time quotes, K-line charts, order book, trade ticks, intraday capital flow, market sentiment temperature, trading session schedule, security lists, exchange rates, and IPO calendar for HK/US/A-share/SG via Longbridge. Also covers ADR premium and FX carry frameworks.
-  Triggers: "股价", "行情", "K线", "走势", "盘口", "资金流", "市场温度", "汇率", "IPO", "打新", "隔夜股", "ADR溢价", "外汇套息", "K線", "盤口", "資金流", "市場溫度", "匯率", "ADR溢價", "外匯套息", "现在多少钱", "多少钱", "stock price", "quote", "kline", "chart", "depth", "orderbook", "capital flow", "market sentiment", "exchange rate", "IPO calendar", "security list", "ADR premium", "fx carry", "market open", "trading hours", "开市", "溢价", "NVDA.US", "700.HK", "600519.SH", "股價", "走勢", "開盤", "今天開市"
+  实时行情、K线、盘口、逐笔成交、盘中资金流、市场情绪温度、交易时段、证券列表、汇率、IPO 日历（港/美/A/新），基于 Longbridge。也覆盖 ADR 溢价与外汇套息框架。触发词：股价、行情、K线、走势、盘口、资金流、市场温度、汇率、IPO、打新、隔夜股、ADR溢价、外汇套息、现在多少钱、stock price、quote、kline、chart、depth、orderbook、capital flow、market sentiment、exchange rate、IPO calendar、security list、ADR premium、fx carry、market open、trading hours、开市、溢价。
 license: MIT
 metadata:
   author: longbridge

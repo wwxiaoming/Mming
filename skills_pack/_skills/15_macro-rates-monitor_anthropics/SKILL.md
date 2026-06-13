@@ -1,6 +1,8 @@
 ---
 name: macro-rates-monitor
-description: Build macroeconomic and rates dashboards combining macro indicators, yield curves, inflation breakevens, and swap rates. Use when monitoring macro conditions, analyzing yield curve shape, decomposing real vs nominal rates, assessing policy rate expectations, or evaluating financial conditions.
+description: |
+  构建宏观经济与利率仪表盘：综合宏观指标、收益率曲线、通胀盈亏平衡、掉期利率。用于监控宏观环境、分析收益率曲线形态、拆分实际 vs 名义利率、评估政策利率预期、判断金融条件。
+
 ---
 
 # Macroeconomic and Rates Monitor

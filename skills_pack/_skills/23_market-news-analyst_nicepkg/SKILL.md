@@ -1,6 +1,8 @@
 ---
 name: market-news-analyst
-description: This skill should be used when analyzing recent market-moving news events and their impact on equity markets and commodities. Use this skill when the user requests analysis of major financial news from the past 10 days, wants to understand market reactions to monetary policy decisions (FOMC, ECB, BOJ), needs assessment of geopolitical events' impact on commodities, or requires comprehensive review of earnings announcements from mega-cap stocks. The skill automatically collects news using WebSearch/WebFetch tools and produces impact-ranked analysis reports. All analysis thinking and output are conducted in English.
+description: |
+  用于分析近期市场驱动新闻事件及其对股市与大宗商品的影响。当用户请求分析过去 10 天重大财经新闻、想理解市场对货币政策（FOMC、ECB、BOJ）的反应、评估地缘事件对大宗商品影响、或需全面回顾大盘股业绩公告时使用。自动通过 WebSearch/WebFetch 收集新闻并产出按影响力排序的分析报告。所有分析思考与输出以中文呈现。
+
 ---
 
 # Market News Analyst

@@ -1,8 +1,7 @@
 ---
 name: longbridge-intel
 description: |
-  Market intelligence: strategy screener, popularity rankings, top movers with news correlation, quote anomalies, index/ETF constituent stocks, morning briefings, catalyst monitoring for watchlist, event-driven strategies, ETF fund flows, sector rotation, market microstructure, supply chain analysis, industry overviews, and ARK-style disruptive innovation analysis.
-  Triggers: "筛选", "策略筛选", "排行", "热度", "异动", "成分股", "晨报", "早报", "催化剂", "事件驱动", "ETF资金流", "板块轮动", "产业链", "行业概览", "颠覆式创新", "ARK", "篩選", "排行", "異動", "成分股", "晨報", "ETF資金流", "板塊輪動", "產業鏈", "screener", "rank", "anomaly", "constituent", "morning brief", "catalyst", "event strategy", "ETF flow", "ETF资金流", "ETF申赎", "ETF資金流", "etf flow", "资金申赎", "etf 资金", "sector rotation", "supply chain", "ARK", "disruptive innovation", "板块筛选", "行业筛选", "板塊篩選", "強勢板塊", "弱勢板塊", "top sectors", "催化劑", "事件驅動", "行業概覽", "顛覆式創新", "策略篩選", "熱度"
+  市场情报：策略筛选器、热度排行、异动+新闻关联、行情异常、指数/ETF 成分股、早晨简报、自选股催化剂监控、事件驱动策略、ETF 资金流、板块轮动、市场微观结构、产业链分析、行业概览、ARK 式颠覆式创新分析。触发词：筛选、策略筛选、排行、热度、异动、成分股、晨报、早报、催化剂、事件驱动、ETF资金流、板块轮动、产业链、行业概览、ARK、颠覆式创新、screener、rank、anomaly、constituent、morning brief、catalyst、event strategy、ETF flow、sector rotation、supply chain。
 license: MIT
 metadata:
   author: longbridge

@@ -1,21 +1,7 @@
 ---
 name: earnings-preview
-description: >
-  Generate a pre-earnings briefing for any stock using Yahoo Finance data.
-  Use this skill whenever the user wants to prepare for an upcoming earnings report,
-  understand what analysts expect, review a company's beat/miss track record,
-  or get a quick overview before an earnings call.
-  Triggers include: "earnings preview for AAPL", "what to expect from TSLA earnings",
-  "MSFT reports next week", "earnings preview", "pre-earnings analysis",
-  "what are analysts expecting for NVDA", "earnings estimates for",
-  "will GOOGL beat earnings", "earnings beat/miss history",
-  "upcoming earnings", "before earnings", "earnings setup",
-  "consensus estimates", "earnings whisper", "EPS expectations",
-  "what's the street expecting", "earnings season preview",
-  any mention of preparing for or previewing an earnings report,
-  or any request to understand expectations ahead of a company's earnings date.
-  Always use this skill when the user mentions a ticker in context of upcoming earnings,
-  even if they don't say "preview" explicitly.
+description: |
+  用 Yahoo Finance 数据为任意股票生成财报前简报。用户想为即将发布的财报做准备、了解分析师预期、回顾公司 beat/miss 记录，或在业绩电话会前快速概览时使用。触发词：AAPL 财报前瞻、TSLA 财报预期什么、MSFT 下周披露、earnings preview、pre-earnings analysis、NVDA 分析师预期、earnings estimates、GOOGL 能否 beat 预期、beat/miss 历史、upcoming earnings、before earnings、earnings setup、consensus estimates、earnings whisper、EPS expectations、what's the street expecting、earnings season preview，或任何涉及财报前预期梳理的请求。
 ---
 
 # Earnings Preview Skill

@@ -1,6 +1,8 @@
 ---
 name: market-top-detector
-description: Detects market top probability using O'Neil Distribution Days, Minervini Leading Stock Deterioration, and Monty Defensive Sector Rotation. Generates a 0-100 composite score with risk zone classification. Use when user asks about market top risk, distribution days, defensive rotation, leadership breakdown, or whether to reduce equity exposure. Focuses on 2-8 week tactical timing signals for 10-20% corrections.
+description: |
+  用 O'Neil Distribution Days、Minervini Leading Stock Deterioration、Monty Defensive Sector Rotation 三种方法检测市场见顶概率。生成 0-100 综合分 + 风险区分类。当用户询问市场见顶风险、分发日、防御板块轮动、龙头股恶化、是否减仓时使用。专注 2-8 周战术择时信号，针对 10-20% 调整。
+
 ---
 
 # Market Top Detector Skill

@@ -1,6 +1,8 @@
 ---
 name: fred-macro
-description: "API gratuita de la Reserva Federal (FRED): 840K+ series macroeconómicas (GDP, CPI, tasas, empleo, M2, VIX, treasuries)."
+description: |
+  美联储免费 API (FRED)：840K+ 宏观数据序列（GDP、CPI、利率、就业、M2、VIX、美债）。
+
 license: MIT
 metadata:
   category: finanzas, api, macroeconomia, federal-reserve, eeUU

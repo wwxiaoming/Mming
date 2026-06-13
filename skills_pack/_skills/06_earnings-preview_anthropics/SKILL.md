@@ -1,6 +1,8 @@
 ---
 name: earnings-preview
-description: Build pre-earnings analysis with estimate models, scenario frameworks, and key metrics to watch. Use before a company reports quarterly earnings to prepare positioning notes, set up bull/bear scenarios, and identify what will move the stock. Triggers on "earnings preview", "what to watch for [company] earnings", "pre-earnings", "earnings setup", or "preview Q[X] for [company]".
+description: |
+  构建财报前分析：估值模型、情景框架、关键观察指标。在公司季报披露前用于：准备头寸备忘、搭建多/空情景、识别股价驱动因素。触发词：earnings preview、what to watch for [公司] earnings、pre-earnings、earnings setup、preview Q[X] for [公司]。
+
 ---
 
 # Earnings Preview

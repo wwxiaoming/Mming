@@ -1,8 +1,7 @@
 ---
 name: longbridge-fundamentals
 description: |
-  Financial statements, business segments, dividends, valuation multiples (PE/PB/PS), industry comparison, operating data, corporate actions, company and executive profiles, cross-stock comparison, and valuation ranking via Longbridge. Also: DCF models, value investing screens (low PE/PB, margin of safety), and behavioral finance analysis frameworks.
-  Triggers: "财报", "三表", "利润表", "资产负债", "现金流", "估值", "PE", "PB", "分红", "公司信息", "高管", "行业估值", "并购", "DCF", "内在价值", "低估值", "安全边际", "行为金融", "小盘成长", "专精特新", "財報", "估值", "分紅", "內在價值", "安全邊際", "financial report", "income statement", "balance sheet", "valuation", "dividend", "company info", "industry valuation", "DCF", "value screen", "behavioral finance", "利潤表", "資產負債", "現金流", "行業估值", "併購", "行為金融", "小盤成長"
+  财务报表、业务分部、分红、估值倍数（PE/PB/PS）、行业对比、经营数据、公司行为、公司与高管资料、跨股对比、估值排名，通过 Longbridge。另含 DCF 模型、价值投资筛选（低 PE/PB、安全边际）、行为金融分析框架。触发词：财报、三表、利润表、资产负债、现金流、估值、PE、PB、分红、公司信息、高管、行业估值、并购、DCF、内在价值、低估值、安全边际、行为金融、financial report、income statement、balance sheet、valuation、dividend、DCF、value screen、behavioral finance。
 license: MIT
 metadata:
   author: longbridge

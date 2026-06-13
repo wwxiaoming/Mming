@@ -1,18 +1,7 @@
 ---
 name: company-valuation
-description: >
-  Estimate the intrinsic value of a public company using DCF, relative (peer multiple)
-  and sum-of-parts (SOTP) methods, then triangulate to an implied share price with
-  upside/downside versus the current market price. Use this skill whenever the user asks:
-  "what is AAPL worth", "valuation of NVDA", "fair value of TSLA", "intrinsic value",
-  "DCF for MSFT", "build a DCF", "discounted cash flow", "WACC", "terminal value",
-  "implied share price", "upside to fair value", "is X overvalued/undervalued",
-  "relative valuation", "peer comparison valuation", "EV/EBITDA target", "SOTP",
-  "sum of the parts", "how much is [company] worth", "price target from fundamentals",
-  "value this company", or any ticker in the context of computing intrinsic or
-  relative valuation. Default to running ALL three methods
-  (DCF + relative + SOTP-if-applicable) and presenting a blended implied price with a
-  sensitivity table. Do not answer valuation questions from memory — always run the workflow.
+description: |
+  用 DCF、相对估值（同行倍数）和 SOTP（分部加总）三种方法估算上市公司的内在价值，综合得到隐含股价并对比当前市价计算上行/下行空间。适用场景：用户问'AAPL 值多少'、'NVDA 估值'、'TSLA 公允价值'、'MSFT DCF'、'建个 DCF'、'折现现金流'、'WACC'、'终值'、'隐含股价'、'相对公允的上行空间'、'X 是否高估/低估'、'相对估值'、'同业对比估值'、'EV/EBITDA 目标'、'SOTP'、'分部加总'、'这公司值多少钱'、'基本面驱动的目标价'，或任何在计算内在/相对估值语境下的股票代码。默认同时运行三种方法（DCF + 相对 + SOTP-如适用），输出混合隐含价 + 敏感性表。不要凭记忆回答估值问题——始终运行完整工作流。
 ---
 
 # Company Valuation

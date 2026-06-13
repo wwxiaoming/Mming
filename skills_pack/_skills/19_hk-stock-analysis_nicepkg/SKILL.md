@@ -1,6 +1,8 @@
 ---
 name: hk-stock-analysis
-description: Comprehensive Hong Kong stock analysis covering H-shares, Red Chips, local HK stocks, AH premium analysis, Stock Connect flows, and HK market characteristics (T+0, no price limits, short selling). Use when user asks about 港股分析, Hong Kong listed stocks, H shares, or needs analysis considering HK market features.
+description: |
+  全面的港股分析，覆盖 H 股、红筹、本地港股、AH 折溢价、互联互通资金流向，以及港股特征（T+0、无涨跌幅限制、做空机制）。当用户询问'港股分析'、香港上市股票、H 股，或需要考虑港股特性的分析时使用。
+
 ---
 
 # 港股分析 (Hong Kong Stock Analysis)

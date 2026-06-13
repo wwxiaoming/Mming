@@ -1,8 +1,7 @@
 ---
 name: longbridge-research
 description: |
-  Institution ratings, consensus price targets, EPS/revenue forecasts, finance calendar, shareholder data, fund holders, insider trades (SEC Form 4), short interest, industry rankings, peer group analysis via Longbridge. Frameworks: investment proposals, coverage initiation, stock research, competitive analysis, financial planning, and DeFi/on-chain analysis.
-  Triggers: "机构评级", "目标价", "一致预期", "EPS预测", "内部人交易", "空头", "行业排名", "投资提案", "首次覆盖", "竞争格局", "财务规划", "DeFi收益", "链上数据", "機構評級", "目標價", "一致預期", "內部人交易", "空頭", "投資提案", "首次覆蓋", "競爭格局", "鏈上數據", "analyst rating", "price target", "consensus", "insider trades", "short interest", "coverage initiation", "DeFi yield", "on-chain", "earnings calendar", "finance calendar", "财报日历", "下周谁财报", "下周财报", "下周有哪些财报", "哪些财报", "谁财报", "FOMC", "非农", "股东", "谁持有", "股東", "基金持仓", "基金持倉", "機構評級", "目標價", "財務規劃"
+  机构评级、一致目标价、EPS/营收预测、财报日历、股东数据、基金持仓、内部人交易（SEC Form 4）、空头持仓、行业排名、同业组分析，通过 Longbridge。框架：投资提案、首次覆盖、股票研究、竞争分析、财务规划、DeFi/链上分析。触发词：机构评级、目标价、一致预期、EPS预测、内部人交易、空头、行业排名、投资提案、首次覆盖、竞争格局、财务规划、DeFi收益、链上数据、analyst rating、price target、consensus、insider trades、short interest、coverage initiation、DeFi yield、on-chain、财报日历、FOMC、非农。
 license: MIT
 metadata:
   author: longbridge

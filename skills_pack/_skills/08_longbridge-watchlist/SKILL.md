@@ -1,8 +1,7 @@
 ---
 name: longbridge-watchlist
 description: |
-  Watchlist group management (list/create/rename/delete/add/remove symbols), price alerts (list/add/delete), and community stock lists (sharelist: list/detail/create/delete/manage) via Longbridge. Mutating operations require explicit user confirmation (dry-run protocol).
-  Triggers: "自选股", "添加自选", "删除自选", "创建分组", "价格提醒", "提醒", "股票清单", "自選股", "新增至自選", "建立分組", "價格提醒", "watchlist", "add to watchlist", "create group", "rename group", "price alert", "sharelist", "community list", "刪除自選", "股票清單", "重命名分組", "重新命名"
+  自选股分组管理（列/创建/重命名/删除/添加/移除标的）、价格提醒（列/添加/删除）、社区股票清单（sharelist：列/详情/创建/删除/管理），通过 Longbridge。变更操作需用户明确确认（dry-run 协议）。触发词：自选股、添加自选、删除自选、创建分组、价格提醒、股票清单、watchlist、add to watchlist、create group、rename group、price alert、sharelist、community list。
 license: MIT
 metadata:
   author: longbridge

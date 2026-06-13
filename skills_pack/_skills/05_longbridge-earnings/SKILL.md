@@ -1,16 +1,7 @@
 ---
 name: longbridge-earnings
-description: >
-  Earnings analysis — pre- and post-earnings. Pre-earnings preview: prior-guidance review,
-  recent-events tracking, last call's Q&A, and a key-things-to-watch framework for an upcoming
-  release. Post-earnings: two tiers — a fast in-chat summary card (default) and a full Markdown
-  research report (on request). Covers beat/miss, segments, margins, guidance, estimates,
-  valuation. US / HK / A-share. Use whenever the user wants an earnings preview or a
-  post-earnings / quarterly-results writeup. Triggers: "earnings update", "quarterly results",
-  "Q1/Q2/Q3/Q4 results", "earnings report", "post-earnings analysis", "beat/miss",
-  "guidance update", "earnings preview", "pre-earnings", "what to watch this earnings",
-  "before earnings", "财报分析", "业绩更新", "季度业绩", "季报", "年报", "盈利分析", "财报点评",
-  "财报前瞻", "业绩前瞻", "财报预览", "上季度指引", "財報分析", "業績更新", "季度業績", "季報",
+description: |
+  财报分析——业绩前瞻 + 业绩回顾。前瞻：复盘上季度指引、追踪近期事件、梳理上次电话会 Q&A，并给出本期'关注要点'框架。回顾分两层：快速聊天摘要卡（默认）与完整 Markdown 研究报告（按需生成）。覆盖 beat/miss、分部、利润率、指引、预测、估值，适用美/港/A 股。触发词：earnings update、quarterly results、Q1/Q2/Q3/Q4 results、earnings report、post-earnings analysis、beat/miss、guidance update、earnings preview、pre-earnings、what to watch this earnings、before earnings、财报分析、业绩更新、季度业绩、季报、年报、盈利分析、财报点评、财报前瞻、业绩前瞻、财报预览。
   "年報", "財報點評", "財報前瞻", "業績前瞻", "財報預覽".
 ---
 
