@@ -1,5 +1,17 @@
 # A 股短线选股自动化 Spec
 
+> ⚠️ **DEPRECATED**: 本 spec 已被 **x1.0 融合版** 取代。
+>
+> x1.0 在本 spec 基础上融合了 v1.7.0 的量化打分 + 工程化脚本栈，新增了：
+> - `x1.environment_gate` 环境闸门（S/A/B/C/D 五级）
+> - `x1.exclusion_filter` 10 条排除规则
+> - `x1.conclusion_mapper` 4 选 1 结论映射
+> - 持仓联动（159941）+ 美股隔夜 + 周末展望
+> - 6 通道自动写出（POSITIONS / DAILY_LOG / STOCK_CONTEXT / state.json / 飞书）
+>
+> 新 spec 路径: `.trae/specs/x1-0-fusion-trader/spec.md`
+> 本 spec 仅作历史参考保留，不再生效。
+
 ## Why
 
 用户已有一套完整的 A 股短线交易决策手册（见 `/workspace/选股prompt.txt`），要求将其逻辑沉淀为可复用的「选股文档」，并通过工作日定时任务，每天 8:00 输出当日开盘前最值得关注的 5 支潜力标的，减少人工盯盘与情绪化交易，提升决策质量与执行效率。
