@@ -1,0 +1,30 @@
+[
+  {
+    "code": "600531",
+    "name": "豫光金铅",
+    "score1": 3,
+    "score2": 5,
+    "score3": 3,
+    "score4": 2,
+    "score5": 4,
+    "score6": 3,
+    "total": 20,
+    "zt_count": 1,
+    "above_avg": 0.75,
+    "vol_ratio": 3.16
+  },
+  {
+    "code": "600458",
+    "name": "时代新材",
+    "score1": 3,
+    "score2": 1,
+    "score3": 3,
+    "score4": 2,
+    "score5": 4,
+    "score6": 2,
+    "total": 15,
+    "zt_count": 1,
+    "above_avg": 0.75,
+    "vol_ratio": 1.45
+  }
+]
