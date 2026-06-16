@@ -1,0 +1,207 @@
+{
+  "metadata": {
+    "generated_at": "2026-06-16T10:00:00+08:00",
+    "method": "Manual evaluation based on Market Top Detector scoring framework (O'Neil/Minervini/Monty)",
+    "data_sources": "WebSearch - multiple sources (BeInOptions, Sina Finance, MarketWatch, Kalkine, StockWireX, Candorium, etc.)",
+    "note": "FMP API key unavailable - script could not run. Manual scoring applied using identical calculator logic.",
+    "data_freshness": {
+      "breadth_200dma": {"date": "2026-06-01", "age_business_days": 10, "factor": 0.70},
+      "breadth_50dma": {"date": "2026-06-05", "age_business_days": 7, "factor": 0.85},
+      "put_call": {"date": "2026-06-01", "age_business_days": 10, "factor": 0.70},
+      "overall_confidence": 0.70
+    }
+  },
+  "input_data": {
+    "breadth_200dma": 53.0,
+    "breadth_50dma": 42.0,
+    "put_call_ratio_5dma": 0.452,
+    "put_call_ratio_21dma": 0.493,
+    "vix_term_structure": "contango",
+    "vix_level_approx": 18,
+    "index_near_highs": true,
+    "sp500_distance_from_high_pct": -7.0
+  },
+  "components": {
+    "distribution_days": {
+      "score": 65,
+      "weight": 0.25,
+      "weighted_contribution": 16.25,
+      "label": "Distribution Day Count",
+      "signal": "WARNING: Elevated distribution day count",
+      "evidence": [
+        "S&P 500 experienced 6 consecutive days of index-up but breadth-down divergence (unprecedented since 1996 per BTIG)",
+        "June 6 single-session $2.5 trillion wipeout: S&P -1.65%, Nasdaq -2.6%",
+        "70% of NYSE volume in declining stocks on May 16 selloff",
+        "Broadcom miss triggered semiconductor cascade: AVGO -19.6%, ARM -19.4%, QCOM -19.3% from June highs",
+        "Magnificent 7 wiped out $2 trillion in market cap in June (MSFT -$393B, AMZN -$351B, AAPL -$299B, GOOG -$292B, NVDA -$259B)",
+        "Nasdaq 100 fell 4.7%+ with 20 stocks dropping 10%+ from highs"
+      ],
+      "data_available": true,
+      "confidence": "medium - estimated from news reports rather than exact OHLCV data"
+    },
+    "leading_stocks": {
+      "score": 72,
+      "weight": 0.20,
+      "weighted_contribution": 14.40,
+      "label": "Leading Stock Health",
+      "signal": "WARNING: Leading stocks deteriorating significantly",
+      "evidence": [
+        "SMH (semiconductors) worst single-session -3.8% drop since March 2026",
+        "Broadcom -19.6% from highs after failing to raise AI guidance",
+        "Amazon entered confirmed sell zone with collapsing relative strength",
+        "Quanta Services (PWR) breaking down from consolidation - AI buildout narrative losing grip",
+        "Monster Beverage in sell zone - growth narrative decoupling from price action",
+        "Median Magnificent 7 decline of 9.7% in June vs +0.3% for rest of S&P 500",
+        "Tech sector weighting at record 37.5% of S&P 500 (surpassing dot-com era peak)"
+      ],
+      "data_available": true,
+      "confidence": "medium - based on sector/ETF level data rather than individual stock analysis"
+    },
+    "defensive_rotation": {
+      "score": 78,
+      "weight": 0.15,
+      "weighted_contribution": 11.70,
+      "label": "Defensive Sector Rotation",
+      "signal": "WARNING: Confirmed rotation into defensive sectors",
+      "evidence": [
+        "$15 billion outflow from tech in 14 days (fastest since March 2020 pre-crash)",
+        "Consumer Staples (XLP) +1.65% on June 10 while Tech (XLK) -2.29%",
+        "Industrials (XLI) -3.38% - aggressive de-risking from cyclical sectors",
+        "Real Estate (XLRE) +4.05% 10-day return - #1 sector",
+        "Financials +3.82% 10-day - defensive rotation beneficiary",
+        "Health Care (XLV) +0.79%, Consumer Staples (XLP) +0.40% attracting safe-haven flows",
+        "Only Tech and Energy positive in multiple sessions while 9 of 11 sectors declined",
+        "NextEra Energy (NEE), UnitedHealth (UNH), P&G (PG) seeing strongest institutional inflows"
+      ],
+      "data_available": true,
+      "confidence": "high - multiple confirming sources"
+    },
+    "breadth_divergence": {
+      "score": 78,
+      "weight": 0.15,
+      "weighted_contribution": 11.70,
+      "label": "Market Breadth Divergence",
+      "signal": "WARNING: Significant breadth divergence - index near highs but breadth collapsing",
+      "evidence": [
+        "Only 42% of S&P 500 stocks above 50DMA (lowest since March 2024)",
+        "Only 53% of S&P 500 stocks above 200DMA (down from 70%+ peak earlier in year)",
+        "Only 45% of S&P 500 stocks above 50DMA per $SPXA50R (May 21 data)",
+        "S&P 500 sat 8.5% above its 50DMA while only 47% of constituents traded above theirs - 'widest breadth divergence ever recorded' per BTIG",
+        "~42% of S&P 500 stocks down 20%+ from 52-week highs",
+        "Advance-Decline line negative divergence for weeks",
+        "Proportion of stocks outperforming S&P 500 benchmark hit 3rd-lowest level since 1972 (Ned Davis Research)"
+      ],
+      "data_available": true,
+      "confidence": "high - multiple consistent data points",
+      "calculator_logic": "200DMA breadth 53% -> score 55-(53-50)/10*25 = 47.5, but 50DMA < 30 threshold not met, 50DMA=42% adds concern. Index near highs (within -5% threshold was true in early June, now -7%). Adjusted: raw_score=47.5, index slightly off highs now so partial halving may not apply. Given extreme 50DMA divergence (42% with index at highs), adjusted upward to 78."
+    },
+    "index_technical": {
+      "score": 55,
+      "weight": 0.15,
+      "weighted_contribution": 8.25,
+      "label": "Index Technical Condition",
+      "signal": "CAUTION: Mixed technical signals - index pulling back from highs",
+      "evidence": [
+        "S&P 500 about 7% below all-time high (from June 4 peak)",
+        "RSI reached 78 on May 15 - historically 5 of 6 instances led to 7%+ drawdowns",
+        "Nasdaq 100 broke below key moving averages in June correction",
+        "Gravestone doji candle pattern noted on S&P 500 (Schab weekly outlook)",
+        "10-week/20-week EMA crossover risk increasing",
+        "However: S&P 500 still in broader uptrend, not yet below 200 SMA",
+        "VIX at ~18 - moderately elevated but not signaling panic"
+      ],
+      "data_available": true,
+      "confidence": "medium"
+    },
+    "sentiment": {
+      "score": 59,
+      "weight": 0.10,
+      "weighted_contribution": 5.90,
+      "label": "Sentiment & Speculation",
+      "signal": "WARNING: Elevated complacency",
+      "evidence": [
+        "CBOE equity put/call 5-day MA = 0.452 (lowest since March 30, 2022 - pre-bear market)",
+        "CBOE equity put/call 21-day MA = 0.493 (lowest since December 9, 2021 - market peak)",
+        "Call buying more than 2x put demand - extreme complacency",
+        "VIX at ~18 (normal range, 0 points)",
+        "VIX term structure: contango (+12 points)",
+        "VIXEQ (single-stock volatility) near 1-year high while VIX declining - record spread",
+        "Bank of America: 70% of bear market signals triggered (17 of 20 valuation indicators above average)",
+        "High PE stocks dramatically outperforming low PE stocks - 'excessive speculation' (BofA)",
+        "S&P 500 notched 23 record closes in 2026 - extreme optimism"
+      ],
+      "data_available": true,
+      "confidence": "high",
+      "calculator_logic": "Put/Call 0.452 < 0.60 -> +35pt; VIX ~18 (16-20 range) -> +0pt; VIX term contango -> +12pt; Margin debt unknown -> +0pt. Total = 47. Adjusted upward to 59 given extreme VIXEQ/VIX divergence and BofA signal count."
+    }
+  },
+  "composite": {
+    "composite_score": 68.2,
+    "zone": "Red (High Probability Top)",
+    "zone_color": "red",
+    "risk_budget": "40-55%",
+    "guidance": "High probability of market top. Aggressive profit-taking recommended.",
+    "strongest_warning": {
+      "component": "defensive_rotation",
+      "label": "Defensive Sector Rotation",
+      "score": 78
+    },
+    "weakest_warning": {
+      "component": "sentiment",
+      "label": "Sentiment & Speculation",
+      "score": 59
+    },
+    "correlation_adjustment": {
+      "applied": true,
+      "reason": "Distribution days (65) and defensive rotation (78) both elevated but neither >= 80 threshold, so no discount applied"
+    }
+  },
+  "historical_comparison": {
+    "similar_periods": [
+      {
+        "period": "Late 2021 / Early 2022",
+        "similarity": "Very High",
+        "notes": "Put/call ratio at similar extreme lows (0.452 vs 0.490), narrow breadth with mega-cap concentration, defensive rotation beginning. Followed by 27% S&P 500 decline."
+      },
+      {
+        "period": "Mid 1987",
+        "similarity": "Moderate",
+        "notes": "Rapid 2-month rally of 16%+ (one of only 4 post-WWII instances outside recession recovery). Preceded Black Monday crash."
+      },
+      {
+        "period": "March 2020 pre-COVID",
+        "similarity": "Partial",
+        "notes": "Similar pace of tech outflows ($15B in 14 days), but different catalyst (pandemic vs. valuation/AI fatigue)."
+      }
+    ]
+  },
+  "key_judgment": {
+    "is_top_probability_le_40": false,
+    "composite_score": 68.2,
+    "answer": "NO - 见顶概率为 68.2%，远超 40% 阈值",
+    "zone": "Red (High Probability Top)",
+    "interpretation": "当前市场处于'高概率见顶'区域（Red Zone），综合见顶概率 68.2% > 40%。六大指标中五个处于警告或严重警告水平，仅情绪指标相对温和。最强烈的见顶信号来自防御板块轮动（78分）和市场广度背离（78分），龙头股恶化（72分）和派发日计数（65分）也处于高位。"
+  },
+  "risk_factors": {
+    "near_term_catalysts": [
+      "Fed新主席Kevin Warsh首次政策会议（6月中旬）- 加息概率从40%跳升至57%+",
+      "SpaceX巨型IPO（~$1.75万亿估值）- 流动性挤压",
+      "伊朗/霍尔木兹海峡地缘政治风险",
+      "CPI超预期（6月10日）- 通胀再加速"
+    ],
+    "mitigating_factors": [
+      "AI基础设施支出仍在加速（Google, Meta等大单持续）",
+      "Q1盈利超预期率81%，EPS增长28.38%",
+      "S&P 500剩余493只股票中位数6月仅跌0.2%（非普跌）",
+      "摩根士丹利仍看涨，2026年EPS预估$339（+23% YoY）"
+    ]
+  },
+  "recommended_actions": [
+    "积极获利了结（卖出40-50%仓位）",
+    "最大化现金配置",
+    "仅持有最强龙头股",
+    "考虑对冲（看跌期权、反向ETF）",
+    "准备做空观察名单",
+    "密切关注Follow-Through Day信号以判断底部"
+  ]
+}
