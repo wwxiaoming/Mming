@@ -44,8 +44,12 @@ def _high_gap(s: dict) -> bool:
 
 
 def _no_theme(s: dict) -> bool:
-    """④ 逻辑不清：reason 为空"""
-    return not (s.get("reason") or "").strip()
+    """④ 逻辑不清：股票在同花顺热点榜内但 reason 为空(情绪冲动)
+    说明：非热点股的 reason 为空属正常,不应被排除。
+    """
+    if (s.get("reason") or "").strip():
+        return False
+    return bool(s.get("in_hot", False))
 
 
 def _theme_diffuse(s: dict) -> bool:

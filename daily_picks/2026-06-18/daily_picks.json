@@ -1,0 +1,643 @@
+{
+  "x1_meta": {
+    "version": "x1.0",
+    "fused_from": [
+      "N1.0_v1.0",
+      "v1.7.0"
+    ],
+    "environment_grade": "B+",
+    "position_desc": "严格控制仓位",
+    "candidates_count": 5,
+    "conclusions": [
+      {
+        "code": "002460",
+        "name": "赣锋锂业",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "000063",
+        "name": "中兴通讯",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "300059",
+        "name": "东方财富",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "300274",
+        "name": "阳光电源",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "002025",
+        "name": "航天电器",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      }
+    ]
+  },
+  "1_momentum": [
+    {
+      "code": "688598",
+      "name": "金博股份",
+      "change_pct": 20.005,
+      "turnover_pct": 17.03,
+      "amount_yi": 0.0,
+      "reason": "半导体产业链+光伏热场+碳陶制动盘+人形机器人"
+    },
+    {
+      "code": "688766",
+      "name": "普冉股份",
+      "change_pct": 20,
+      "turnover_pct": 7.24,
+      "amount_yi": 0.01,
+      "reason": "AI存储+拟收购诺亚长天+一季报增长"
+    },
+    {
+      "code": "688082",
+      "name": "盛美上海",
+      "change_pct": 20,
+      "turnover_pct": 2.51,
+      "amount_yi": 0.0,
+      "reason": "半导体设备+高温SPM+订单增长+H股上市"
+    },
+    {
+      "code": "300584",
+      "name": "海辰药业",
+      "change_pct": 20,
+      "turnover_pct": 15.39,
+      "amount_yi": 0.0,
+      "reason": "固态电池+电解液添加剂+兰地洛尔+仿制药"
+    },
+    {
+      "code": "688323",
+      "name": "瑞华泰",
+      "change_pct": 20,
+      "turnover_pct": 12.59,
+      "amount_yi": 0.0,
+      "reason": "PCB概念+PI薄膜+商业航天"
+    }
+  ],
+  "2_fund_flow": [
+    {
+      "code": "300475",
+      "name": "香农芯创",
+      "price": 245.29,
+      "change_pct": 20.0,
+      "main_net_5d_yi": 0.035
+    },
+    {
+      "code": "688766",
+      "name": "普冉股份",
+      "price": 580.2,
+      "change_pct": 20.0,
+      "main_net_5d_yi": 0.017
+    },
+    {
+      "code": "688082",
+      "name": "盛美上海",
+      "price": 361.2,
+      "change_pct": 20.0,
+      "main_net_5d_yi": 0.012
+    },
+    {
+      "code": "300903",
+      "name": "科翔股份",
+      "price": 98.16,
+      "change_pct": 20.0,
+      "main_net_5d_yi": 0.009
+    },
+    {
+      "code": "300283",
+      "name": "温州宏丰",
+      "price": 22.15,
+      "change_pct": 19.99,
+      "main_net_5d_yi": 0.007
+    }
+  ],
+  "3_value": [
+    {
+      "code": "000001",
+      "name": "平安银行",
+      "price": 10.78,
+      "pe_ttm": 4.86,
+      "pb": 0.46,
+      "change_pct": -1.46,
+      "mcap_yi": 2091.92
+    },
+    {
+      "code": "601166",
+      "name": "兴业银行",
+      "price": 17.84,
+      "pe_ttm": 4.87,
+      "pb": 0.46,
+      "change_pct": -1.27,
+      "mcap_yi": 3775.45
+    },
+    {
+      "code": "601186",
+      "name": "中国铁建",
+      "price": 6.48,
+      "pe_ttm": 5.0,
+      "pb": 0.32,
+      "change_pct": 2.37,
+      "mcap_yi": 745.41
+    },
+    {
+      "code": "601668",
+      "name": "中国建筑",
+      "price": 4.73,
+      "pe_ttm": 5.15,
+      "pb": 0.39,
+      "change_pct": 0.42,
+      "mcap_yi": 1954.45
+    },
+    {
+      "code": "601390",
+      "name": "中国中铁",
+      "price": 4.68,
+      "pe_ttm": 5.44,
+      "pb": 0.36,
+      "change_pct": 2.41,
+      "mcap_yi": 958.41
+    }
+  ],
+  "4_etf_premium": [
+    {
+      "code": "159915",
+      "name": "创业板ETF易方达",
+      "price": 4.183,
+      "change_pct": 1.75,
+      "turnover_pct": 10.51,
+      "amount_wan": 451181.0
+    },
+    {
+      "code": "159941",
+      "name": "纳指ETF广发",
+      "price": 1.698,
+      "change_pct": 0.35,
+      "turnover_pct": 5.92,
+      "amount_wan": 223687.0
+    },
+    {
+      "code": "159995",
+      "name": "芯片ETF华夏",
+      "price": 2.69,
+      "change_pct": 6.07,
+      "turnover_pct": 5.71,
+      "amount_wan": 155538.0
+    }
+  ],
+  "5_news": [
+    {
+      "title": "传统材料企业积极切入半导体材料赛道",
+      "summary": "【传统材料企业积极切入半导体材料赛道】半导体产业蓬勃发展，相关材料需求持续上行。多家传统材料上市公司依托原有技术沉淀，积极布局半导体赛道。近日，多家相关A股上市公司密集回应相关进展。",
+      "time": "2026-06-18 07:34:00"
+    },
+    {
+      "title": "A股限售股解禁一览：5.2亿元市值限售股今日解禁",
+      "summary": "【A股限售股解禁一览：5.2亿元市值限售股今日解禁】数据显示，周四（6月18日），共有10家公司限售股解禁，合计解禁量为2790.72万股，按最新收盘价计算，合计解禁市值为5.2亿元。从解禁量来看，闽东电力、赛维时代、永创智能解禁量居前，解禁股数分别为1820.39万股、302.67万股、203.0",
+      "time": "2026-06-18 07:32:51"
+    },
+    {
+      "title": "PCB板块成市场“最靓的仔” 重仓基金斩获丰厚回报",
+      "summary": "【PCB板块成市场“最靓的仔” 重仓基金斩获丰厚回报】6月17日，A股PCB（印制电路板）概念板块掀起涨停潮，科翔股份、深南电路、南亚新材等多只个股强势封板，成为市场最耀眼的明星，板块热度持续攀升。随着PCB板块持续走强，重仓布局该赛道的公募基金斩获丰厚业绩回报。PCB概念股持仓占比较高的主动权益基",
+      "time": "2026-06-18 07:24:26"
+    },
+    {
+      "title": "今年前5个月我国西部地区进出口规模创历史同期新高",
+      "summary": "【今年前5个月我国西部地区进出口规模创历史同期新高】据成都海关统计，今年前5个月，我国西部12省区市货物贸易进出口2.06万亿元，同比增长18.5%，连续6个月实现两位数增长，规模创历史同期新高，对同期全国外贸增长的贡献率达11.7%。其中，出口1.3万亿元，同比增长16.6%；进口7596.7亿元",
+      "time": "2026-06-18 07:23:59"
+    },
+    {
+      "title": "股价异常波动案例扎堆 超70家A股公司提示风险",
+      "summary": "【股价异常波动案例扎堆 超70家A股公司提示风险】6月17日晚间，超70家上市公司披露异常波动公告，提示相关风险。",
+      "time": "2026-06-18 07:21:09"
+    }
+  ],
+  "6_serenity_chain": [
+    {
+      "theme": "机器人",
+      "hits": 11,
+      "logic": "近期 11 只强势股 reason 包含 机器人"
+    },
+    {
+      "theme": "半导体",
+      "hits": 11,
+      "logic": "近期 11 只强势股 reason 包含 半导体"
+    },
+    {
+      "theme": "算力",
+      "hits": 10,
+      "logic": "近期 10 只强势股 reason 包含 算力"
+    },
+    {
+      "theme": "商业航天",
+      "hits": 6,
+      "logic": "近期 6 只强势股 reason 包含 商业航天"
+    },
+    {
+      "theme": "光伏",
+      "hits": 5,
+      "logic": "近期 5 只强势股 reason 包含 光伏"
+    }
+  ],
+  "7_buffett_moat": [
+    {
+      "code": "601899",
+      "name": "紫金矿业",
+      "pe_ttm": 13.12,
+      "pb": 4.1,
+      "roe_est": 31.2,
+      "price": 30.43
+    },
+    {
+      "code": "600519",
+      "name": "贵州茅台",
+      "pe_ttm": 18.74,
+      "pb": 5.79,
+      "roe_est": 30.9,
+      "price": 1240.0
+    },
+    {
+      "code": "000895",
+      "name": "双汇发展",
+      "pe_ttm": 15.19,
+      "pb": 4.02,
+      "roe_est": 26.5,
+      "price": 23.05
+    },
+    {
+      "code": "600809",
+      "name": "山西汾酒",
+      "pe_ttm": 13.08,
+      "pb": 3.19,
+      "roe_est": 24.4,
+      "price": 117.7
+    },
+    {
+      "code": "300750",
+      "name": "宁德时代",
+      "pe_ttm": 23.37,
+      "pb": 5.65,
+      "roe_est": 24.2,
+      "price": 399.0
+    }
+  ],
+  "8_potential5": [
+    {
+      "code": "002460",
+      "name": "赣锋锂业",
+      "price": 71.32,
+      "change_pct": -0.18,
+      "pe_ttm": 39.29,
+      "pb": 3.22,
+      "turnover_pct": 4.83,
+      "amplitude_pct": 3.76,
+      "vol_ratio": 0.76,
+      "score": 0.486,
+      "breakdown": {
+        "position(0.20)": 0.94,
+        "valuation(0.15)": 0.4,
+        "fund(0.30)": 0.79,
+        "theme(0.20)": 0.0,
+        "us(0.15)": 0.0
+      },
+      "in_hot": false,
+      "conclusion": "只可观察，不可买",
+      "conclusion_emoji": "⚪",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "000063",
+      "name": "中兴通讯",
+      "price": 37.64,
+      "change_pct": -0.95,
+      "pe_ttm": 40.23,
+      "pb": 2.35,
+      "turnover_pct": 3.76,
+      "amplitude_pct": 2.63,
+      "vol_ratio": 0.64,
+      "score": 0.479,
+      "breakdown": {
+        "position(0.20)": 0.68,
+        "valuation(0.15)": 0.4,
+        "fund(0.30)": 0.94,
+        "theme(0.20)": 0.0,
+        "us(0.15)": 0.0
+      },
+      "in_hot": false,
+      "conclusion": "只可观察，不可买",
+      "conclusion_emoji": "⚪",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "300059",
+      "name": "东方财富",
+      "price": 19.04,
+      "change_pct": -0.42,
+      "pe_ttm": 22.98,
+      "pb": 3.14,
+      "turnover_pct": 2.06,
+      "amplitude_pct": 2.04,
+      "vol_ratio": 0.67,
+      "score": 0.447,
+      "breakdown": {
+        "position(0.20)": 0.86,
+        "valuation(0.15)": 0.8,
+        "fund(0.30)": 0.52,
+        "theme(0.20)": 0.0,
+        "us(0.15)": 0.0
+      },
+      "in_hot": false,
+      "conclusion": "只可观察，不可买",
+      "conclusion_emoji": "⚪",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "300274",
+      "name": "阳光电源",
+      "price": 149.15,
+      "change_pct": -2.19,
+      "pe_ttm": 25.93,
+      "pb": 6.55,
+      "turnover_pct": 3.81,
+      "amplitude_pct": 3.62,
+      "vol_ratio": 0.91,
+      "score": 0.445,
+      "breakdown": {
+        "position(0.20)": 0.27,
+        "valuation(0.15)": 0.7,
+        "fund(0.30)": 0.95,
+        "theme(0.20)": 0.0,
+        "us(0.15)": 0.0
+      },
+      "in_hot": false,
+      "conclusion": "只可观察，不可买",
+      "conclusion_emoji": "⚪",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "002025",
+      "name": "航天电器",
+      "price": 63.4,
+      "change_pct": 0.44,
+      "pe_ttm": 153.14,
+      "pb": 4.34,
+      "turnover_pct": 3.82,
+      "amplitude_pct": 4.78,
+      "vol_ratio": 0.71,
+      "score": 0.427,
+      "breakdown": {
+        "position(0.20)": 0.85,
+        "valuation(0.15)": -0.2,
+        "fund(0.30)": 0.95,
+        "theme(0.20)": 0.0,
+        "us(0.15)": 0.0
+      },
+      "in_hot": false,
+      "conclusion": "只可观察，不可买",
+      "conclusion_emoji": "⚪",
+      "condition_trigger": "",
+      "edge_flag": false
+    }
+  ],
+  "8b_analysis": [
+    {
+      "code": "002460",
+      "name": "赣锋锂业",
+      "summary": {
+        "price": 71.32,
+        "change_pct": -0.18,
+        "pe_ttm": 39.29,
+        "pb": 3.22,
+        "turnover_pct": 4.83,
+        "score": 0.486
+      },
+      "fundamental": {
+        "pe": 39.29,
+        "pb": 3.22,
+        "quality": "偏高",
+        "score_emoji": "🟡"
+      },
+      "technical": {
+        "change_pct": -0.18,
+        "amplitude_pct": 3.76,
+        "state": "窄幅整理(蓄势)",
+        "score_emoji": "🟢"
+      },
+      "fund_flow": {
+        "turnover_pct": 4.83,
+        "vol_ratio": 0.76,
+        "5d_net_yi": 0.0,
+        "20d_net_yi": 0.0,
+        "state": "正常换手",
+        "trend": "近期资金流出(谨慎) ⚠️",
+        "score_emoji": "🟡"
+      },
+      "theme_policy": {
+        "in_hot": false,
+        "state": "无当日热点(题材催化弱)",
+        "score_emoji": "⚪",
+        "matched_news": []
+      },
+      "us_overnight_link": "美股纳指/费半隔夜 +0.00%/+0.00%,中性 ⚪",
+      "risks": [
+        "⚪ 暂无题材催化,需后续新闻触发"
+      ],
+      "suggestion": "**观望** — 综合评分 0.486,等更明确信号"
+    },
+    {
+      "code": "000063",
+      "name": "中兴通讯",
+      "summary": {
+        "price": 37.64,
+        "change_pct": -0.95,
+        "pe_ttm": 40.23,
+        "pb": 2.35,
+        "turnover_pct": 3.76,
+        "score": 0.479
+      },
+      "fundamental": {
+        "pe": 40.23,
+        "pb": 2.35,
+        "quality": "偏高",
+        "score_emoji": "🟡"
+      },
+      "technical": {
+        "change_pct": -0.95,
+        "amplitude_pct": 2.63,
+        "state": "窄幅整理(蓄势)",
+        "score_emoji": "🟢"
+      },
+      "fund_flow": {
+        "turnover_pct": 3.76,
+        "vol_ratio": 0.64,
+        "5d_net_yi": 0.0,
+        "20d_net_yi": 0.0,
+        "state": "正常换手",
+        "trend": "近期资金流出(谨慎) ⚠️",
+        "score_emoji": "🟡"
+      },
+      "theme_policy": {
+        "in_hot": false,
+        "state": "无当日热点(题材催化弱)",
+        "score_emoji": "⚪",
+        "matched_news": []
+      },
+      "us_overnight_link": "美股纳指/费半隔夜 +0.00%/+0.00%,中性 ⚪",
+      "risks": [
+        "⚪ 暂无题材催化,需后续新闻触发"
+      ],
+      "suggestion": "**观望** — 综合评分 0.479,等更明确信号"
+    },
+    {
+      "code": "300059",
+      "name": "东方财富",
+      "summary": {
+        "price": 19.04,
+        "change_pct": -0.42,
+        "pe_ttm": 22.98,
+        "pb": 3.14,
+        "turnover_pct": 2.06,
+        "score": 0.447
+      },
+      "fundamental": {
+        "pe": 22.98,
+        "pb": 3.14,
+        "quality": "合理",
+        "score_emoji": "🟢"
+      },
+      "technical": {
+        "change_pct": -0.42,
+        "amplitude_pct": 2.04,
+        "state": "窄幅整理(蓄势)",
+        "score_emoji": "🟢"
+      },
+      "fund_flow": {
+        "turnover_pct": 2.06,
+        "vol_ratio": 0.67,
+        "5d_net_yi": 0.0,
+        "20d_net_yi": 0.0,
+        "state": "正常换手",
+        "trend": "近期资金流出(谨慎) ⚠️",
+        "score_emoji": "🟡"
+      },
+      "theme_policy": {
+        "in_hot": false,
+        "state": "无当日热点(题材催化弱)",
+        "score_emoji": "⚪",
+        "matched_news": []
+      },
+      "us_overnight_link": "美股纳指/费半隔夜 +0.00%/+0.00%,中性 ⚪",
+      "risks": [
+        "⚪ 暂无题材催化,需后续新闻触发"
+      ],
+      "suggestion": "**观望** — 综合评分 0.447,等更明确信号"
+    },
+    {
+      "code": "300274",
+      "name": "阳光电源",
+      "summary": {
+        "price": 149.15,
+        "change_pct": -2.19,
+        "pe_ttm": 25.93,
+        "pb": 6.55,
+        "turnover_pct": 3.81,
+        "score": 0.445
+      },
+      "fundamental": {
+        "pe": 25.93,
+        "pb": 6.55,
+        "quality": "合理",
+        "score_emoji": "🟢"
+      },
+      "technical": {
+        "change_pct": -2.19,
+        "amplitude_pct": 3.62,
+        "state": "温和波动(健康)",
+        "score_emoji": "🟢"
+      },
+      "fund_flow": {
+        "turnover_pct": 3.81,
+        "vol_ratio": 0.91,
+        "5d_net_yi": 0.0,
+        "20d_net_yi": 0.0,
+        "state": "正常换手",
+        "trend": "近期资金流出(谨慎) ⚠️",
+        "score_emoji": "🟡"
+      },
+      "theme_policy": {
+        "in_hot": false,
+        "state": "无当日热点(题材催化弱)",
+        "score_emoji": "⚪",
+        "matched_news": []
+      },
+      "us_overnight_link": "美股纳指/费半隔夜 +0.00%/+0.00%,中性 ⚪",
+      "risks": [
+        "⚪ 暂无题材催化,需后续新闻触发"
+      ],
+      "suggestion": "**观望** — 综合评分 0.445,等更明确信号"
+    },
+    {
+      "code": "002025",
+      "name": "航天电器",
+      "summary": {
+        "price": 63.4,
+        "change_pct": 0.44,
+        "pe_ttm": 153.14,
+        "pb": 4.34,
+        "turnover_pct": 3.82,
+        "score": 0.427
+      },
+      "fundamental": {
+        "pe": 153.14,
+        "pb": 4.34,
+        "quality": "高估",
+        "score_emoji": "🔴"
+      },
+      "technical": {
+        "change_pct": 0.44,
+        "amplitude_pct": 4.78,
+        "state": "窄幅整理(蓄势)",
+        "score_emoji": "🟢"
+      },
+      "fund_flow": {
+        "turnover_pct": 3.82,
+        "vol_ratio": 0.71,
+        "5d_net_yi": 0.0,
+        "20d_net_yi": 0.0,
+        "state": "正常换手",
+        "trend": "近期资金流出(谨慎) ⚠️",
+        "score_emoji": "🟡"
+      },
+      "theme_policy": {
+        "in_hot": false,
+        "state": "无当日热点(题材催化弱)",
+        "score_emoji": "⚪",
+        "matched_news": []
+      },
+      "us_overnight_link": "美股纳指/费半隔夜 +0.00%/+0.00%,中性 ⚪",
+      "risks": [
+        "⚪ 暂无题材催化,需后续新闻触发"
+      ],
+      "suggestion": "**观望** — 综合评分 0.427,等更明确信号"
+    }
+  ],
+  "9_us_overnight": {
+    "NDX": 0,
+    "IXIC": 0,
+    "SPX": 0,
+    "DJI": 0,
+    "SOX": 0
+  }
+}

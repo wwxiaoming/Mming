@@ -315,7 +315,8 @@ def strategy_8_potential5() -> list[dict]:
             "open": q.get("open", 0),
             "last_close": q.get("last_close", 0),
             "reason": next((r for c, r in hot_themes if c == code), ""),
-            "sector_rank": 99,
+            "in_hot": code in hot_codes,   # 是否在同花顺热点榜(用于 ④ _no_theme 条件触发)
+            "sector_rank": 1,         # 板块内排名默认前 3(数据缺失时通过 E_NOT_FRONT 排除)
             "sector_chg_5d": 0.0,
             "upper_shadow_count_5d": 0,
             "holding_cycle": "short",
