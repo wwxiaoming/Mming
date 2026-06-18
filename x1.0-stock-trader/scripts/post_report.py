@@ -214,12 +214,12 @@ def main():
     analyses = picks.get("8b_analysis", [])
 
     # 休市日处理（x1.0 第 10 章）
+    # 简化逻辑:以 daily_picks.json 是否有 x1_meta.is_trading_day=False 字段为准;
+    # 否则默认 True(交易日)
     is_trading_day = True
-    try:
-        sc = (WORKSPACE / "STOCK_CONTEXT.md").read_text(encoding="utf-8")
-        is_trading_day = ("休市" not in sc and "is_trading_day: True" in sc) or ("is_trading_day: True" in sc)
-    except Exception:
-        is_trading_day = True
+    x1_meta_raw = picks.get("x1_meta", {})
+    if isinstance(x1_meta_raw, dict) and x1_meta_raw.get("is_trading_day") is False:
+        is_trading_day = False
 
     # 环境闸门元数据
     x1_meta = picks.get("x1_meta", {})

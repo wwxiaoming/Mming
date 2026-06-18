@@ -1,0 +1,419 @@
+{
+  "date": "2026-06-19",
+  "generated_at": "2026-06-19 07:39:12",
+  "version": "x1.0",
+  "x1_meta": {
+    "version": "x1.0",
+    "fused_from": [
+      "N1.0_v1.0",
+      "v1.7.0"
+    ],
+    "candidates_count": 5,
+    "conclusions": [
+      {
+        "code": "300274",
+        "name": "阳光电源",
+        "conclusion": "条件满足才可买入",
+        "emoji": "🟡"
+      },
+      {
+        "code": "000063",
+        "name": "中兴通讯",
+        "conclusion": "条件满足才可买入",
+        "emoji": "🟡"
+      },
+      {
+        "code": "002415",
+        "name": "海康威视",
+        "conclusion": "条件满足才可买入",
+        "emoji": "🟡"
+      },
+      {
+        "code": "300014",
+        "name": "亿纬锂能",
+        "conclusion": "条件满足才可买入",
+        "emoji": "🟡"
+      },
+      {
+        "code": "000977",
+        "name": "浪潮信息",
+        "conclusion": "条件满足才可买入",
+        "emoji": "🟡"
+      }
+    ]
+  },
+  "us_overnight": {
+    "NDX": 2.48,
+    "IXIC": 1.91,
+    "SPX": 1.08,
+    "DJI": 0.14,
+    "SOX": 0
+  },
+  "holdings_159941": {
+    "name": "纳指ETF广发",
+    "price": 1.693,
+    "change_pct": -0.29,
+    "shares": 700,
+    "cost": 1.623,
+    "daily_pnl": -3.5,
+    "cum_pnl": 49.0,
+    "cum_pnl_pct": 4.31
+  },
+  "top_picks": {
+    "momentum": [
+      {
+        "code": "300166",
+        "name": "东方国信",
+        "change_pct": 20.026,
+        "turnover_pct": 21.78,
+        "amount_yi": 0.0,
+        "reason": "算力租赁+智算中心+AI云平台"
+      },
+      {
+        "code": "300319",
+        "name": "麦捷科技",
+        "change_pct": 20.017,
+        "turnover_pct": 21.19,
+        "amount_yi": 0.0,
+        "reason": "英伟达电感+光模块+深圳国资"
+      },
+      {
+        "code": "688485",
+        "name": "九州一轨",
+        "change_pct": 20.007,
+        "turnover_pct": 14.78,
+        "amount_yi": 0.0,
+        "reason": "硅光+半导体+金刚石+轨交减振降噪"
+      },
+      {
+        "code": "688478",
+        "name": "晶升股份",
+        "change_pct": 20.006,
+        "turnover_pct": 4.02,
+        "amount_yi": 0.0,
+        "reason": "碳化硅+半导体设备+订单增长"
+      },
+      {
+        "code": "688598",
+        "name": "金博股份",
+        "change_pct": 20.004,
+        "turnover_pct": 14.99,
+        "amount_yi": 0.0,
+        "reason": "氮化铝+碳陶制动盘+人形机器人"
+      }
+    ],
+    "fund_flow": [
+      {
+        "code": "300319",
+        "name": "麦捷科技",
+        "price": 27.76,
+        "change_pct": 20.02,
+        "main_net_5d_yi": 0.014
+      },
+      {
+        "code": "300166",
+        "name": "东方国信",
+        "price": 18.7,
+        "change_pct": 20.03,
+        "main_net_5d_yi": 0.01
+      },
+      {
+        "code": "688729",
+        "name": "屹唐股份",
+        "price": 33.07,
+        "change_pct": 19.99,
+        "main_net_5d_yi": 0.007
+      },
+      {
+        "code": "688598",
+        "name": "金博股份",
+        "price": 59.75,
+        "change_pct": 20.0,
+        "main_net_5d_yi": 0.005
+      },
+      {
+        "code": "688515",
+        "name": "裕太微",
+        "price": 238.8,
+        "change_pct": 20.0,
+        "main_net_5d_yi": 0.005
+      }
+    ],
+    "value": [
+      {
+        "code": "601166",
+        "name": "兴业银行",
+        "price": 17.32,
+        "pe_ttm": 4.73,
+        "pb": 0.45,
+        "change_pct": -2.91,
+        "mcap_yi": 3665.41
+      },
+      {
+        "code": "000001",
+        "name": "平安银行",
+        "price": 10.52,
+        "pe_ttm": 4.74,
+        "pb": 0.45,
+        "change_pct": -2.41,
+        "mcap_yi": 2041.47
+      },
+      {
+        "code": "601186",
+        "name": "中国铁建",
+        "price": 6.3,
+        "pe_ttm": 4.86,
+        "pb": 0.31,
+        "change_pct": -2.78,
+        "mcap_yi": 724.7
+      },
+      {
+        "code": "601668",
+        "name": "中国建筑",
+        "price": 4.61,
+        "pe_ttm": 5.02,
+        "pb": 0.38,
+        "change_pct": -2.54,
+        "mcap_yi": 1904.87
+      },
+      {
+        "code": "601390",
+        "name": "中国中铁",
+        "price": 4.51,
+        "pe_ttm": 5.25,
+        "pb": 0.35,
+        "change_pct": -3.63,
+        "mcap_yi": 923.6
+      }
+    ],
+    "potential5": [
+      {
+        "code": "300274",
+        "name": "阳光电源",
+        "price": 146.98,
+        "change_pct": -1.45,
+        "pe_ttm": 25.55,
+        "pb": 6.45,
+        "turnover_pct": 3.85,
+        "amplitude_pct": 4.31,
+        "vol_ratio": 0.93,
+        "score": 0.647,
+        "breakdown": {
+          "position(0.20)": 0.52,
+          "valuation(0.15)": 0.7,
+          "fund(0.30)": 0.96,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 1.0
+        },
+        "in_hot": false,
+        "conclusion": "条件满足才可买入",
+        "conclusion_emoji": "🟡",
+        "condition_trigger": "等题材催化（同花顺热点 reason 命中）",
+        "edge_flag": true
+      },
+      {
+        "code": "000063",
+        "name": "中兴通讯",
+        "price": 37.89,
+        "change_pct": 0.66,
+        "pe_ttm": 40.5,
+        "pb": 2.36,
+        "turnover_pct": 5.41,
+        "amplitude_pct": 4.33,
+        "vol_ratio": 1.04,
+        "score": 0.59,
+        "breakdown": {
+          "position(0.20)": 0.78,
+          "valuation(0.15)": 0.4,
+          "fund(0.30)": 0.75,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 1.0
+        },
+        "in_hot": false,
+        "conclusion": "条件满足才可买入",
+        "conclusion_emoji": "🟡",
+        "condition_trigger": "等题材催化（同花顺热点 reason 命中）",
+        "edge_flag": true
+      },
+      {
+        "code": "002415",
+        "name": "海康威视",
+        "price": 32.3,
+        "change_pct": -0.19,
+        "pe_ttm": 19.82,
+        "pb": 3.74,
+        "turnover_pct": 0.91,
+        "amplitude_pct": 3.99,
+        "vol_ratio": 1.15,
+        "score": 0.577,
+        "breakdown": {
+          "position(0.20)": 0.94,
+          "valuation(0.15)": 0.8,
+          "fund(0.30)": 0.4,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 1.0
+        },
+        "in_hot": false,
+        "conclusion": "条件满足才可买入",
+        "conclusion_emoji": "🟡",
+        "condition_trigger": "等主力建仓信号（换手 1.5-8% + vol_ratio > 1） | 等题材催化（同花顺热点 reason 命中）",
+        "edge_flag": true
+      },
+      {
+        "code": "300014",
+        "name": "亿纬锂能",
+        "price": 66.66,
+        "change_pct": -1.3,
+        "pe_ttm": 32.34,
+        "pb": 3.36,
+        "turnover_pct": 5.1,
+        "amplitude_pct": 4.68,
+        "vol_ratio": 1.14,
+        "score": 0.571,
+        "breakdown": {
+          "position(0.20)": 0.57,
+          "valuation(0.15)": 0.4,
+          "fund(0.30)": 0.83,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 1.0
+        },
+        "in_hot": false,
+        "conclusion": "条件满足才可买入",
+        "conclusion_emoji": "🟡",
+        "condition_trigger": "等题材催化（同花顺热点 reason 命中）",
+        "edge_flag": true
+      },
+      {
+        "code": "000977",
+        "name": "浪潮信息",
+        "price": 65.66,
+        "change_pct": 1.8,
+        "pe_ttm": 37.74,
+        "pb": 4.33,
+        "turnover_pct": 4.74,
+        "amplitude_pct": 4.4,
+        "vol_ratio": 1.14,
+        "score": 0.565,
+        "breakdown": {
+          "position(0.20)": 0.4,
+          "valuation(0.15)": 0.4,
+          "fund(0.30)": 0.91,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 1.0
+        },
+        "in_hot": false,
+        "conclusion": "条件满足才可买入",
+        "conclusion_emoji": "🟡",
+        "condition_trigger": "等回调到位（位置分 < 0.5 提示买点未到） | 等题材催化（同花顺热点 reason 命中）",
+        "edge_flag": true
+      }
+    ],
+    "serenity_chain": [
+      {
+        "theme": "机器人",
+        "hits": 14,
+        "logic": "近期 14 只强势股 reason 包含 机器人"
+      },
+      {
+        "theme": "算力",
+        "hits": 10,
+        "logic": "近期 10 只强势股 reason 包含 算力"
+      },
+      {
+        "theme": "半导体",
+        "hits": 9,
+        "logic": "近期 9 只强势股 reason 包含 半导体"
+      },
+      {
+        "theme": "芯片",
+        "hits": 4,
+        "logic": "近期 4 只强势股 reason 包含 芯片"
+      },
+      {
+        "theme": "hbm",
+        "hits": 4,
+        "logic": "近期 4 只强势股 reason 包含 hbm"
+      }
+    ],
+    "buffett_moat": [
+      {
+        "code": "601899",
+        "name": "紫金矿业",
+        "pe_ttm": 12.8,
+        "pb": 4.0,
+        "roe_est": 31.2,
+        "price": 29.69
+      },
+      {
+        "code": "600519",
+        "name": "贵州茅台",
+        "pe_ttm": 18.36,
+        "pb": 5.67,
+        "roe_est": 30.9,
+        "price": 1215.0
+      },
+      {
+        "code": "000895",
+        "name": "双汇发展",
+        "pe_ttm": 15.01,
+        "pb": 3.97,
+        "roe_est": 26.4,
+        "price": 22.79
+      },
+      {
+        "code": "600809",
+        "name": "山西汾酒",
+        "pe_ttm": 12.58,
+        "pb": 3.07,
+        "roe_est": 24.4,
+        "price": 113.28
+      },
+      {
+        "code": "601628",
+        "name": "中国人寿",
+        "pe_ttm": 6.58,
+        "pb": 1.59,
+        "roe_est": 24.2,
+        "price": 33.7
+      }
+    ]
+  },
+  "news": [
+    {
+      "title": "周四你需要知道的隔夜全球要闻",
+      "summary": "周四你需要知道的隔夜全球要闻：周四你需要知道的隔夜全球要闻：SpaceX获得主要债券评级机构投资级评级；纳指大涨1.9% 费城半导体指数创下历史新高。",
+      "time": "2026-06-19 06:24:28"
+    },
+    {
+      "title": "纳指收盘大涨1.9% 英特尔、美光科技等多只芯片股创下历史新高",
+      "summary": "【纳指收盘大涨1.9% 英特尔、美光科技等多只芯片股创下历史新高】美股三大指数集体收涨，纳指涨1.91%，标普500指数涨1.09%，道指涨0.14%。芯片股集体走高，闪迪、英特尔、美光科技、台积电、西部数据、应用材料、阿斯麦创下收盘历史新高，具体来看，费城半导体指数涨6.42%，闪迪涨超11%，英",
+      "time": "2026-06-19 04:01:42"
+    }
+  ],
+  "etf_active": [
+    {
+      "code": "159915",
+      "name": "创业板ETF易方达",
+      "price": 4.269,
+      "change_pct": 2.06,
+      "turnover_pct": 10.05,
+      "amount_wan": 449398.0
+    },
+    {
+      "code": "159995",
+      "name": "芯片ETF华夏",
+      "price": 2.816,
+      "change_pct": 4.68,
+      "turnover_pct": 7.51,
+      "amount_wan": 215239.0
+    },
+    {
+      "code": "159941",
+      "name": "纳指ETF广发",
+      "price": 1.693,
+      "change_pct": -0.29,
+      "turnover_pct": 6.86,
+      "amount_wan": 259122.0
+    }
+  ]
+}

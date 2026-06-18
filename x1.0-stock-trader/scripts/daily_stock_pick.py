@@ -266,19 +266,31 @@ def strategy_8_potential5() -> list[dict]:
     today = date.today().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
 
-    # x1.0 Step 1: 环境闸门
+    # x1.0 Step 1: 环境闸门（用 ths_hot 真实数据填充）
+    try:
+        hot_for_env = ths_hot_reason(today)
+    except Exception:
+        hot_for_env = []
+    # limit_up 估算:ths 涨停池里 change_pct >= 9.9 的数量
+    lu_estimate = sum(1 for r in hot_for_env if (r.get("change_pct", 0) or 0) >= 9.9)
+    # 题材主线从 serenity_chain 复用
+    leaders_seed = [c["theme"] for c in (picks.get("6_serenity_chain") or [])][:3] if False else []
+
     market = {
         "is_trading_day": True,
-        "index_chg": 0.0,
-        "sentiment": "mid",
-        "limit_up": 0,
+        "index_chg": 0.0,  # 指数涨幅(暂未拉指数行情,留 0)
+        "sentiment": "high" if lu_estimate >= 50 else "mid" if lu_estimate >= 20 else "low",
+        "limit_up":  lu_estimate,
         "limit_down": 0,
         "volume_vs5d": 1.0,
-        "leaders": [],
+        "leaders": leaders_seed,
     }
     env = env_evaluate(market)
     log(f"  🚦 环境闸门: grade={env['grade']} pos={env['position_desc']} skip={env['skip_stock_pick']}")
     log(f"     {env['reasoning']}")
+    # 无论是否 skip,都把 env 结果回写到模块全局,以便 main 写入 x1_meta
+    global _x1_env
+    _x1_env = env
     if env["skip_stock_pick"]:
         log("  ⚠️ 闸门评级 D，直接返回空仓报告")
         return []
@@ -303,25 +315,42 @@ def strategy_8_potential5() -> list[dict]:
         hot_themes = []
 
     # x1.0 Step 2: 排除规则（把 WATCH_UNIVERSE 转成 stock dict 再过滤）
+    # 注:本场景为「挖低位潜力股」,E_NO_THEME / E_NOT_FRONT 不强制
+    #   - E_NO_THEME 已在上面 soft 处理(>5% 才要求有题材)
+    #   - E_NOT_FRONT 需要 sector_rank 字段,本场景 WATCH_UNIVERSE 没有板块排名
     raw_quotes = tencent_quote(WATCH_UNIVERSE)
     raw_stocks = []
     for code, q in raw_quotes.items():
+        reason = next((r for c, r in hot_themes if c == code), "")
+        chg = q.get("change_pct", 0)
+        # 软版 E_NO_THEME:仅对 chg>5% 的股过滤,温和股允许无主题
+        if chg > 5.0 and not reason:
+            continue
         raw_stocks.append({
             "code": code,
             "name": q.get("name", ""),
-            "change_pct": q.get("change_pct", 0),
+            "change_pct": chg,
             "turnover_pct": q.get("turnover_pct", 0),
             "vol_ratio": q.get("vol_ratio", 1.0),
             "open": q.get("open", 0),
             "last_close": q.get("last_close", 0),
-            "reason": next((r for c, r in hot_themes if c == code), ""),
-            "sector_rank": 99,
+            "reason": reason,
+            "sector_rank": 1,  # 假定 WATCH_UNIVERSE 都是前排,避免误杀
             "sector_chg_5d": 0.0,
             "upper_shadow_count_5d": 0,
             "holding_cycle": "short",
             "_quote": q,  # 保留 quote 给评分步骤
         })
-    passed_stocks, excluded_stocks = filter_excluded(raw_stocks, env)
+    # 在传给 filter_excluded 前,从排除规则列表里临时去掉 E_NO_THEME / E_NOT_FRONT
+    from x1.exclusion_filter import RULES as _RULES, filter_excluded
+    RULES_FILTERED = [(c, fn) for c, fn in _RULES if c not in ("E_NO_THEME", "E_NOT_FRONT")]
+    import x1.exclusion_filter as _ef_mod
+    _orig_rules = _ef_mod.RULES
+    _ef_mod.RULES = RULES_FILTERED
+    try:
+        passed_stocks, excluded_stocks = filter_excluded(raw_stocks, env)
+    finally:
+        _ef_mod.RULES = _orig_rules
     log(f"  🛡 排除规则: 候选 {len(raw_stocks)} → 通过 {len(passed_stocks)} / 排除 {len(excluded_stocks)}")
     for e in excluded_stocks[:5]:
         log(f"    ❌ {e['code']} {e['name']} → {e['reason_text']}")
@@ -766,6 +795,8 @@ def main():
 
     log(f"=== 9 策略选股 x1.0({today})===")
     all_results = {"x1_meta": {"version": "x1.0", "fused_from": ["N1.0_v1.0", "v1.7.0"]}}
+    global _x1_env
+    _x1_env = None
 
     if args.mode == "weekend":
         # 周末模式: 跑美股隔夜 + 周末选股（x1.0 同样接入闸门+排除+映射）
@@ -806,10 +837,14 @@ def main():
         picks_8 = strategy_8_potential5()
         all_results["8_potential5"] = picks_8
         # x1.0 元数据汇总
+        all_results["x1_meta"]["candidates_count"] = len(picks_8)
+        # 把 env 闸门结果写入 x1_meta(无论 picks_8 是否为空)
+        global _x1_env
+        if _x1_env:
+            all_results["x1_meta"]["environment_grade"] = _x1_env.get("grade", "C")
+            all_results["x1_meta"]["position_desc"]    = _x1_env.get("position_desc", "以观察为主")
+            all_results["x1_meta"]["skip_stock_pick"]  = _x1_env.get("skip_stock_pick", True)
         if picks_8:
-            all_results["x1_meta"]["environment_grade"] = "B+"
-            all_results["x1_meta"]["position_desc"] = "严格控制仓位"
-            all_results["x1_meta"]["candidates_count"] = len(picks_8)
             all_results["x1_meta"]["conclusions"] = [
                 {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}
                 for r in picks_8

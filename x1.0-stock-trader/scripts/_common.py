@@ -42,8 +42,8 @@ def tencent_quote(codes: list[str]) -> dict[str, dict]:
             continue
         low = c.lower()
         if low.startswith("us") or low.startswith("us."):
-            # 美股(腾讯要求无点号: usNDX / usAAPL)
-            prefixed.append(low.replace("us.", "us").lower())
+            # 美股(腾讯要求无点号 + 保留大小写: usNDX / usAAPL)
+            prefixed.append(c.replace("us.", "us"))
         elif c.startswith(("6", "9")):
             prefixed.append(f"sh{c}")
         elif c.startswith("8"):
@@ -67,25 +67,32 @@ def tencent_quote(codes: list[str]) -> dict[str, dict]:
             continue
         # 提取 6 位代码(去掉 sh/sz/bj 前缀,us 保持原样)
         code = key[2:] if key[:2] in ("sh", "sz", "bj") else key
+        # 安全 float 转换(美股/指数字段结构不同,部分字段可能是字符串)
+        def _f(idx: int) -> float:
+            try:
+                v = vals[idx]
+                return float(v) if v and v not in ("-", "None", "") else 0
+            except (ValueError, IndexError):
+                return 0
         out[code] = {
             "name":         vals[1],
-            "price":        float(vals[3])  if vals[3]  else 0,
-            "last_close":   float(vals[4])  if vals[4]  else 0,
-            "open":         float(vals[5])  if vals[5]  else 0,
-            "change_amt":   float(vals[31]) if vals[31] else 0,
-            "change_pct":   float(vals[32]) if vals[32] else 0,
-            "high":         float(vals[33]) if vals[33] else 0,
-            "low":          float(vals[34]) if vals[34] else 0,
-            "amount_wan":   float(vals[37]) if vals[37] else 0,
-            "turnover_pct": float(vals[38]) if vals[38] else 0,
-            "pe_ttm":       float(vals[39]) if vals[39] else 0,
-            "amplitude_pct":float(vals[43]) if vals[43] else 0,
-            "mcap_yi":      float(vals[44]) if vals[44] else 0,
-            "float_mcap_yi":float(vals[45]) if vals[45] else 0,
-            "pb":           float(vals[46]) if vals[46] else 0,
-            "limit_up":     float(vals[47]) if vals[47] else 0,
-            "limit_down":   float(vals[48]) if vals[48] else 0,
-            "vol_ratio":    float(vals[49]) if vals[49] else 0,
+            "price":        _f(3),
+            "last_close":   _f(4),
+            "open":         _f(5),
+            "change_amt":   _f(31),
+            "change_pct":   _f(32),
+            "high":         _f(33),
+            "low":          _f(34),
+            "amount_wan":   _f(37),
+            "turnover_pct": _f(38),
+            "pe_ttm":       _f(39),
+            "amplitude_pct":_f(43),
+            "mcap_yi":      _f(44),
+            "float_mcap_yi":_f(45),
+            "pb":           _f(46),
+            "limit_up":     _f(47),
+            "limit_down":   _f(48),
+            "vol_ratio":    _f(49),
         }
     return out
 

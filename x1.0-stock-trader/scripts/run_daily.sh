@@ -6,6 +6,7 @@
 # 上一版本: v1.7.0（python 跑 9 策略 + 五引擎打分，缺少环境闸门与排除规则）
 # x1.0 新增: 1) 闸门评级 D 直接出空仓报告 2) 10 条排除规则硬过滤 3) 4 选 1 结论映射 4) 双产物输出（daily_picks/ + output/）
 set -e
+export TZ="Asia/Shanghai"
 cd /workspace
 
 # ── 用户配置 ──
