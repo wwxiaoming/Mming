@@ -44,7 +44,13 @@ def _high_gap(s: dict) -> bool:
 
 
 def _no_theme(s: dict) -> bool:
-    """④ 逻辑不清：reason 为空"""
+    """④ 逻辑不清：明确标在热点池(in_hot_pool=True)但 reason 为空
+
+    注:扫描池(WATCH_UNIVERSE)中的非热点股预期就不在热点池,
+        用 in_hot_pool=False 显式标记,本规则放行,避免误伤。
+    """
+    if not s.get("in_hot_pool", False):
+        return False
     return not (s.get("reason") or "").strip()
 
 
@@ -55,9 +61,18 @@ def _theme_diffuse(s: dict) -> bool:
 
 
 def _not_front(s: dict) -> bool:
-    """⑥ 非前排：板块内排名 > 3"""
-    rank = int(s.get("sector_rank", 99) or 99)
-    return rank > 3
+    """⑥ 非前排：板块内排名 > 3（且已知排名,99 为占位符/未知 → 放行）
+
+    扫描池中大部分股票未做板块排名,默认 99 是"无数据"而非"真的 99 名",
+    真实排名仅在能查到板块榜时才填入(≤ 板块容量)。
+    """
+    rank = s.get("sector_rank", None)
+    if rank is None or rank == 99:
+        return False
+    try:
+        return int(rank) > 3
+    except (TypeError, ValueError):
+        return False
 
 
 def _sector_weak(s: dict) -> bool:

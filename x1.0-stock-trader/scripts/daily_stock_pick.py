@@ -306,6 +306,7 @@ def strategy_8_potential5() -> list[dict]:
     raw_quotes = tencent_quote(WATCH_UNIVERSE)
     raw_stocks = []
     for code, q in raw_quotes.items():
+        reason_text = next((r for c, r in hot_themes if c == code), "")
         raw_stocks.append({
             "code": code,
             "name": q.get("name", ""),
@@ -314,8 +315,9 @@ def strategy_8_potential5() -> list[dict]:
             "vol_ratio": q.get("vol_ratio", 1.0),
             "open": q.get("open", 0),
             "last_close": q.get("last_close", 0),
-            "reason": next((r for c, r in hot_themes if c == code), ""),
-            "sector_rank": 99,
+            "reason": reason_text,
+            "in_hot_pool": bool(reason_text),  # x1.0 修复:仅热点股才标记 in_hot_pool
+            "sector_rank": None,  # x1.0 修复:None = 未填,exclusion ⑥ 放行
             "sector_chg_5d": 0.0,
             "upper_shadow_count_5d": 0,
             "holding_cycle": "short",

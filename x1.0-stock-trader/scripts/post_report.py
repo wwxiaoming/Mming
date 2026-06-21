@@ -214,12 +214,21 @@ def main():
     analyses = picks.get("8b_analysis", [])
 
     # 休市日处理（x1.0 第 10 章）
-    is_trading_day = True
+    # x1.0 修复:
+    #   1) 用 Asia/Shanghai 日期判定周末(沙箱 UTC 与北京时间会差 1 天)
+    #   2) STOCK_CONTEXT.md 显式标 is_trading_day: False 时,以文件为准
+    #   3) 不再依赖旧表达式(`("休市" not in sc and ...) or ...` 逻辑塌缩,总为 False)
+    from datetime import datetime, timezone, timedelta
+    sha_tz = timezone(timedelta(hours=8))
+    sha_date = datetime.now(sha_tz).date()
+    is_trading_day = sha_date.weekday() < 5  # 0=Mon..6=Sun, <5 即交易日
     try:
         sc = (WORKSPACE / "STOCK_CONTEXT.md").read_text(encoding="utf-8")
-        is_trading_day = ("休市" not in sc and "is_trading_day: True" in sc) or ("is_trading_day: True" in sc)
+        if "is_trading_day: False" in sc and "is_trading_day: True" not in sc:
+            is_trading_day = False
     except Exception:
-        is_trading_day = True
+        pass
+    log(f"  📅 交易日判定(Asia/Shanghai {sha_date.isoformat()}, 星期{sha_date.weekday()+1}): is_trading_day={is_trading_day}")
 
     # 环境闸门元数据
     x1_meta = picks.get("x1_meta", {})
