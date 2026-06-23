@@ -11,5 +11,18 @@
       "divergence": 68.0
     },
     "recorded_at": "2026-06-15 06:29:57"
+  },
+  {
+    "data_date": "2026-06-18",
+    "composite_score": 53.0,
+    "component_scores": {
+      "breadth_level_trend": 62,
+      "ma_crossover": 50,
+      "cycle_position": 50,
+      "bearish_signal": 50,
+      "historical_percentile": 30,
+      "divergence": 70.0
+    },
+    "recorded_at": "2026-06-23 06:03:34"
   }
 ]
