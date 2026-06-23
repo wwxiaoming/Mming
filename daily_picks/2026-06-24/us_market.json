@@ -1,0 +1,183 @@
+{
+  "date": "2026-06-24",
+  "summary": {
+    "NDX": -3.29,
+    "IXIC": -2.21,
+    "SPX": -1.44,
+    "DJI": -0.09,
+    "SOX": -5.5
+  },
+  "indices": [
+    {
+      "code": "usNDX",
+      "name": "纳斯达克100",
+      "price": 29347.27,
+      "change_pct": -3.29,
+      "change_amt": -998.13,
+      "open": 30200.0,
+      "high": 30250.0,
+      "low": 29280.0
+    },
+    {
+      "code": "usIXIC",
+      "name": "纳斯达克综合",
+      "price": 25587.04,
+      "change_pct": -2.21,
+      "change_amt": -578.0,
+      "open": 26100.0,
+      "high": 26150.0,
+      "low": 25500.0
+    },
+    {
+      "code": "usINX",
+      "name": "标普500",
+      "price": 7365.46,
+      "change_pct": -1.44,
+      "change_amt": -107.5,
+      "open": 7430.0,
+      "high": 7460.0,
+      "low": 7340.0
+    },
+    {
+      "code": "usDJI",
+      "name": "道琼斯",
+      "price": 51666.84,
+      "change_pct": -0.09,
+      "change_amt": -47.0,
+      "open": 51500.0,
+      "high": 51800.0,
+      "low": 51400.0
+    },
+    {
+      "code": "usSOX",
+      "name": "费城半导体",
+      "price": 6230.0,
+      "change_pct": -5.5,
+      "change_amt": -362.0,
+      "open": 6480.0,
+      "high": 6500.0,
+      "low": 6200.0
+    }
+  ],
+  "magnificent7": [
+    {
+      "code": "usAAPL",
+      "name": "苹果",
+      "price": 294.3,
+      "change_pct": -0.91
+    },
+    {
+      "code": "usMSFT",
+      "name": "微软",
+      "price": 373.94,
+      "change_pct": 1.8
+    },
+    {
+      "code": "usNVDA",
+      "name": "英伟达",
+      "price": 200.04,
+      "change_pct": -4.13
+    },
+    {
+      "code": "usGOOG",
+      "name": "谷歌",
+      "price": 346.08,
+      "change_pct": -0.77
+    },
+    {
+      "code": "usAMZN",
+      "name": "亚马逊",
+      "price": 234.11,
+      "change_pct": 0.57
+    },
+    {
+      "code": "usMETA",
+      "name": "Meta",
+      "price": 562.2,
+      "change_pct": -0.29
+    },
+    {
+      "code": "usTSLA",
+      "name": "特斯拉",
+      "price": 381.61,
+      "change_pct": -5.79
+    }
+  ],
+  "semis": [
+    {
+      "code": "usAMD",
+      "name": "AMD",
+      "price": 519.85,
+      "change_pct": -5.76
+    },
+    {
+      "code": "usAVGO",
+      "name": "博通",
+      "price": 380.15,
+      "change_pct": -3.06
+    },
+    {
+      "code": "usTSM",
+      "name": "台积电",
+      "price": 436.39,
+      "change_pct": -6.69
+    },
+    {
+      "code": "usMU",
+      "name": "美光",
+      "price": 1051.77,
+      "change_pct": -13.18
+    },
+    {
+      "code": "usASML",
+      "name": "ASML",
+      "price": 1778.46,
+      "change_pct": -7.82
+    }
+  ],
+  "china_concept": [
+    {
+      "code": "usBABA",
+      "name": "阿里",
+      "price": 102.6,
+      "change_pct": -2.26
+    },
+    {
+      "code": "usPDD",
+      "name": "拼多多",
+      "price": 76.56,
+      "change_pct": -1.98
+    },
+    {
+      "code": "usJD",
+      "name": "京东",
+      "price": 26.12,
+      "change_pct": -3.33
+    },
+    {
+      "code": "usBIDU",
+      "name": "百度",
+      "price": 110.14,
+      "change_pct": -1.43
+    },
+    {
+      "code": "usNIO",
+      "name": "蔚来",
+      "price": 5.09,
+      "change_pct": 0.79
+    },
+    {
+      "code": "usXPEV",
+      "name": "小鹏",
+      "price": 12.76,
+      "change_pct": -4.42
+    },
+    {
+      "code": "usLI",
+      "name": "理想",
+      "price": 12.63,
+      "change_pct": -1.48
+    }
+  ],
+  "all": []
+}
