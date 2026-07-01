@@ -93,16 +93,19 @@ RULES = [
 def filter_excluded(
     stock_list: list[dict],
     market: dict[str, Any] | None = None,
+    disabled_rules: list[str] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     """
     输入：stock_list = [{code, name, change_pct, ...}, ...]
          market     = 环境闸门结果（用于 E_BAD_ENV）
+         disabled_rules = 临时禁用的规则 code 列表（策略 8 挖低位股时禁用 E_NO_THEME）
     输出：(passed, excluded_with_reason)
           passed  = 保留的标的
           excluded = [{code, name, reason_code, reason_text}, ...]
     """
     passed: list[dict] = []
     excluded: list[dict] = []
+    disabled_set = set(disabled_rules or [])
 
     # 环境闸门：如果是 D 级，所有股都被排除
     env_skip = bool(market and market.get("skip_stock_pick"))
@@ -120,6 +123,8 @@ def filter_excluded(
         # 顺序检查所有规则，第一条命中即排除
         hit = None
         for code, fn in RULES:
+            if code in disabled_set:
+                continue
             try:
                 if fn(s):
                     hit = code

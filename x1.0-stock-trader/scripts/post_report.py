@@ -217,7 +217,9 @@ def main():
     is_trading_day = True
     try:
         sc = (WORKSPACE / "STOCK_CONTEXT.md").read_text(encoding="utf-8")
-        is_trading_day = ("休市" not in sc and "is_trading_day: True" in sc) or ("is_trading_day: True" in sc)
+        # 默认 True（交易日）；仅当 STOCK_CONTEXT 显式含 is_trading_day: False 才视为休市
+        if "is_trading_day: False" in sc or "## 休市" in sc:
+            is_trading_day = False
     except Exception:
         is_trading_day = True
 
@@ -244,12 +246,14 @@ def main():
     md.append("---\n")
     md.append(section_environment_gate(x1_meta))
     md.append("---\n")
+    # x1.0 第 18.1: 159941 持仓必须在 TOP 5 之前
+    md.append(section_159941(t159))
+    md.append("---\n")
     md.append(section_potential5_summary(picks))
     md.append("---\n")
     md.append(section_per_stock_analysis(analyses))
     md.append("---\n")
     md.append(section_us(us))
-    md.append(section_159941(t159))
     md.append(section_risks(picks, us, t159, analyses))
 
     md.append("\n---\n")

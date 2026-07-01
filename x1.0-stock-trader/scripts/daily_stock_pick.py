@@ -321,7 +321,7 @@ def strategy_8_potential5() -> list[dict]:
             "holding_cycle": "short",
             "_quote": q,  # 保留 quote 给评分步骤
         })
-    passed_stocks, excluded_stocks = filter_excluded(raw_stocks, env)
+    passed_stocks, excluded_stocks = filter_excluded(raw_stocks, env, disabled_rules=["E_NO_THEME", "E_NOT_FRONT"])
     log(f"  🛡 排除规则: 候选 {len(raw_stocks)} → 通过 {len(passed_stocks)} / 排除 {len(excluded_stocks)}")
     for e in excluded_stocks[:5]:
         log(f"    ❌ {e['code']} {e['name']} → {e['reason_text']}")
@@ -805,10 +805,15 @@ def main():
     if args.mode in ("all", "8"):
         picks_8 = strategy_8_potential5()
         all_results["8_potential5"] = picks_8
-        # x1.0 元数据汇总
+        # x1.0 元数据汇总 — 评估闸门并写入 x1_meta
+        market = {"is_trading_day": True, "index_chg": 0.0, "sentiment": "mid",
+                  "limit_up": 0, "limit_down": 0, "volume_vs5d": 1.0, "leaders": []}
+        env = env_evaluate(market)
+        all_results["x1_meta"]["environment_grade"] = env["grade"]
+        all_results["x1_meta"]["position_desc"] = env["position_desc"]
+        all_results["x1_meta"]["skip_stock_pick"] = env["skip_stock_pick"]
+        all_results["x1_meta"]["environment_reasoning"] = env.get("reasoning", "")
         if picks_8:
-            all_results["x1_meta"]["environment_grade"] = "B+"
-            all_results["x1_meta"]["position_desc"] = "严格控制仓位"
             all_results["x1_meta"]["candidates_count"] = len(picks_8)
             all_results["x1_meta"]["conclusions"] = [
                 {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}

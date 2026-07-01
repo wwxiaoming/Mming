@@ -1,0 +1,62 @@
+📊 每日选股摘要 — 2026-07-02
+
+🌙 美股隔夜:
+  NDX -1.54%  SPX -0.22%  DJI -0.03%  SOX +0.00%
+
+📈 159941 持仓:
+  现价 1.652 (+0.24%)
+  700股 × 成本1.623
+  当日 +2.80元  累计 +1.79% (+20.30元) 🟢
+
+1️⃣ 当日强势股
+  1. name=朗源股份 code=300175 change_pct=+20.09
+  2. name=ST雪浪 code=300385 change_pct=+20.04
+  3. name=汇宇制药 code=688553 change_pct=+20.04
+  4. name=华民股份 code=300345 change_pct=+20.03
+  5. name=金道科技 code=301279 change_pct=+20.02
+
+2️⃣ 主力资金
+  1. name=格科微 code=688728 change_pct=+20.01
+  2. name=金宏气体 code=688106 change_pct=+20.01
+  3. name=拓斯达 code=300607 change_pct=+20.01
+  4. name=四会富仕 code=300852 change_pct=+20.00
+  5. name=蓝晓科技 code=300487 change_pct=+20.00
+
+3️⃣ 价值股
+  1. name=兴业银行 code=601166 pe_ttm=+4.56
+  2. name=平安银行 code=000001 pe_ttm=+4.58
+  3. name=中国铁建 code=601186 pe_ttm=+4.67
+  4. name=中国建筑 code=601668 pe_ttm=+4.80
+  5. name=中国中铁 code=601390 pe_ttm=+4.91
+
+4️⃣ ETF 活跃
+  1. name=创业板ETF易方达 code=159915 change_pct=-2.06
+  2. name=芯片ETF华夏 code=159995 change_pct=-2.04
+  3. name=纳指ETF广发 code=159941 change_pct=+0.24
+
+6️⃣ 产业链瓶颈
+  1. theme=机器人 hits=35
+  2. theme=半导体 hits=18
+  3. theme=算力 hits=12
+  4. theme=光伏 hits=9
+  5. theme=商业航天 hits=8
+
+7️⃣ 护城河
+  1. name=贵州茅台 code=600519 roe_est=+35.50
+  2. name=紫金矿业 code=601899 roe_est=+32.50
+  3. name=双汇发展 code=000895 roe_est=+26.50
+  4. name=阳光电源 code=300274 roe_est=+25.30
+  5. name=山西汾酒 code=600809 roe_est=+24.40
+
+8️⃣ 🌱 明日潜力股 TOP 5(x1.0 4 选 1)
+  1. 600030 中信证券 分=0.441 ⚪ 只可观察，不可买
+  2. 601899 紫金矿业 分=0.428 ⚪ 只可观察，不可买
+  3. 601688 华泰证券 分=0.404 ⚪ 只可观察，不可买
+  4. 601012 隆基绿能 分=0.375 ⚪ 只可观察，不可买
+  5. 600406 国电南瑞 分=0.35 ⚪ 只可观察，不可买
+
+🚦 环境闸门(x1.0):
+  评级 C / 以观察为主
+
+📁 详细报告: /workspace/daily_picks/2026-07-02/
+📁 x1.0 主报告: /workspace/output/2026-07-02_早盘潜力股_x1.0.md

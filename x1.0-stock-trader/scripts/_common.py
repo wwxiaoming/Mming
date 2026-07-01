@@ -42,8 +42,8 @@ def tencent_quote(codes: list[str]) -> dict[str, dict]:
             continue
         low = c.lower()
         if low.startswith("us") or low.startswith("us."):
-            # 美股(腾讯要求无点号: usNDX / usAAPL)
-            prefixed.append(low.replace("us.", "us").lower())
+            # 美股(腾讯要求无点号: usNDX / usAAPL — 保持原始大小写以匹配响应 key)
+            prefixed.append(c.replace("us.", "us"))
         elif c.startswith(("6", "9")):
             prefixed.append(f"sh{c}")
         elif c.startswith("8"):
@@ -63,29 +63,32 @@ def tencent_quote(codes: list[str]) -> dict[str, dict]:
             continue
         key = line.split("=")[0].split("_")[-1]
         vals = line.split('"')[1].split("~")
-        if len(vals) < 50:
+        if len(vals) < 4:
             continue
-        # 提取 6 位代码(去掉 sh/sz/bj 前缀,us 保持原样)
+        # 提取代码(去掉 sh/sz/bj 前缀,us 保持原样)
         code = key[2:] if key[:2] in ("sh", "sz", "bj") else key
+        # 工具:安全取第 N 个字段(US 股字段数可能 < 50)
+        def gv(i, default=0):
+            return vals[i] if i < len(vals) and vals[i] else default
         out[code] = {
-            "name":         vals[1],
-            "price":        float(vals[3])  if vals[3]  else 0,
-            "last_close":   float(vals[4])  if vals[4]  else 0,
-            "open":         float(vals[5])  if vals[5]  else 0,
-            "change_amt":   float(vals[31]) if vals[31] else 0,
-            "change_pct":   float(vals[32]) if vals[32] else 0,
-            "high":         float(vals[33]) if vals[33] else 0,
-            "low":          float(vals[34]) if vals[34] else 0,
-            "amount_wan":   float(vals[37]) if vals[37] else 0,
-            "turnover_pct": float(vals[38]) if vals[38] else 0,
-            "pe_ttm":       float(vals[39]) if vals[39] else 0,
-            "amplitude_pct":float(vals[43]) if vals[43] else 0,
-            "mcap_yi":      float(vals[44]) if vals[44] else 0,
-            "float_mcap_yi":float(vals[45]) if vals[45] else 0,
-            "pb":           float(vals[46]) if vals[46] else 0,
-            "limit_up":     float(vals[47]) if vals[47] else 0,
-            "limit_down":   float(vals[48]) if vals[48] else 0,
-            "vol_ratio":    float(vals[49]) if vals[49] else 0,
+            "name":         gv(1, ""),
+            "price":        float(gv(3, 0)) if gv(3, 0) else 0,
+            "last_close":   float(gv(4, 0)) if gv(4, 0) else 0,
+            "open":         float(gv(5, 0)) if gv(5, 0) else 0,
+            "change_amt":   float(gv(31, 0)) if gv(31, 0) else 0,
+            "change_pct":   float(gv(32, 0)) if gv(32, 0) else 0,
+            "high":         float(gv(33, 0)) if gv(33, 0) else 0,
+            "low":          float(gv(34, 0)) if gv(34, 0) else 0,
+            "amount_wan":   float(gv(37, 0)) if gv(37, 0) else 0,
+            "turnover_pct": float(gv(38, 0)) if gv(38, 0) else 0,
+            "pe_ttm":       float(gv(39, 0)) if gv(39, 0) else 0,
+            "amplitude_pct":float(gv(43, 0)) if gv(43, 0) else 0,
+            "mcap_yi":      float(gv(44, 0)) if gv(44, 0) else 0,
+            "float_mcap_yi":float(gv(45, 0)) if gv(45, 0) else 0,
+            "pb":           float(gv(46, 0)) if gv(46, 0) and gv(46, 0).replace('.','',1).replace('-','',1).isdigit() else 0,
+            "limit_up":     float(gv(47, 0)) if gv(47, 0) else 0,
+            "limit_down":   float(gv(48, 0)) if gv(48, 0) else 0,
+            "vol_ratio":    float(gv(49, 0)) if gv(49, 0) and gv(49, 0).replace('.','',1).replace('-','',1).isdigit() else 0,
         }
     return out
 

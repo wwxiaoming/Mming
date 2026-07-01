@@ -1,0 +1,652 @@
+{
+  "x1_meta": {
+    "version": "x1.0",
+    "fused_from": [
+      "N1.0_v1.0",
+      "v1.7.0"
+    ],
+    "environment_grade": "C",
+    "position_desc": "以观察为主",
+    "skip_stock_pick": false,
+    "environment_reasoning": "指数 +0.00% 震荡 | 情绪中 | 涨停 0 跌停 0 一般 | 量能 1.00x 正常 | 无清晰主线",
+    "candidates_count": 5,
+    "conclusions": [
+      {
+        "code": "600030",
+        "name": "中信证券",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "601899",
+        "name": "紫金矿业",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "601688",
+        "name": "华泰证券",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "601012",
+        "name": "隆基绿能",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "600406",
+        "name": "国电南瑞",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      }
+    ]
+  },
+  "1_momentum": [
+    {
+      "code": "300175",
+      "name": "朗源股份",
+      "change_pct": 20.086,
+      "turnover_pct": 4.78,
+      "amount_yi": 0.0,
+      "reason": "果蔬龙头+新零售+摘帽"
+    },
+    {
+      "code": "300385",
+      "name": "ST雪浪",
+      "change_pct": 20.04,
+      "turnover_pct": 3.89,
+      "amount_yi": 0.0,
+      "reason": "预重整+环保装备+常州国资"
+    },
+    {
+      "code": "688553",
+      "name": "汇宇制药",
+      "change_pct": 20.038,
+      "turnover_pct": 7.47,
+      "amount_yi": 0.0,
+      "reason": "创新药+临床试验获批+仿制药"
+    },
+    {
+      "code": "300345",
+      "name": "华民股份",
+      "change_pct": 20.034,
+      "turnover_pct": 20.59,
+      "amount_yi": 0.0,
+      "reason": "半导体硅材料+太空光伏+HJT硅片"
+    },
+    {
+      "code": "301279",
+      "name": "金道科技",
+      "change_pct": 20.018,
+      "turnover_pct": 3.55,
+      "amount_yi": 0.0,
+      "reason": "人形机器人+杭叉合作+叉车变速箱"
+    }
+  ],
+  "2_fund_flow": [
+    {
+      "code": "688728",
+      "name": "格科微",
+      "price": 25.25,
+      "change_pct": 20.01,
+      "main_net_5d_yi": 0.013
+    },
+    {
+      "code": "688106",
+      "name": "金宏气体",
+      "price": 49.78,
+      "change_pct": 20.01,
+      "main_net_5d_yi": 0.008
+    },
+    {
+      "code": "300607",
+      "name": "拓斯达",
+      "price": 49.48,
+      "change_pct": 20.01,
+      "main_net_5d_yi": 0.007
+    },
+    {
+      "code": "300852",
+      "name": "四会富仕",
+      "price": 83.09,
+      "change_pct": 20.0,
+      "main_net_5d_yi": 0.005
+    },
+    {
+      "code": "300487",
+      "name": "蓝晓科技",
+      "price": 70.62,
+      "change_pct": 20.0,
+      "main_net_5d_yi": 0.004
+    }
+  ],
+  "3_value": [
+    {
+      "code": "601166",
+      "name": "兴业银行",
+      "price": 16.7,
+      "pe_ttm": 4.56,
+      "pb": 0.43,
+      "change_pct": 0.85,
+      "mcap_yi": 3534.2
+    },
+    {
+      "code": "000001",
+      "name": "平安银行",
+      "price": 10.16,
+      "pe_ttm": 4.58,
+      "pb": 0.43,
+      "change_pct": 1.09,
+      "mcap_yi": 1971.61
+    },
+    {
+      "code": "601186",
+      "name": "中国铁建",
+      "price": 6.05,
+      "pe_ttm": 4.67,
+      "pb": 0.3,
+      "change_pct": 1.68,
+      "mcap_yi": 695.95
+    },
+    {
+      "code": "601668",
+      "name": "中国建筑",
+      "price": 4.41,
+      "pe_ttm": 4.8,
+      "pb": 0.37,
+      "change_pct": 1.61,
+      "mcap_yi": 1822.23
+    },
+    {
+      "code": "601390",
+      "name": "中国中铁",
+      "price": 4.25,
+      "pe_ttm": 4.91,
+      "pb": 0.33,
+      "change_pct": 1.92,
+      "mcap_yi": 863.77
+    }
+  ],
+  "4_etf_premium": [
+    {
+      "code": "159915",
+      "name": "创业板ETF易方达",
+      "price": 4.274,
+      "change_pct": -2.06,
+      "turnover_pct": 11.81,
+      "amount_wan": 548477.0
+    },
+    {
+      "code": "159995",
+      "name": "芯片ETF华夏",
+      "price": 3.321,
+      "change_pct": -2.04,
+      "turnover_pct": 6.1,
+      "amount_wan": 227492.0
+    },
+    {
+      "code": "159941",
+      "name": "纳指ETF广发",
+      "price": 1.652,
+      "change_pct": 0.24,
+      "turnover_pct": 4.05,
+      "amount_wan": 150884.0
+    }
+  ],
+  "5_news": [
+    {
+      "title": "A股限售股解禁一览：8.69亿元市值限售股今日解禁",
+      "summary": "【A股限售股解禁一览：8.69亿元市值限售股今日解禁】数据显示，周四（7月2日），共有7家公司限售股解禁，合计解禁量为2363.84万股，按最新收盘价计算，合计解禁市值为8.69亿元。",
+      "time": "2026-07-02 07:31:03"
+    },
+    {
+      "title": "18家半导体公司IPO同日获受理 展现细分领域“芯”实力",
+      "summary": "【18家半导体公司IPO同日获受理 展现细分领域“芯”实力】6月30日，18家半导体公司IPO申请同日获交易所受理。记者梳理发现，这18家公司各有千秋，且不乏细分领域的龙头，显示出国产半导体在量检测设备、天车、第三代半导体材料、光通信等多个领域的新进展、新突破，展现了“强链、补链、延链”的新成效。",
+      "time": "2026-07-02 07:20:00"
+    },
+    {
+      "title": "超越“科技抱团”叙事 资本市场包容性需要多元定价",
+      "summary": "【超越“科技抱团”叙事 资本市场包容性需要多元定价】“抱团”“小登”“老登”……这些都是今年A股新兴的高频词，清晰折射出上半年冷热不均、高度分化的市场生态：一边是AI产业链的活跃，一边是多数行业和个股的沉寂；指数看起来不弱，投资者体感却差异悬殊。但“硅基”经济显然不是中国经济的全部。对于一个拥有14",
+      "time": "2026-07-02 07:16:00"
+    },
+    {
+      "title": "A股IPO保荐半年盘点：三大券商领跑 中小投行借北交所突围",
+      "summary": "【A股IPO保荐半年盘点：三大券商领跑 中小投行借北交所突围】2026年上半年，A股IPO保荐市场格局发生了一些新变化。Choice数据显示：以正式挂牌上市为口径，上半年共有71家公司登陆A股，较去年同期的51家增长39.22%；募资净额合计639.64亿元，较去年同期的334.46亿元增长91.2",
+      "time": "2026-07-02 07:11:38"
+    },
+    {
+      "title": "从词元到算力中心：人工智能浪潮下A股硬科技的重估逻辑",
+      "summary": "【从词元到算力中心：人工智能浪潮下A股硬科技的重估逻辑】当前，人工智能正在成为新一轮科技革命和产业变革的核心驱动力，并由此推动全球资本市场深刻重构。在A股市场，地产、金融、传统消费等板块的估值中枢有所下移，而以人工智能为引领的半导体、算力基础设施、高端制造等科技板块持续吸引资金关注。这一变化并非简单",
+      "time": "2026-07-02 07:08:57"
+    }
+  ],
+  "6_serenity_chain": [
+    {
+      "theme": "机器人",
+      "hits": 35,
+      "logic": "近期 35 只强势股 reason 包含 机器人"
+    },
+    {
+      "theme": "半导体",
+      "hits": 18,
+      "logic": "近期 18 只强势股 reason 包含 半导体"
+    },
+    {
+      "theme": "算力",
+      "hits": 12,
+      "logic": "近期 12 只强势股 reason 包含 算力"
+    },
+    {
+      "theme": "光伏",
+      "hits": 9,
+      "logic": "近期 9 只强势股 reason 包含 光伏"
+    },
+    {
+      "theme": "商业航天",
+      "hits": 8,
+      "logic": "近期 8 只强势股 reason 包含 商业航天"
+    }
+  ],
+  "7_buffett_moat": [
+    {
+      "code": "600519",
+      "name": "贵州茅台",
+      "pe_ttm": 18.03,
+      "pb": 6.4,
+      "roe_est": 35.5,
+      "price": 1193.01
+    },
+    {
+      "code": "601899",
+      "name": "紫金矿业",
+      "pe_ttm": 10.82,
+      "pb": 3.52,
+      "roe_est": 32.5,
+      "price": 25.11
+    },
+    {
+      "code": "000895",
+      "name": "双汇发展",
+      "pe_ttm": 15.3,
+      "pb": 4.05,
+      "roe_est": 26.5,
+      "price": 23.22
+    },
+    {
+      "code": "300274",
+      "name": "阳光电源",
+      "pe_ttm": 23.8,
+      "pb": 6.01,
+      "roe_est": 25.3,
+      "price": 136.92
+    },
+    {
+      "code": "600809",
+      "name": "山西汾酒",
+      "pe_ttm": 12.32,
+      "pb": 3.0,
+      "roe_est": 24.4,
+      "price": 110.86
+    }
+  ],
+  "8_potential5": [
+    {
+      "code": "600030",
+      "name": "中信证券",
+      "price": 29.47,
+      "change_pct": 2.58,
+      "pe_ttm": 12.97,
+      "pb": 1.53,
+      "turnover_pct": 3.52,
+      "amplitude_pct": 4.77,
+      "vol_ratio": 1.51,
+      "score": 0.441,
+      "breakdown": {
+        "position(0.20)": 0.14,
+        "valuation(0.15)": 1.0,
+        "fund(0.30)": 1.0,
+        "theme(0.20)": 0.0,
+        "us(0.15)": -0.25
+      },
+      "in_hot": false,
+      "conclusion": "只可观察，不可买",
+      "conclusion_emoji": "⚪",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "601899",
+      "name": "紫金矿业",
+      "price": 25.11,
+      "change_pct": -0.12,
+      "pe_ttm": 10.82,
+      "pb": 3.52,
+      "turnover_pct": 1.65,
+      "amplitude_pct": 4.49,
+      "vol_ratio": 0.92,
+      "score": 0.428,
+      "breakdown": {
+        "position(0.20)": 0.96,
+        "valuation(0.15)": 1.0,
+        "fund(0.30)": 0.41,
+        "theme(0.20)": 0.0,
+        "us(0.15)": -0.25
+      },
+      "in_hot": false,
+      "conclusion": "只可观察，不可买",
+      "conclusion_emoji": "⚪",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "601688",
+      "name": "华泰证券",
+      "price": 21.64,
+      "change_pct": 4.95,
+      "pe_ttm": 11.14,
+      "pb": 1.1,
+      "turnover_pct": 2.69,
+      "amplitude_pct": 7.47,
+      "vol_ratio": 1.42,
+      "score": 0.404,
+      "breakdown": {
+        "position(0.20)": 0.3,
+        "valuation(0.15)": 1.0,
+        "fund(0.30)": 0.77,
+        "theme(0.20)": 0.0,
+        "us(0.15)": -0.25
+      },
+      "in_hot": false,
+      "conclusion": "只可观察，不可买",
+      "conclusion_emoji": "⚪",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "601012",
+      "name": "隆基绿能",
+      "price": 13.19,
+      "change_pct": 0.53,
+      "pe_ttm": -14.47,
+      "pb": 1.98,
+      "turnover_pct": 2.7,
+      "amplitude_pct": 5.95,
+      "vol_ratio": 1.26,
+      "score": 0.375,
+      "breakdown": {
+        "position(0.20)": 0.82,
+        "valuation(0.15)": 0.1,
+        "fund(0.30)": 0.78,
+        "theme(0.20)": 0.0,
+        "us(0.15)": -0.25
+      },
+      "in_hot": false,
+      "conclusion": "只可观察，不可买",
+      "conclusion_emoji": "⚪",
+      "condition_trigger": "",
+      "edge_flag": false
+    },
+    {
+      "code": "600406",
+      "name": "国电南瑞",
+      "price": 22.67,
+      "change_pct": -0.79,
+      "pe_ttm": 21.88,
+      "pb": 3.66,
+      "turnover_pct": 0.87,
+      "amplitude_pct": 2.45,
+      "vol_ratio": 1.06,
+      "score": 0.35,
+      "breakdown": {
+        "position(0.20)": 0.74,
+        "valuation(0.15)": 0.8,
+        "fund(0.30)": 0.4,
+        "theme(0.20)": 0.0,
+        "us(0.15)": -0.25
+      },
+      "in_hot": false,
+      "conclusion": "只可观察，不可买",
+      "conclusion_emoji": "⚪",
+      "condition_trigger": "",
+      "edge_flag": false
+    }
+  ],
+  "8b_analysis": [
+    {
+      "code": "600030",
+      "name": "中信证券",
+      "summary": {
+        "price": 29.47,
+        "change_pct": 2.58,
+        "pe_ttm": 12.97,
+        "pb": 1.53,
+        "turnover_pct": 3.52,
+        "score": 0.441
+      },
+      "fundamental": {
+        "pe": 12.97,
+        "pb": 1.53,
+        "quality": "深度低估",
+        "score_emoji": "🟢"
+      },
+      "technical": {
+        "change_pct": 2.58,
+        "amplitude_pct": 4.77,
+        "state": "温和波动(健康)",
+        "score_emoji": "🟢"
+      },
+      "fund_flow": {
+        "turnover_pct": 3.52,
+        "vol_ratio": 1.51,
+        "5d_net_yi": 18.486,
+        "20d_net_yi": 27.685,
+        "state": "主力建仓(放量)",
+        "trend": "5日+20日双双净流入 ✅",
+        "score_emoji": "🟢"
+      },
+      "theme_policy": {
+        "in_hot": false,
+        "state": "无当日热点(题材催化弱)",
+        "score_emoji": "⚪",
+        "matched_news": [
+          {
+            "title": "A股IPO保荐半年盘点：三大券商领跑 中小投行借北交所突围",
+            "summary": "【A股IPO保荐半年盘点：三大券商领跑 中小投行借北交所突围】2026年上半年，A股IPO保荐市场格局发生了一些新变化。Choice数据显示：以正式挂牌上市为口径，上半年共有71家公司登陆A股，较去年同期的51家增长39.22%；募资净额合计639.64亿元，较去年同期的334.46亿元增长91.25%。在市场整体复苏的背景下，国泰海通、中金公司、中信证券强势领跑，而东吴证券、国金证券等中小券商则凭借深耕北交所业务实现差异化突围。",
+            "time": "2026-07-02 07:11:38"
+          }
+        ]
+      },
+      "us_overnight_link": "美股隔夜对非科技板块影响有限(纳指 -1.54%)",
+      "risks": [
+        "⚪ 暂无题材催化,需后续新闻触发"
+      ],
+      "suggestion": "**观望** — 综合评分 0.441,等更明确信号"
+    },
+    {
+      "code": "601899",
+      "name": "紫金矿业",
+      "summary": {
+        "price": 25.11,
+        "change_pct": -0.12,
+        "pe_ttm": 10.82,
+        "pb": 3.52,
+        "turnover_pct": 1.65,
+        "score": 0.428
+      },
+      "fundamental": {
+        "pe": 10.82,
+        "pb": 3.52,
+        "quality": "深度低估",
+        "score_emoji": "🟢"
+      },
+      "technical": {
+        "change_pct": -0.12,
+        "amplitude_pct": 4.49,
+        "state": "窄幅整理(蓄势)",
+        "score_emoji": "🟢"
+      },
+      "fund_flow": {
+        "turnover_pct": 1.65,
+        "vol_ratio": 0.92,
+        "5d_net_yi": -14.004,
+        "20d_net_yi": -107.935,
+        "state": "正常换手",
+        "trend": "近期资金流出(谨慎) ⚠️",
+        "score_emoji": "🟡"
+      },
+      "theme_policy": {
+        "in_hot": false,
+        "state": "无当日热点(题材催化弱)",
+        "score_emoji": "⚪",
+        "matched_news": []
+      },
+      "us_overnight_link": "美股隔夜对非科技板块影响有限(纳指 -1.54%)",
+      "risks": [
+        "⚪ 暂无题材催化,需后续新闻触发"
+      ],
+      "suggestion": "**观望** — 综合评分 0.428,等更明确信号"
+    },
+    {
+      "code": "601688",
+      "name": "华泰证券",
+      "summary": {
+        "price": 21.64,
+        "change_pct": 4.95,
+        "pe_ttm": 11.14,
+        "pb": 1.1,
+        "turnover_pct": 2.69,
+        "score": 0.404
+      },
+      "fundamental": {
+        "pe": 11.14,
+        "pb": 1.1,
+        "quality": "深度低估",
+        "score_emoji": "🟢"
+      },
+      "technical": {
+        "change_pct": 4.95,
+        "amplitude_pct": 7.47,
+        "state": "温和波动(健康)",
+        "score_emoji": "🟢"
+      },
+      "fund_flow": {
+        "turnover_pct": 2.69,
+        "vol_ratio": 1.42,
+        "5d_net_yi": 2.999,
+        "20d_net_yi": 6.49,
+        "state": "主力建仓(放量)",
+        "trend": "5日+20日双双净流入 ✅",
+        "score_emoji": "🟢"
+      },
+      "theme_policy": {
+        "in_hot": false,
+        "state": "无当日热点(题材催化弱)",
+        "score_emoji": "⚪",
+        "matched_news": []
+      },
+      "us_overnight_link": "美股隔夜对非科技板块影响有限(纳指 -1.54%)",
+      "risks": [
+        "⚪ 暂无题材催化,需后续新闻触发"
+      ],
+      "suggestion": "**观望** — 综合评分 0.404,等更明确信号"
+    },
+    {
+      "code": "601012",
+      "name": "隆基绿能",
+      "summary": {
+        "price": 13.19,
+        "change_pct": 0.53,
+        "pe_ttm": -14.47,
+        "pb": 1.98,
+        "turnover_pct": 2.7,
+        "score": 0.375
+      },
+      "fundamental": {
+        "pe": -14.47,
+        "pb": 1.98,
+        "quality": "亏损股(暂无 PE)",
+        "score_emoji": "⚪"
+      },
+      "technical": {
+        "change_pct": 0.53,
+        "amplitude_pct": 5.95,
+        "state": "温和波动(健康)",
+        "score_emoji": "🟢"
+      },
+      "fund_flow": {
+        "turnover_pct": 2.7,
+        "vol_ratio": 1.26,
+        "5d_net_yi": 5.08,
+        "20d_net_yi": -1.104,
+        "state": "主力建仓(放量)",
+        "trend": "5日净流入(短线关注) ⚡",
+        "score_emoji": "🟢"
+      },
+      "theme_policy": {
+        "in_hot": false,
+        "state": "无当日热点(题材催化弱)",
+        "score_emoji": "⚪",
+        "matched_news": []
+      },
+      "us_overnight_link": "美股隔夜对非科技板块影响有限(纳指 -1.54%)",
+      "risks": [
+        "🔴 净利润为负(亏损),业绩风险",
+        "⚪ 暂无题材催化,需后续新闻触发"
+      ],
+      "suggestion": "**观望** — 综合评分 0.375,等更明确信号"
+    },
+    {
+      "code": "600406",
+      "name": "国电南瑞",
+      "summary": {
+        "price": 22.67,
+        "change_pct": -0.79,
+        "pe_ttm": 21.88,
+        "pb": 3.66,
+        "turnover_pct": 0.87,
+        "score": 0.35
+      },
+      "fundamental": {
+        "pe": 21.88,
+        "pb": 3.66,
+        "quality": "合理",
+        "score_emoji": "🟢"
+      },
+      "technical": {
+        "change_pct": -0.79,
+        "amplitude_pct": 2.45,
+        "state": "窄幅整理(蓄势)",
+        "score_emoji": "🟢"
+      },
+      "fund_flow": {
+        "turnover_pct": 0.87,
+        "vol_ratio": 1.06,
+        "5d_net_yi": -0.52,
+        "20d_net_yi": -12.43,
+        "state": "正常换手",
+        "trend": "近期资金流出(谨慎) ⚠️",
+        "score_emoji": "🟡"
+      },
+      "theme_policy": {
+        "in_hot": false,
+        "state": "无当日热点(题材催化弱)",
+        "score_emoji": "⚪",
+        "matched_news": []
+      },
+      "us_overnight_link": "美股隔夜对非科技板块影响有限(纳指 -1.54%)",
+      "risks": [
+        "⚪ 暂无题材催化,需后续新闻触发"
+      ],
+      "suggestion": "**观望** — 综合评分 0.35,等更明确信号"
+    }
+  ],
+  "9_us_overnight": {
+    "NDX": -1.54,
+    "IXIC": -0.66,
+    "SPX": -0.22,
+    "DJI": -0.03,
+    "SOX": 0
+  }
+}
