@@ -1,0 +1,437 @@
+[
+  {
+    "date": "2026-06-24",
+    "strategy": "1_momentum",
+    "strategy_label": "策略1-强势股",
+    "code": "688291",
+    "name": "金橙子",
+    "score": 0,
+    "price_at_pick": 0,
+    "reason": "激光通信+激光控制系统+收购萨米特+一季报增长",
+    "pe_ttm": 0,
+    "mcap_yi": 0,
+    "change_pct": 20,
+    "base_price": 61.11,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": -3.45,
+      "T+3": -11.52,
+      "T+5": -6.97
+    },
+    "max_return": 1.88,
+    "min_return": -14.91,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -7.13
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "1_momentum",
+    "strategy_label": "策略1-强势股",
+    "code": "300085",
+    "name": "银之杰",
+    "score": 0,
+    "price_at_pick": 0,
+    "reason": "开盘啦实控人任董事长+金融科技",
+    "pe_ttm": 0,
+    "mcap_yi": 0,
+    "change_pct": 20,
+    "base_price": 37.51,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": 2.96,
+      "T+3": -7.73,
+      "T+5": 2.69
+    },
+    "max_return": 8.88,
+    "min_return": -11.2,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": 2.53
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "1_momentum",
+    "strategy_label": "策略1-强势股",
+    "code": "300665",
+    "name": "飞鹿股份",
+    "score": 0,
+    "price_at_pick": 0,
+    "reason": "控制权变更+新能源材料+防腐涂料+军工",
+    "pe_ttm": 0,
+    "mcap_yi": 0,
+    "change_pct": 20,
+    "base_price": 11.26,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": 0.27,
+      "T+3": -1.51,
+      "T+5": -10.57
+    },
+    "max_return": 12.34,
+    "min_return": -13.85,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -10.73
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "1_momentum",
+    "strategy_label": "策略1-强势股",
+    "code": "300835",
+    "name": "龙磁科技",
+    "score": 0,
+    "price_at_pick": 0,
+    "reason": "芯片电感+服务器电源+稀土永磁+业绩增长",
+    "pe_ttm": 0,
+    "mcap_yi": 0,
+    "change_pct": 19.999,
+    "base_price": 238.36,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": 6.2,
+      "T+3": -6.83,
+      "T+5": -6.61
+    },
+    "max_return": 9.92,
+    "min_return": -16.52,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -6.77
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "1_momentum",
+    "strategy_label": "策略1-强势股",
+    "code": "300721",
+    "name": "怡达股份",
+    "score": 0,
+    "price_at_pick": 0,
+    "reason": "湿电子化学品+HPPO技术+环氧丙烷+拟建新项目",
+    "pe_ttm": 0,
+    "mcap_yi": 0,
+    "change_pct": 19.993,
+    "base_price": 38.0,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": -7.5,
+      "T+3": 8.66,
+      "T+5": -6.26
+    },
+    "max_return": 10.53,
+    "min_return": -13.97,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -6.42
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "3_value",
+    "strategy_label": "策略3-价值股",
+    "code": "601166",
+    "name": "兴业银行",
+    "score": 0,
+    "price_at_pick": 17.65,
+    "reason": "",
+    "pe_ttm": 4.82,
+    "mcap_yi": 3735.24,
+    "change_pct": -0.45,
+    "base_price": 17.08,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": -0.82,
+      "T+3": -1.17,
+      "T+5": -2.22
+    },
+    "max_return": 0.76,
+    "min_return": -3.75,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -2.38
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "3_value",
+    "strategy_label": "策略3-价值股",
+    "code": "000001",
+    "name": "平安银行",
+    "score": 0,
+    "price_at_pick": 10.71,
+    "reason": "",
+    "pe_ttm": 4.83,
+    "mcap_yi": 2078.34,
+    "change_pct": 0.56,
+    "base_price": 10.47,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": -0.48,
+      "T+3": -2.2,
+      "T+5": -2.96
+    },
+    "max_return": 1.15,
+    "min_return": -4.58,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -3.12
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "3_value",
+    "strategy_label": "策略3-价值股",
+    "code": "601186",
+    "name": "中国铁建",
+    "score": 0,
+    "price_at_pick": 6.3,
+    "reason": "",
+    "pe_ttm": 4.86,
+    "mcap_yi": 724.7,
+    "change_pct": -0.94,
+    "base_price": 6.23,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": -1.44,
+      "T+3": -3.05,
+      "T+5": -2.89
+    },
+    "max_return": 0.0,
+    "min_return": -5.14,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -3.05
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "3_value",
+    "strategy_label": "策略3-价值股",
+    "code": "601668",
+    "name": "中国建筑",
+    "score": 0,
+    "price_at_pick": 4.57,
+    "reason": "",
+    "pe_ttm": 4.98,
+    "mcap_yi": 1888.34,
+    "change_pct": -1.72,
+    "base_price": 4.47,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": -0.67,
+      "T+3": -1.57,
+      "T+5": -1.34
+    },
+    "max_return": 0.89,
+    "min_return": -4.25,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -1.5
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "3_value",
+    "strategy_label": "策略3-价值股",
+    "code": "601390",
+    "name": "中国中铁",
+    "score": 0,
+    "price_at_pick": 4.51,
+    "reason": "",
+    "pe_ttm": 5.21,
+    "mcap_yi": 916.61,
+    "change_pct": -3.01,
+    "base_price": 4.41,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": -1.36,
+      "T+3": -3.63,
+      "T+5": -3.63
+    },
+    "max_return": 0.68,
+    "min_return": -6.35,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -3.79
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "7_buffett_moat",
+    "strategy_label": "策略7-护城河",
+    "code": "601899",
+    "name": "紫金矿业",
+    "score": 0,
+    "price_at_pick": 27.75,
+    "reason": "",
+    "pe_ttm": 11.96,
+    "mcap_yi": 0,
+    "change_pct": 0,
+    "base_price": 26.13,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": -2.26,
+      "T+3": -1.3,
+      "T+5": -3.9
+    },
+    "max_return": 3.18,
+    "min_return": -6.54,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -4.06
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "7_buffett_moat",
+    "strategy_label": "策略7-护城河",
+    "code": "600519",
+    "name": "贵州茅台",
+    "score": 0,
+    "price_at_pick": 1222.45,
+    "reason": "",
+    "pe_ttm": 18.47,
+    "mcap_yi": 0,
+    "change_pct": 0,
+    "base_price": 1178.976,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": 0.43,
+      "T+3": 1.36,
+      "T+5": 1.19
+    },
+    "max_return": 3.1,
+    "min_return": -2.37,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": 1.03
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "7_buffett_moat",
+    "strategy_label": "策略7-护城河",
+    "code": "000895",
+    "name": "双汇发展",
+    "score": 0,
+    "price_at_pick": 22.78,
+    "reason": "",
+    "pe_ttm": 15.01,
+    "mcap_yi": 0,
+    "change_pct": 0,
+    "base_price": 22.57,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": 0.44,
+      "T+3": 0.97,
+      "T+5": 2.88
+    },
+    "max_return": 4.47,
+    "min_return": -1.95,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": 2.72
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "7_buffett_moat",
+    "strategy_label": "策略7-护城河",
+    "code": "600809",
+    "name": "山西汾酒",
+    "score": 0,
+    "price_at_pick": 109.18,
+    "reason": "",
+    "pe_ttm": 12.13,
+    "mcap_yi": 0,
+    "change_pct": 0,
+    "base_price": 105.71,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": 4.17,
+      "T+3": 3.35,
+      "T+5": 4.87
+    },
+    "max_return": 7.73,
+    "min_return": -1.25,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": 4.71
+  },
+  {
+    "date": "2026-06-24",
+    "strategy": "7_buffett_moat",
+    "strategy_label": "策略7-护城河",
+    "code": "300750",
+    "name": "宁德时代",
+    "score": 0,
+    "price_at_pick": 392.51,
+    "reason": "",
+    "pe_ttm": 22.99,
+    "mcap_yi": 0,
+    "change_pct": 0,
+    "base_price": 399.88,
+    "base_date": "2026-06-25",
+    "returns": {
+      "T+1": 0.51,
+      "T+3": -1.88,
+      "T+5": -4.01
+    },
+    "max_return": 2.48,
+    "min_return": -7.47,
+    "kline_count": 6,
+    "hs300_returns": {
+      "T+1": 1.4,
+      "T+3": -0.49,
+      "T+5": 0.16
+    },
+    "excess_t5": -4.17
+  }
+]

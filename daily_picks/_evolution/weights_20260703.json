@@ -1,0 +1,34 @@
+{
+  "old_weights": {
+    "position": 0.2,
+    "valuation": 0.15,
+    "fund": 0.3,
+    "theme": 0.2,
+    "us": 0.15
+  },
+  "new_weights": {
+    "position": 0.18,
+    "valuation": 0.15,
+    "fund": 0.327,
+    "theme": 0.18,
+    "us": 0.163
+  },
+  "changes": {
+    "position": -0.02,
+    "valuation": 0.0,
+    "fund": 0.027,
+    "theme": -0.02,
+    "us": 0.013
+  },
+  "rationale": "基于策略命中率与平均收益自动优化,单次调整 ≤ 30%",
+  "adjustments": [
+    "↓ position: 0.200 → 0.165 (Δ -0.035, 信号 -0.58)",
+    "↓ valuation: 0.150 → 0.138 (Δ -0.012, 信号 -0.26)",
+    "↓ theme: 0.200 → 0.165 (Δ -0.035, 信号 -0.58)"
+  ],
+  "engine_signals": {
+    "valuation": -0.26,
+    "theme": -0.577,
+    "position": -0.577
+  }
+}
