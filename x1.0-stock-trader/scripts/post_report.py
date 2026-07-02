@@ -40,10 +40,19 @@ def section_environment_gate(meta: dict) -> str:
     return "\n".join(out)
 
 # ── 2. 明日潜力股 TOP 5 总览表 ──
-def section_potential5_summary(picks: dict) -> str:
+def section_potential5_summary(picks: dict, env: dict) -> str:
     rows = picks.get("8_potential5", [])
     if not rows:
-        return "### 🎯 明日潜力股 TOP 5\n(无候选股 — 闸门评级 D 或阈值过滤后无符合标的)\n"
+        # x1_meta 里保存的是 environment_grade 字符串,需要从这里读
+        env_grade = env.get("environment_grade", env.get("grade", "?"))
+        env_skip = env.get("skip_stock_pick", False)
+        if env_skip:
+            return "### 🎯 明日潜力股 TOP 5\n(无候选股 — 闸门评级 D,跳闸,仅观察不买入)\n"
+        return (
+            "### 🎯 明日潜力股 TOP 5\n"
+            f"(无候选股 — 闸门评级 {env_grade},但排除规则硬过滤后无符合标的;"
+            f"原因:WATCH_UNIVERSE 候选未命中同花顺热点 reason → 触发 E_NO_THEME ④)\n"
+        )
     out = ["### 🎯 明日潜力股 TOP 5 — 评分表(位置 0.20 + 估值 0.15 + 资金 0.30 + 题材 0.20 + 美股 0.15)\n"]
     out.append("| # | 代码 | 名称 | 现价 | 涨跌% | PE | PB | 换手% | 量比 | **总分** | **4 选 1 结论** | 位置 | 估值 | 资金 | 题材 | 美股 | 热点 |")
     out.append("|---|------|------|------|-------|-----|----|------|-----|----------|----------------|------|------|------|------|------|------|")
@@ -244,12 +253,14 @@ def main():
     md.append("---\n")
     md.append(section_environment_gate(x1_meta))
     md.append("---\n")
-    md.append(section_potential5_summary(picks))
+    # x1.0 第 18 章持仓联动: 159941 必须在 TOP 5 之前同报告出现
+    md.append(section_159941(t159))
+    md.append("---\n")
+    md.append(section_potential5_summary(picks, x1_meta))
     md.append("---\n")
     md.append(section_per_stock_analysis(analyses))
     md.append("---\n")
     md.append(section_us(us))
-    md.append(section_159941(t159))
     md.append(section_risks(picks, us, t159, analyses))
 
     md.append("\n---\n")

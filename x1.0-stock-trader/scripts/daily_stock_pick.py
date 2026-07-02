@@ -251,7 +251,7 @@ def strategy_7_buffett_moat() -> list[dict]:
     out.sort(key=lambda r: r["roe_est"], reverse=True)
     return out[:5]
 
-def strategy_8_potential5() -> list[dict]:
+def strategy_8_potential5(env: dict | None = None) -> list[dict]:
     """策略 8 x1.0: 明日潜力股 TOP 5（不追高，挖低位+资金流入+题材催化）
     评分公式（五引擎）:
       position 位置(0.20): 当日涨跌幅 -3% ~ +3%（温和，未暴涨）
@@ -267,16 +267,17 @@ def strategy_8_potential5() -> list[dict]:
     us = load_json(DAILY_DIR / today / "us_market.json")
 
     # x1.0 Step 1: 环境闸门
-    market = {
-        "is_trading_day": True,
-        "index_chg": 0.0,
-        "sentiment": "mid",
-        "limit_up": 0,
-        "limit_down": 0,
-        "volume_vs5d": 1.0,
-        "leaders": [],
-    }
-    env = env_evaluate(market)
+    if env is None:
+        market = {
+            "is_trading_day": True,
+            "index_chg": 0.0,
+            "sentiment": "mid",
+            "limit_up": 0,
+            "limit_down": 0,
+            "volume_vs5d": 1.0,
+            "leaders": [],
+        }
+        env = env_evaluate(market)
     log(f"  🚦 环境闸门: grade={env['grade']} pos={env['position_desc']} skip={env['skip_stock_pick']}")
     log(f"     {env['reasoning']}")
     if env["skip_stock_pick"]:
@@ -803,17 +804,23 @@ def main():
     if args.mode in ("all", "7"):
         all_results["7_buffett_moat"] = strategy_7_buffett_moat()
     if args.mode in ("all", "8"):
-        picks_8 = strategy_8_potential5()
+        # x1.0: 在 main 层计算环境闸门,确保 x1_meta 始终有 environment_grade
+        market = {"is_trading_day": True, "index_chg": 0.0, "sentiment": "mid",
+                  "limit_up": 0, "limit_down": 0, "volume_vs5d": 1.0, "leaders": []}
+        env_8 = env_evaluate(market)
+        all_results["x1_meta"]["environment_grade"] = env_8["grade"]
+        all_results["x1_meta"]["position_desc"] = env_8["position_desc"]
+        all_results["x1_meta"]["skip_stock_pick"] = env_8["skip_stock_pick"]
+        all_results["x1_meta"]["env_reasoning"] = env_8.get("reasoning", "")
+        picks_8 = strategy_8_potential5(env=env_8)
         all_results["8_potential5"] = picks_8
         # x1.0 元数据汇总
-        if picks_8:
-            all_results["x1_meta"]["environment_grade"] = "B+"
-            all_results["x1_meta"]["position_desc"] = "严格控制仓位"
-            all_results["x1_meta"]["candidates_count"] = len(picks_8)
-            all_results["x1_meta"]["conclusions"] = [
-                {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}
-                for r in picks_8
-            ]
+        all_results["x1_meta"]["candidates_count"] = len(picks_8)
+        all_results["x1_meta"]["excluded_count"] = 0  # 由 exclusion_filter 内部统计
+        all_results["x1_meta"]["conclusions"] = [
+            {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}
+            for r in picks_8
+        ]
     # 策略 8b: 深度潜力分析(依赖 8 的输出)
     if args.mode in ("all", "8b"):
         if "8_potential5" not in all_results:
