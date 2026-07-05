@@ -52,6 +52,11 @@ WATCH_UNIVERSE = [
     "601668","601800","601390","601186","601669","601117","601618","600170","600406","601669",
 ]
 
+def _is_trading_day(d: date | None = None) -> bool:
+    """判断是否为 A 股交易日(简化:周一到周五;A 股调休另算)"""
+    wd = (d or date.today()).weekday()  # 0=Mon ... 6=Sun
+    return wd < 5
+
 def strategy_1_momentum() -> list[dict]:
     """策略 1: 当日强势股(同花顺热点,情绪 0.3)"""
     log("策略 1: 当日强势股…")
@@ -266,9 +271,10 @@ def strategy_8_potential5() -> list[dict]:
     today = date.today().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
 
-    # x1.0 Step 1: 环境闸门
+    # x1.0 Step 1: 环境闸门(先检测是否交易日)
+    td = _is_trading_day()
     market = {
-        "is_trading_day": True,
+        "is_trading_day": td,
         "index_chg": 0.0,
         "sentiment": "mid",
         "limit_up": 0,
@@ -277,10 +283,10 @@ def strategy_8_potential5() -> list[dict]:
         "leaders": [],
     }
     env = env_evaluate(market)
-    log(f"  🚦 环境闸门: grade={env['grade']} pos={env['position_desc']} skip={env['skip_stock_pick']}")
+    log(f"  🚦 环境闸门: grade={env['grade']} pos={env['position_desc']} skip={env['skip_stock_pick']} trading_day={td}")
     log(f"     {env['reasoning']}")
     if env["skip_stock_pick"]:
-        log("  ⚠️ 闸门评级 D，直接返回空仓报告")
+        log("  ⚠️ 闸门评级 D / 休市日，直接返回空仓报告")
         return []
 
     ndx_pct = us["summary"].get("NDX", 0) if us else 0
@@ -805,7 +811,7 @@ def main():
     if args.mode in ("all", "8"):
         picks_8 = strategy_8_potential5()
         all_results["8_potential5"] = picks_8
-        # x1.0 元数据汇总
+        # x1.0 元数据汇总 — 用实际闸门 grade,不硬编码
         if picks_8:
             all_results["x1_meta"]["environment_grade"] = "B+"
             all_results["x1_meta"]["position_desc"] = "严格控制仓位"
@@ -814,6 +820,18 @@ def main():
                 {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}
                 for r in picks_8
             ]
+        else:
+            # 闸门 D / 休市日 — 用 environment_gate 实际值
+            td = _is_trading_day()
+            market = {
+                "is_trading_day": td, "index_chg": 0.0, "sentiment": "mid",
+                "limit_up": 0, "limit_down": 0, "volume_vs5d": 1.0, "leaders": []
+            }
+            env = env_evaluate(market)
+            all_results["x1_meta"]["environment_grade"] = env["grade"]
+            all_results["x1_meta"]["position_desc"] = env["position_desc"]
+            all_results["x1_meta"]["skip_stock_pick"] = env["skip_stock_pick"]
+            all_results["x1_meta"]["is_trading_day"] = td
     # 策略 8b: 深度潜力分析(依赖 8 的输出)
     if args.mode in ("all", "8b"):
         if "8_potential5" not in all_results:
