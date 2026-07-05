@@ -16,9 +16,14 @@ post_report.py — x1.0 融合版报告
 """
 import sys, json
 from pathlib import Path
-from datetime import date
+from datetime import date, datetime, timezone, timedelta
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE
+
+# ── Asia/Shanghai 交易日历(用 UTC+8 推算本地日期) ──
+_CST = timezone(timedelta(hours=8))
+def today_cst() -> str:
+    return datetime.now(_CST).strftime("%Y-%m-%d")
 
 def fmt_emoji(pct: float) -> str:
     if pct > 0.5: return "🟢"
@@ -201,7 +206,7 @@ def section_risks(picks: dict, us: dict, t159: dict, analyses: list[dict]) -> st
     return "\n".join(out)
 
 def main():
-    today = date.today().strftime("%Y-%m-%d")
+    today = today_cst()
     out_dir = DAILY_DIR / today
     if not out_dir.exists():
         log(f"❌ {out_dir} 不存在,先跑 run_daily.sh")
@@ -243,18 +248,18 @@ def main():
 
     md.append("---\n")
     md.append(section_environment_gate(x1_meta))
+    md.append(section_159941(t159))   # x1.0 第 18 章：持仓联动必须在 TOP 5 之前
     md.append("---\n")
     md.append(section_potential5_summary(picks))
     md.append("---\n")
     md.append(section_per_stock_analysis(analyses))
     md.append("---\n")
     md.append(section_us(us))
-    md.append(section_159941(t159))
     md.append(section_risks(picks, us, t159, analyses))
 
     md.append("\n---\n")
     md.append("> ⚠️ **风险声明**:本报告仅供参考,不构成投资建议。市场有风险,投资需谨慎。")
-    md.append(f"> 报告生成时间: {date.today().strftime('%Y-%m-%d %H:%M:%S')}")
+    md.append(f"> 报告生成时间: {datetime.now(_CST).strftime('%Y-%m-%d %H:%M:%S %Z')}")
 
     text = "\n".join(md)
 

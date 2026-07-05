@@ -3,9 +3,12 @@ strategy_holdings_tracker.py — 159941(广发纳指100ETF)持仓跟踪
 计算:现价 / 涨跌 / 当日盈亏 / 累计盈亏(对比成本) / 对比美股隔夜
 写入: /workspace/daily_picks/YYYY-MM-DD/159941-tracker.json
 """
-import sys, json, argparse
+import sys, json, argparse, os
 from pathlib import Path
-from datetime import date
+from datetime import date, datetime, timezone, timedelta
+# x1.0: 统一用 Asia/Shanghai 交易日历
+os.environ.setdefault("TZ", "Asia/Shanghai")
+_CST = timezone(timedelta(hours=8))
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import tencent_quote, save_json, load_json, DAILY_DIR, log
 
@@ -17,7 +20,7 @@ def main():
     parser.add_argument("--date",  default=None, help="日期(默认今天)")
     args = parser.parse_args()
 
-    today = args.date or date.today().strftime("%Y-%m-%d")
+    today = args.date or datetime.now(_CST).strftime("%Y-%m-%d")
     out_dir = DAILY_DIR / today
     out_dir.mkdir(parents=True, exist_ok=True)
 

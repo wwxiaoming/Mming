@@ -6,7 +6,8 @@
 # 上一版本: v1.7.0（python 跑 9 策略 + 五引擎打分，缺少环境闸门与排除规则）
 # x1.0 新增: 1) 闸门评级 D 直接出空仓报告 2) 10 条排除规则硬过滤 3) 4 选 1 结论映射 4) 双产物输出（daily_picks/ + output/）
 set -e
-cd /workspace
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "${SCRIPT_DIR}/.."
 
 # ── 用户配置 ──
 HOLDINGS_CODE="159941"
@@ -49,8 +50,8 @@ python3 scripts/auto_publish.py
 echo
 echo "═══════════════════════════════════════════════"
 echo "  ✅ 全部完成"
-echo "  📊 报告:  /workspace/daily_picks/$(date '+%Y-%m-%d').md"
-echo "  📋 摘要:  /workspace/daily_picks/$(date '+%Y-%m-%d')/summary.txt"
+echo "  📊 报告:  /workspace/daily_picks/$(TZ=Asia/Shanghai date '+%Y-%m-%d').md"
+echo "  📋 摘要:  /workspace/daily_picks/$(TZ=Asia/Shanghai date '+%Y-%m-%d')/summary.txt"
 echo "  📈 持仓:  /workspace/POSITIONS.md"
 echo "  📝 日志:  /workspace/DAILY_LOG.md"
 echo "  📚 上下文:/workspace/STOCK_CONTEXT.md"

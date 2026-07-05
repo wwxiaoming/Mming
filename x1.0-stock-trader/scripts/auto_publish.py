@@ -10,7 +10,10 @@ auto_publish.py — 6 通道自动写出
 from __future__ import annotations
 import os, sys, json, re
 from pathlib import Path
-from datetime import datetime, date
+from datetime import datetime, date, timezone, timedelta
+# x1.0: 统一用 Asia/Shanghai 交易日历
+os.environ.setdefault("TZ", "Asia/Shanghai")
+_CST = timezone(timedelta(hours=8))
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE
 
@@ -414,7 +417,7 @@ def publish_feishu(today: str, summary: str):
 
 # ── 主入口 ──
 def main():
-    today = date.today().strftime("%Y-%m-%d")
+    today = datetime.now(_CST).strftime("%Y-%m-%d")
     out_dir = DAILY_DIR / today
     if not out_dir.exists():
         log(f"❌ {out_dir} 不存在,先跑 run_daily.sh")

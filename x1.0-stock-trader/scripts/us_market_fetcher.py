@@ -2,9 +2,12 @@
 us_market_fetcher.py — 拉美股 5 指数隔夜 + 7 巨头 + 半导体 + 中概
 写入: /workspace/daily_picks/YYYY-MM-DD/us_market.json
 """
-import sys, json
+import sys, json, os
 from pathlib import Path
-from datetime import date
+from datetime import date, datetime, timezone, timedelta
+# x1.0: 统一用 Asia/Shanghai 交易日历
+os.environ.setdefault("TZ", "Asia/Shanghai")
+_CST = timezone(timedelta(hours=8))
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import tencent_quote, save_json, DAILY_DIR, log
 
@@ -45,7 +48,7 @@ US_TICKERS = [
 ]
 
 def main():
-    today = date.today().strftime("%Y-%m-%d")
+    today = datetime.now(_CST).strftime("%Y-%m-%d")
     out_dir = DAILY_DIR / today
     out_dir.mkdir(parents=True, exist_ok=True)
 

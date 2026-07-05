@@ -17,9 +17,14 @@ x1.0 新增（相对 v1.7.0）:
   - 排除规则（x1.exclusion_filter）：10 条硬过滤在评分前生效
   - 4 选 1 结论映射（x1.conclusion_mapper）：评分 → 可直接试仓/条件满足/只可观察/明确不买
 """
-import sys, json, urllib.request, argparse
+import sys, json, urllib.request, argparse, os
 from pathlib import Path
-from datetime import date
+from datetime import date, datetime, timezone, timedelta
+# x1.0: 统一用 Asia/Shanghai 交易日历(避免 UTC 跨日导致日期错位)
+os.environ.setdefault("TZ", "Asia/Shanghai")
+_CST = timezone(timedelta(hours=8))
+def _today_str() -> str:
+    return datetime.now(_CST).strftime("%Y-%m-%d")
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import (
     tencent_quote, ths_hot_reason, eastmoney_global_news, industry_top,
@@ -263,7 +268,7 @@ def strategy_8_potential5() -> list[dict]:
     x1.0 新增：在评分前调 environment_gate + exclusion_filter，评分后调 conclusion_mapper
     """
     log("策略 8: 🌱 明日潜力股 TOP 5（挖低位+资金流入+题材催化）…")
-    today = date.today().strftime("%Y-%m-%d")
+    today = _today_str()
     us = load_json(DAILY_DIR / today / "us_market.json")
 
     # x1.0 Step 1: 环境闸门
@@ -760,7 +765,7 @@ def main():
     parser.add_argument("--date", default=None)
     args = parser.parse_args()
 
-    today = args.date or date.today().strftime("%Y-%m-%d")
+    today = args.date or _today_str()
     out_dir = DAILY_DIR / today
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -805,11 +810,17 @@ def main():
     if args.mode in ("all", "8"):
         picks_8 = strategy_8_potential5()
         all_results["8_potential5"] = picks_8
-        # x1.0 元数据汇总
+        # x1.0 元数据汇总（独立计算 env，避免策略内部 skip 时拿不到闸门元数据）
+        meta_market = {
+            "is_trading_day": True, "index_chg": 0.0, "sentiment": "mid",
+            "limit_up": 0, "limit_down": 0, "volume_vs5d": 1.0, "leaders": [],
+        }
+        meta_env = env_evaluate(meta_market)
+        all_results["x1_meta"]["environment_grade"] = meta_env["grade"]
+        all_results["x1_meta"]["position_desc"] = meta_env["position_desc"]
+        all_results["x1_meta"]["skip_stock_pick"] = meta_env["skip_stock_pick"]
+        all_results["x1_meta"]["candidates_count"] = len(picks_8)
         if picks_8:
-            all_results["x1_meta"]["environment_grade"] = "B+"
-            all_results["x1_meta"]["position_desc"] = "严格控制仓位"
-            all_results["x1_meta"]["candidates_count"] = len(picks_8)
             all_results["x1_meta"]["conclusions"] = [
                 {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}
                 for r in picks_8
