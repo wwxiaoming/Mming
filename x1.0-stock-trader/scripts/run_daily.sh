@@ -6,7 +6,8 @@
 # 上一版本: v1.7.0（python 跑 9 策略 + 五引擎打分，缺少环境闸门与排除规则）
 # x1.0 新增: 1) 闸门评级 D 直接出空仓报告 2) 10 条排除规则硬过滤 3) 4 选 1 结论映射 4) 双产物输出（daily_picks/ + output/）
 set -e
-cd /workspace
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
 
 # ── 用户配置 ──
 HOLDINGS_CODE="159941"
@@ -21,12 +22,12 @@ echo
 
 # ── 1. 美股隔夜 ──
 echo "[1/5] 拉美股隔夜数据…"
-python3 scripts/us_market_fetcher.py
+python3 us_market_fetcher.py
 
 # ── 2. 持仓跟踪 ──
 echo
 echo "[2/5] 跟踪 ${HOLDINGS_CODE} 持仓…"
-python3 scripts/strategy_holdings_tracker.py \
+python3 strategy_holdings_tracker.py \
   --code="${HOLDINGS_CODE}" \
   --shares="${HOLDINGS_SHARES}" \
   --cost="${HOLDINGS_COST}"
@@ -34,17 +35,17 @@ python3 scripts/strategy_holdings_tracker.py \
 # ── 3. 9 策略并行 ──
 echo
 echo "[3/5] 9 策略并行选股…"
-python3 scripts/daily_stock_pick.py --mode=all
+python3 daily_stock_pick.py --mode=all
 
 # ── 4. 拼 Markdown 报告 ──
 echo
 echo "[4/5] 生成 Markdown 报告…"
-python3 scripts/post_report.py
+python3 post_report.py
 
 # ── 5. 自动写出 6 通道 ──
 echo
 echo "[5/5] 自动写出 6 通道…"
-python3 scripts/auto_publish.py
+python3 auto_publish.py
 
 echo
 echo "═══════════════════════════════════════════════"
