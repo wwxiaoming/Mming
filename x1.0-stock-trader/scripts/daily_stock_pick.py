@@ -30,6 +30,9 @@ from x1.environment_gate import evaluate as env_evaluate
 from x1.exclusion_filter import filter_excluded
 from x1.conclusion_mapper import map_conclusion
 
+# 全局日期(由 main() 注入,避免策略内部重复调用 date.today())
+_TODAY = {"value": None}
+
 # 8 行业代表股(覆盖常用板块,用于行业 / 政策 / 资金 3 维度的快速采样)
 WATCH_UNIVERSE = [
     # 科技
@@ -263,7 +266,7 @@ def strategy_8_potential5() -> list[dict]:
     x1.0 新增：在评分前调 environment_gate + exclusion_filter，评分后调 conclusion_mapper
     """
     log("策略 8: 🌱 明日潜力股 TOP 5（挖低位+资金流入+题材催化）…")
-    today = date.today().strftime("%Y-%m-%d")
+    today = _TODAY["value"] or date.today().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
 
     # x1.0 Step 1: 环境闸门
@@ -302,8 +305,9 @@ def strategy_8_potential5() -> list[dict]:
         hot_codes = set()
         hot_themes = []
 
-    # x1.0 Step 2: 排除规则（把 WATCH_UNIVERSE 转成 stock dict 再过滤）
-    raw_quotes = tencent_quote(WATCH_UNIVERSE)
+    # x1.0 Step 2: 排除规则（候选池 = WATCH_UNIVERSE + 同花顺热点 TOP 10,去重）
+    candidate_pool = list(dict.fromkeys(WATCH_UNIVERSE + [r["code"] for r in (hot_rows or [])[:10]]))
+    raw_quotes = tencent_quote(candidate_pool)
     raw_stocks = []
     for code, q in raw_quotes.items():
         raw_stocks.append({
@@ -325,6 +329,32 @@ def strategy_8_potential5() -> list[dict]:
     log(f"  🛡 排除规则: 候选 {len(raw_stocks)} → 通过 {len(passed_stocks)} / 排除 {len(excluded_stocks)}")
     for e in excluded_stocks[:5]:
         log(f"    ❌ {e['code']} {e['name']} → {e['reason_text']}")
+
+    # x1.0 Fallback: 若严格池通过 0,回退到当日热点 TOP 5(走"条件满足才可买入"路径)
+    if not passed_stocks and hot_rows:
+        log(f"  ⚠ 严格池空,回退到当日热点 TOP {min(5, len(hot_rows))}(题材命中但位置过热)")
+        # 仅用 hot_rows 中 reason 非空的,按涨幅排序
+        hot_with_reason = [h for h in hot_rows if (h.get("reason") or "").strip()][:10]
+        hot_codes_set = {h["code"] for h in hot_with_reason}
+        hot_quote_pool = tencent_quote(list(hot_codes_set))
+        for code, q in hot_quote_pool.items():
+            raw_stocks.append({
+                "code": code,
+                "name": q.get("name", ""),
+                "change_pct": q.get("change_pct", 0),
+                "turnover_pct": q.get("turnover_pct", 0),
+                "vol_ratio": q.get("vol_ratio", 1.0),
+                "open": q.get("open", 0),
+                "last_close": q.get("last_close", 0),
+                "reason": next((h["reason"] for h in hot_with_reason if h["code"] == code), ""),
+                "sector_rank": 99,
+                "sector_chg_5d": 0.0,
+                "upper_shadow_count_5d": 0,
+                "holding_cycle": "short",
+                "_quote": q,
+                "_fallback_hot": True,  # 标记为 fallback 路径
+            })
+        passed_stocks = [s for s in raw_stocks if s.get("_fallback_hot")]
 
     # x1.0 Step 3: 五引擎评分（仅对 passed_stocks）
     out = []
@@ -435,6 +465,9 @@ def strategy_8_potential5() -> list[dict]:
         r["conclusion_emoji"] = conc["emoji"]
         r["condition_trigger"] = conc["condition_trigger"]
         r["edge_flag"] = conc["edge_flag"]
+        # 若来自 fallback hot 路径,显式标记"等回踩"
+        if r.get("_fallback_hot") and "条件" in (r.get("conclusion") or ""):
+            r["condition_trigger"] = (r.get("condition_trigger") or "") + " | 当前涨幅过大,等回踩至 5 日线 / -3%~-6% 分批"
 
     return top5
 
@@ -443,7 +476,7 @@ def strategy_8b_potential_analysis(top5: list[dict]) -> list[dict]:
     框架: 基本信息 / 财务 / 技术 / 资金 / 政策 / 风险 / 建议
     """
     log("策略 8b: 📊 深度潜力分析(对 TOP 5 调用 a-share-analysis 框架)…")
-    today = date.today().strftime("%Y-%m-%d")
+    today = _TODAY["value"] or date.today().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
     ndx_pct = us["summary"].get("NDX", 0) if us else 0
     sox_pct = us["summary"].get("SOX", 0) if us else 0
@@ -638,7 +671,7 @@ def strategy_weekend_pick() -> list[dict]:
       news 题材新闻(0.10): 7×24 资讯中匹配股票名
     """
     log("周末策略: 🌙 周一潜力股 TOP 5(基于行业+资金+美股周五+7×24 资讯)…")
-    today = date.today().strftime("%Y-%m-%d")
+    today = _TODAY["value"] or date.today().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
     ndx_pct = us["summary"].get("NDX", 0) if us else 0
     sox_pct = us["summary"].get("SOX", 0) if us else 0
@@ -761,11 +794,22 @@ def main():
     args = parser.parse_args()
 
     today = args.date or date.today().strftime("%Y-%m-%d")
+    _TODAY["value"] = today
     out_dir = DAILY_DIR / today
     out_dir.mkdir(parents=True, exist_ok=True)
 
     log(f"=== 9 策略选股 x1.0({today})===")
     all_results = {"x1_meta": {"version": "x1.0", "fused_from": ["N1.0_v1.0", "v1.7.0"]}}
+
+    # x1.0: 公共环境闸门(给 daily 模式用,weekend 模式自己重算)
+    market = {"is_trading_day": True, "index_chg": 0.0, "sentiment": "mid",
+              "limit_up": 0, "limit_down": 0, "volume_vs5d": 1.0, "leaders": []}
+    if args.mode != "weekend":
+        env = env_evaluate(market)
+        all_results["x1_meta"]["environment_grade"] = env["grade"]
+        all_results["x1_meta"]["position_desc"]  = env["position_desc"]
+        all_results["x1_meta"]["skip_stock_pick"]= env["skip_stock_pick"]
+        all_results["x1_meta"]["env_reasoning"]  = env["reasoning"]
 
     if args.mode == "weekend":
         # 周末模式: 跑美股隔夜 + 周末选股（x1.0 同样接入闸门+排除+映射）
@@ -805,15 +849,16 @@ def main():
     if args.mode in ("all", "8"):
         picks_8 = strategy_8_potential5()
         all_results["8_potential5"] = picks_8
-        # x1.0 元数据汇总
-        if picks_8:
-            all_results["x1_meta"]["environment_grade"] = "B+"
-            all_results["x1_meta"]["position_desc"] = "严格控制仓位"
-            all_results["x1_meta"]["candidates_count"] = len(picks_8)
-            all_results["x1_meta"]["conclusions"] = [
-                {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}
-                for r in picks_8
-            ]
+        # x1.0 元数据汇总：使用真实 env 评级
+        all_results["x1_meta"]["environment_grade"] = env.get("grade", "B")
+        all_results["x1_meta"]["position_desc"] = env.get("position_desc", "严格控制仓位")
+        all_results["x1_meta"]["skip_stock_pick"] = env.get("skip_stock_pick", False)
+        all_results["x1_meta"]["env_reasoning"] = env.get("reasoning", "")
+        all_results["x1_meta"]["candidates_count"] = len(picks_8)
+        all_results["x1_meta"]["conclusions"] = [
+            {"code": r["code"], "name": r["name"], "conclusion": r.get("conclusion", ""), "emoji": r.get("conclusion_emoji", "⚪")}
+            for r in picks_8
+        ]
     # 策略 8b: 深度潜力分析(依赖 8 的输出)
     if args.mode in ("all", "8b"):
         if "8_potential5" not in all_results:

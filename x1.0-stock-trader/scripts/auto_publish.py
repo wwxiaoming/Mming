@@ -8,7 +8,7 @@ auto_publish.py — 6 通道自动写出
 6. 飞书 Webhook 推送(可选,环境变量 FEISHU_WEBHOOK 启用)
 """
 from __future__ import annotations
-import os, sys, json, re
+import os, sys, json, re, argparse
 from pathlib import Path
 from datetime import datetime, date
 sys.path.insert(0, str(Path(__file__).parent))
@@ -414,7 +414,10 @@ def publish_feishu(today: str, summary: str):
 
 # ── 主入口 ──
 def main():
-    today = date.today().strftime("%Y-%m-%d")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--date", default=None, help="日期(默认今天)")
+    args = parser.parse_args()
+    today = args.date or date.today().strftime("%Y-%m-%d")
     out_dir = DAILY_DIR / today
     if not out_dir.exists():
         log(f"❌ {out_dir} 不存在,先跑 run_daily.sh")

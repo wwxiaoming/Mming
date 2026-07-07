@@ -2,7 +2,7 @@
 us_market_fetcher.py — 拉美股 5 指数隔夜 + 7 巨头 + 半导体 + 中概
 写入: /workspace/daily_picks/YYYY-MM-DD/us_market.json
 """
-import sys, json
+import sys, json, argparse
 from pathlib import Path
 from datetime import date
 sys.path.insert(0, str(Path(__file__).parent))

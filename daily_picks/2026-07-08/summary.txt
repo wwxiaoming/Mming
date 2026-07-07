@@ -1,0 +1,61 @@
+📊 每日选股摘要 — 2026-07-08
+
+🌙 美股隔夜:
+  NDX +0.00%  SPX +0.00%  DJI +0.00%  SOX +0.00%
+
+📈 159941 持仓:
+  现价 1.624 (-0.06%)
+  700股 × 成本1.623
+  当日 -0.70元  累计 +0.06% (+0.70元) 🟢
+
+1️⃣ 当日强势股
+  1. name=中远通 code=301516 change_pct=20
+  2. name=有研硅 code=688432 change_pct=20
+  3. name=威尔高 code=301251 change_pct=+20.00
+  4. name=佛塑科技 code=000973 change_pct=+10.04
+  5. name=宝地矿业 code=601121 change_pct=+10.03
+
+2️⃣ 主力资金
+  1. name=有研硅 code=688432 change_pct=+20.00
+  2. name=百合花 code=603823 change_pct=+10.01
+  3. name=佛塑科技 code=000973 change_pct=+10.04
+  4. name=实益达 code=002137 change_pct=+10.01
+  5. name=中远通 code=301516 change_pct=+20.00
+
+3️⃣ 价值股
+  1. name=兴业银行 code=601166 pe_ttm=+4.66
+  2. name=中国铁建 code=601186 pe_ttm=+4.69
+  3. name=平安银行 code=000001 pe_ttm=+4.72
+  4. name=中国建筑 code=601668 pe_ttm=+4.88
+  5. name=中国中铁 code=601390 pe_ttm=+4.88
+
+4️⃣ ETF 活跃
+  1. name=创业板ETF易方达 code=159915 change_pct=-0.96
+  2. name=芯片ETF华夏 code=159995 change_pct=-0.27
+  3. name=纳指ETF广发 code=159941 change_pct=-0.06
+
+6️⃣ 产业链瓶颈
+  1. theme=机器人 hits=7
+  2. theme=半导体 hits=5
+  3. theme=芯片 hits=3
+  4. theme=存储 hits=3
+  5. theme=算力 hits=2
+
+7️⃣ 护城河
+  1. name=贵州茅台 code=600519 roe_est=+35.50
+  2. name=紫金矿业 code=601899 roe_est=+32.60
+  3. name=双汇发展 code=000895 roe_est=+26.40
+  4. name=阳光电源 code=300274 roe_est=+25.30
+  5. name=山西汾酒 code=600809 roe_est=+24.40
+
+8️⃣ 🌱 明日潜力股 TOP 5(x1.0 4 选 1)
+  1. 001230 劲旅环境 分=0.511 🟡 条件满足才可买入
+  2. 605399 晨光新材 分=0.393 ⚪ 只可观察，不可买
+  3. 301516 中远通 分=0.325 ⚪ 只可观察，不可买
+  4. 003004 声迅股份 分=0.287 ⚪ 只可观察，不可买
+
+🚦 环境闸门(x1.0):
+  评级 C / 以观察为主
+
+📁 详细报告: /workspace/daily_picks/2026-07-08/
+📁 x1.0 主报告: /workspace/output/2026-07-08_早盘潜力股_x1.0.md

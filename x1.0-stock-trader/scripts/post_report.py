@@ -14,9 +14,9 @@ post_report.py — x1.0 融合版报告
   - x1.0 第 17 章: 4 选 1 结论映射
   - x1.0 第 18 章: 持仓与跨市场联动
 """
-import sys, json
+import sys, json, argparse
 from pathlib import Path
-from datetime import date
+from datetime import date, datetime
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE
 
@@ -213,11 +213,12 @@ def main():
     t159    = load_json(out_dir / "159941-tracker.json")
     analyses = picks.get("8b_analysis", [])
 
-    # 休市日处理（x1.0 第 10 章）
+    # 休市日处理（x1.0 第 10 章）— 默认是交易日
     is_trading_day = True
     try:
         sc = (WORKSPACE / "STOCK_CONTEXT.md").read_text(encoding="utf-8")
-        is_trading_day = ("休市" not in sc and "is_trading_day: True" in sc) or ("is_trading_day: True" in sc)
+        # 显式标记了 "is_trading_day: False" 才算休市
+        is_trading_day = "is_trading_day: False" not in sc
     except Exception:
         is_trading_day = True
 
@@ -244,17 +245,19 @@ def main():
     md.append("---\n")
     md.append(section_environment_gate(x1_meta))
     md.append("---\n")
+    # x1.0 第 18 章:159941 持仓联动 — 必须在 TOP 5 之前
+    md.append(section_159941(t159))
+    md.append("---\n")
     md.append(section_potential5_summary(picks))
     md.append("---\n")
     md.append(section_per_stock_analysis(analyses))
     md.append("---\n")
     md.append(section_us(us))
-    md.append(section_159941(t159))
     md.append(section_risks(picks, us, t159, analyses))
 
     md.append("\n---\n")
     md.append("> ⚠️ **风险声明**:本报告仅供参考,不构成投资建议。市场有风险,投资需谨慎。")
-    md.append(f"> 报告生成时间: {date.today().strftime('%Y-%m-%d %H:%M:%S')}")
+    md.append(f"> 报告生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     text = "\n".join(md)
 
