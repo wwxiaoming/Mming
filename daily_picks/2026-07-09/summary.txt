@@ -1,0 +1,62 @@
+📊 每日选股摘要 — 2026-07-09
+
+🌙 美股隔夜:
+  NDX +0.00%  SPX +0.00%  DJI +0.00%  SOX +0.00%
+
+📈 159941 持仓:
+  现价 1.595 (-1.79%)
+  700股 × 成本1.623
+  当日 -20.30元  累计 -1.73% (-19.60元) 🔴
+
+1️⃣ 当日强势股
+  1. name=绿盟科技 code=300369 change_pct=20
+  2. name=深信服 code=300454 change_pct=20
+  3. name=翰博高新 code=301321 change_pct=+20.00
+  4. name=朗威股份 code=301202 change_pct=+19.99
+  5. name=威尔高 code=301251 change_pct=+19.99
+
+2️⃣ 主力资金
+  1. name=网宿科技 code=300017 change_pct=+19.97
+  2. name=深信服 code=300454 change_pct=+20.00
+  3. name=威尔高 code=301251 change_pct=+19.99
+  4. name=绿盟科技 code=300369 change_pct=+20.00
+  5. name=翰博高新 code=301321 change_pct=+20.00
+
+3️⃣ 价值股
+  1. name=兴业银行 code=601166 pe_ttm=+4.70
+  2. name=中国铁建 code=601186 pe_ttm=+4.74
+  3. name=平安银行 code=000001 pe_ttm=+4.78
+  4. name=中国中铁 code=601390 pe_ttm=+4.89
+  5. name=中国建筑 code=601668 pe_ttm=+4.98
+
+4️⃣ ETF 活跃
+  1. name=创业板ETF易方达 code=159915 change_pct=-1.65
+  2. name=芯片ETF华夏 code=159995 change_pct=-0.53
+  3. name=纳指ETF广发 code=159941 change_pct=-1.79
+
+6️⃣ 产业链瓶颈
+  1. theme=算力 hits=12
+  2. theme=机器人 hits=6
+  3. theme=半导体 hits=2
+  4. theme=商业航天 hits=2
+  5. theme=卫星 hits=1
+
+7️⃣ 护城河
+  1. name=贵州茅台 code=600519 roe_est=+35.50
+  2. name=紫金矿业 code=601899 roe_est=+32.60
+  3. name=双汇发展 code=000895 roe_est=+26.40
+  4. name=阳光电源 code=300274 roe_est=+25.20
+  5. name=山西汾酒 code=600809 roe_est=+24.40
+
+8️⃣ 🌱 明日潜力股 TOP 5(x1.0 4 选 1)
+  1. 300059 东方财富 分=0.429 ⚪ 只可观察，不可买
+  2. 000568 泸州老窖 分=0.421 ⚪ 只可观察，不可买
+  3. 600547 山东黄金 分=0.412 ⚪ 只可观察，不可买
+  4. 002821 凯莱英 分=0.404 ⚪ 只可观察，不可买
+  5. 000063 中兴通讯 分=0.382 ⚪ 只可观察，不可买
+
+🚦 环境闸门(x1.0):
+  评级 C / 以观察为主
+
+📁 详细报告: /workspace/daily_picks/2026-07-09/
+📁 x1.0 主报告: /workspace/output/2026-07-09_早盘潜力股_x1.0.md

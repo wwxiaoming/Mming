@@ -12,7 +12,7 @@ import os, sys, json, re
 from pathlib import Path
 from datetime import datetime, date
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE
+from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE, today_sh, now_sh
 
 # ── 路径 ──
 POSITIONS_MD  = WORKSPACE / "POSITIONS.md"
@@ -22,7 +22,7 @@ FEISHU_ENV    = "FEISHU_WEBHOOK"
 
 # ── 工具 ──
 def now_iso() -> str:
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return now_sh()
 
 def fmt_money(n: float, sign: bool = False) -> str:
     if n is None:
@@ -414,7 +414,7 @@ def publish_feishu(today: str, summary: str):
 
 # ── 主入口 ──
 def main():
-    today = date.today().strftime("%Y-%m-%d")
+    today = today_sh().strftime("%Y-%m-%d")
     out_dir = DAILY_DIR / today
     if not out_dir.exists():
         log(f"❌ {out_dir} 不存在,先跑 run_daily.sh")

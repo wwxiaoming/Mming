@@ -18,7 +18,7 @@ import sys, json
 from pathlib import Path
 from datetime import date
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE
+from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE, today_sh, now_sh
 
 def fmt_emoji(pct: float) -> str:
     if pct > 0.5: return "🟢"
@@ -52,12 +52,12 @@ def section_potential5_summary(picks: dict) -> str:
         hot_mark = "🔥" if r.get("in_hot") else ""
         conc = r.get("conclusion", "")
         emoji = r.get("conclusion_emoji", "")
-        conc_short = f"{emoji} {conc[:6]}"
+        conc_full = f"{emoji} {conc}" if conc else "—"
         out.append(
             f"| {i} | {r['code']} | {r['name']} | {r['price']:.2f} | {r['change_pct']:+.2f} "
             f"| {r['pe_ttm']:.2f} | {r['pb']:.2f} | {r['turnover_pct']:.2f} | {r.get('vol_ratio',1):.2f} "
             f"| **{r['score']}** "
-            f"| {conc_short} "
+            f"| {conc_full} "
             f"| {b.get('position(0.20)',0)} | {b.get('valuation(0.15)',0)} | {b.get('fund(0.30)',0)} "
             f"| {b.get('theme(0.20)',0)} | {b.get('us(0.15)',0)} | {hot_mark} |"
         )
@@ -201,7 +201,7 @@ def section_risks(picks: dict, us: dict, t159: dict, analyses: list[dict]) -> st
     return "\n".join(out)
 
 def main():
-    today = date.today().strftime("%Y-%m-%d")
+    today = today_sh().strftime("%Y-%m-%d")
     out_dir = DAILY_DIR / today
     if not out_dir.exists():
         log(f"❌ {out_dir} 不存在,先跑 run_daily.sh")
@@ -213,11 +213,12 @@ def main():
     t159    = load_json(out_dir / "159941-tracker.json")
     analyses = picks.get("8b_analysis", [])
 
-    # 休市日处理（x1.0 第 10 章）
+    # 休市日处理（x1.0 第 10 章）：默认 True，仅当 STOCK_CONTEXT.md 明确标记 is_trading_day: False 时才视为休市
     is_trading_day = True
     try:
         sc = (WORKSPACE / "STOCK_CONTEXT.md").read_text(encoding="utf-8")
-        is_trading_day = ("休市" not in sc and "is_trading_day: True" in sc) or ("is_trading_day: True" in sc)
+        if "is_trading_day: False" in sc:
+            is_trading_day = False
     except Exception:
         is_trading_day = True
 
@@ -254,7 +255,9 @@ def main():
 
     md.append("\n---\n")
     md.append("> ⚠️ **风险声明**:本报告仅供参考,不构成投资建议。市场有风险,投资需谨慎。")
-    md.append(f"> 报告生成时间: {date.today().strftime('%Y-%m-%d %H:%M:%S')}")
+    md.append(f"> 报告生成时间: {now_sh()}")
+    md.append(f"> 当前分支:`x1.0-stock-trader/scripts/`(融合 N1.0 v1.0 + v1.7.0)")
+    md.append(f"> 文件落盘:`daily_picks/{today}/{today}.md` + `output/{today}_早盘潜力股_x1.0.md`")
 
     text = "\n".join(md)
 

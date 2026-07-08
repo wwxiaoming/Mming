@@ -7,7 +7,7 @@ import sys, json, argparse
 from pathlib import Path
 from datetime import date
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import tencent_quote, save_json, load_json, DAILY_DIR, log
+from _common import tencent_quote, save_json, load_json, DAILY_DIR, log, today_sh
 
 def main():
     parser = argparse.ArgumentParser()
@@ -17,7 +17,7 @@ def main():
     parser.add_argument("--date",  default=None, help="日期(默认今天)")
     args = parser.parse_args()
 
-    today = args.date or date.today().strftime("%Y-%m-%d")
+    today = args.date or today_sh().strftime("%Y-%m-%d")
     out_dir = DAILY_DIR / today
     out_dir.mkdir(parents=True, exist_ok=True)
 

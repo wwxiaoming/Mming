@@ -1,0 +1,437 @@
+{
+  "date": "2026-07-09",
+  "generated_at": "2026-07-09 07:39:31",
+  "version": "x1.0",
+  "x1_meta": {
+    "version": "x1.0",
+    "fused_from": [
+      "N1.0_v1.0",
+      "v1.7.0"
+    ],
+    "environment_grade": "C",
+    "position_desc": "以观察为主",
+    "skip_stock_pick": false,
+    "candidates_count": 5,
+    "conclusions": [
+      {
+        "code": "300059",
+        "name": "东方财富",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "000568",
+        "name": "泸州老窖",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "600547",
+        "name": "山东黄金",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "002821",
+        "name": "凯莱英",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "000063",
+        "name": "中兴通讯",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      }
+    ]
+  },
+  "us_overnight": {
+    "NDX": 0,
+    "IXIC": 0,
+    "SPX": 0,
+    "DJI": 0,
+    "SOX": 0
+  },
+  "holdings_159941": {
+    "name": "纳指ETF广发",
+    "price": 1.595,
+    "change_pct": -1.79,
+    "shares": 700,
+    "cost": 1.623,
+    "daily_pnl": -20.3,
+    "cum_pnl": -19.6,
+    "cum_pnl_pct": -1.73
+  },
+  "top_picks": {
+    "momentum": [
+      {
+        "code": "300369",
+        "name": "绿盟科技",
+        "change_pct": 20,
+        "turnover_pct": 11.02,
+        "amount_yi": 0.0,
+        "reason": "AI安全+数据安全+算力"
+      },
+      {
+        "code": "300454",
+        "name": "深信服",
+        "change_pct": 20,
+        "turnover_pct": 9.11,
+        "amount_yi": 0.0,
+        "reason": "AI算力网关+算力租赁+间接持股宇树"
+      },
+      {
+        "code": "301321",
+        "name": "翰博高新",
+        "change_pct": 19.995,
+        "turnover_pct": 9.59,
+        "amount_yi": 0.0,
+        "reason": "湿电子化学品+Mini-LED+车载显示+一季报扭亏"
+      },
+      {
+        "code": "301202",
+        "name": "朗威股份",
+        "change_pct": 19.994,
+        "turnover_pct": 5.6,
+        "amount_yi": 0.0,
+        "reason": "液冷+数据中心+算力+维谛合作"
+      },
+      {
+        "code": "301251",
+        "name": "威尔高",
+        "change_pct": 19.992,
+        "turnover_pct": 29.61,
+        "amount_yi": 0.0,
+        "reason": "AI电源PCB+DC/DC订单+产能释放"
+      }
+    ],
+    "fund_flow": [
+      {
+        "code": "300017",
+        "name": "网宿科技",
+        "price": 14.66,
+        "change_pct": 19.97,
+        "main_net_5d_yi": 0.012
+      },
+      {
+        "code": "300454",
+        "name": "深信服",
+        "price": 106.56,
+        "change_pct": 20.0,
+        "main_net_5d_yi": 0.008
+      },
+      {
+        "code": "301251",
+        "name": "威尔高",
+        "price": 60.92,
+        "change_pct": 19.99,
+        "main_net_5d_yi": 0.004
+      },
+      {
+        "code": "300369",
+        "name": "绿盟科技",
+        "price": 6.48,
+        "change_pct": 20.0,
+        "main_net_5d_yi": 0.002
+      },
+      {
+        "code": "301321",
+        "name": "翰博高新",
+        "price": 49.81,
+        "change_pct": 20.0,
+        "main_net_5d_yi": 0.002
+      }
+    ],
+    "value": [
+      {
+        "code": "601166",
+        "name": "兴业银行",
+        "price": 17.21,
+        "pe_ttm": 4.7,
+        "pb": 0.44,
+        "change_pct": 0.82,
+        "mcap_yi": 3642.13
+      },
+      {
+        "code": "601186",
+        "name": "中国铁建",
+        "price": 6.14,
+        "pe_ttm": 4.74,
+        "pb": 0.3,
+        "change_pct": 0.99,
+        "mcap_yi": 706.3
+      },
+      {
+        "code": "000001",
+        "name": "平安银行",
+        "price": 10.6,
+        "pe_ttm": 4.78,
+        "pb": 0.45,
+        "change_pct": 1.24,
+        "mcap_yi": 2056.99
+      },
+      {
+        "code": "601390",
+        "name": "中国中铁",
+        "price": 4.23,
+        "pe_ttm": 4.89,
+        "pb": 0.32,
+        "change_pct": 0.24,
+        "mcap_yi": 859.7
+      },
+      {
+        "code": "601668",
+        "name": "中国建筑",
+        "price": 4.57,
+        "pe_ttm": 4.98,
+        "pb": 0.38,
+        "change_pct": 2.01,
+        "mcap_yi": 1888.34
+      }
+    ],
+    "potential5": [
+      {
+        "code": "300059",
+        "name": "东方财富",
+        "price": 20.13,
+        "change_pct": -0.79,
+        "pe_ttm": 24.3,
+        "pb": 3.32,
+        "turnover_pct": 2.16,
+        "amplitude_pct": 3.4,
+        "vol_ratio": 0.52,
+        "score": 0.429,
+        "breakdown": {
+          "position(0.20)": 0.74,
+          "valuation(0.15)": 0.8,
+          "fund(0.30)": 0.54,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": false,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false
+      },
+      {
+        "code": "000568",
+        "name": "泸州老窖",
+        "price": 76.41,
+        "change_pct": 0.28,
+        "pe_ttm": 11.31,
+        "pb": 2.18,
+        "turnover_pct": 0.62,
+        "amplitude_pct": 2.11,
+        "vol_ratio": 0.8,
+        "score": 0.421,
+        "breakdown": {
+          "position(0.20)": 0.91,
+          "valuation(0.15)": 1.0,
+          "fund(0.30)": 0.3,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": false,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false
+      },
+      {
+        "code": "600547",
+        "name": "山东黄金",
+        "price": 24.65,
+        "change_pct": -0.48,
+        "pe_ttm": 22.03,
+        "pb": 3.55,
+        "turnover_pct": 1.65,
+        "amplitude_pct": 5.57,
+        "vol_ratio": 0.61,
+        "score": 0.412,
+        "breakdown": {
+          "position(0.20)": 0.84,
+          "valuation(0.15)": 0.8,
+          "fund(0.30)": 0.41,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": false,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false
+      },
+      {
+        "code": "002821",
+        "name": "凯莱英",
+        "price": 149.53,
+        "change_pct": -2.33,
+        "pe_ttm": 48.59,
+        "pb": 3.08,
+        "turnover_pct": 4.01,
+        "amplitude_pct": 7.03,
+        "vol_ratio": 0.63,
+        "score": 0.404,
+        "breakdown": {
+          "position(0.20)": 0.22,
+          "valuation(0.15)": 0.4,
+          "fund(0.30)": 1.0,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": false,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false
+      },
+      {
+        "code": "000063",
+        "name": "中兴通讯",
+        "price": 36.87,
+        "change_pct": 3.02,
+        "pe_ttm": 39.41,
+        "pb": 2.3,
+        "turnover_pct": 4.9,
+        "amplitude_pct": 3.83,
+        "vol_ratio": 1.24,
+        "score": 0.382,
+        "breakdown": {
+          "position(0.20)": 0.3,
+          "valuation(0.15)": 0.4,
+          "fund(0.30)": 0.87,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": false,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false
+      }
+    ],
+    "serenity_chain": [
+      {
+        "theme": "算力",
+        "hits": 12,
+        "logic": "近期 12 只强势股 reason 包含 算力"
+      },
+      {
+        "theme": "机器人",
+        "hits": 6,
+        "logic": "近期 6 只强势股 reason 包含 机器人"
+      },
+      {
+        "theme": "半导体",
+        "hits": 2,
+        "logic": "近期 2 只强势股 reason 包含 半导体"
+      },
+      {
+        "theme": "商业航天",
+        "hits": 2,
+        "logic": "近期 2 只强势股 reason 包含 商业航天"
+      },
+      {
+        "theme": "卫星",
+        "hits": 1,
+        "logic": "近期 1 只强势股 reason 包含 卫星"
+      }
+    ],
+    "buffett_moat": [
+      {
+        "code": "600519",
+        "name": "贵州茅台",
+        "pe_ttm": 18.13,
+        "pb": 6.44,
+        "roe_est": 35.5,
+        "price": 1199.3
+      },
+      {
+        "code": "601899",
+        "name": "紫金矿业",
+        "pe_ttm": 11.79,
+        "pb": 3.84,
+        "roe_est": 32.6,
+        "price": 27.36
+      },
+      {
+        "code": "000895",
+        "name": "双汇发展",
+        "pe_ttm": 15.22,
+        "pb": 4.02,
+        "roe_est": 26.4,
+        "price": 23.1
+      },
+      {
+        "code": "300274",
+        "name": "阳光电源",
+        "pe_ttm": 21.64,
+        "pb": 5.46,
+        "roe_est": 25.2,
+        "price": 124.49
+      },
+      {
+        "code": "600809",
+        "name": "山西汾酒",
+        "pe_ttm": 11.96,
+        "pb": 2.92,
+        "roe_est": 24.4,
+        "price": 107.64
+      }
+    ]
+  },
+  "news": [
+    {
+      "title": "行业景气度攀升 8家锂电产业链公司上半年业绩预喜",
+      "summary": "【行业景气度攀升 8家锂电产业链公司上半年业绩预喜】2026年上半年，我国新能源汽车出口实现高速增长，叠加国内外储能行业迎来抢装潮，共同推动国内锂电池产业高速扩张，产能投资热潮持续升温。与此同时，伴随着行业持续高景气，A股锂电产业链上市公司业绩也迎来集体修复。",
+      "time": "2026-07-09 07:38:00"
+    },
+    {
+      "title": "AI算力需求持续外溢 云计算板块进入新一轮扩张周期",
+      "summary": "【AI算力需求持续外溢 云计算板块进入新一轮扩张周期】7月8日，A股云计算概念股走强。在业内看来，云计算板块大涨的催化剂，源于头部厂商超预期的业绩兑现。7月8日，浪潮信息披露2026年半年度业绩预告，预计上半年归母净利润为26亿元至31亿元，同比增长226%至288%。基本每股收益预计为1.77元至",
+      "time": "2026-07-09 07:37:00"
+    },
+    {
+      "title": "AI等科技主题主动权益基金规模超5600亿元",
+      "summary": "【AI等科技主题主动权益基金规模超5600亿元】2026年上半年，AI（人工智能）算力、半导体、光通信等硬科技领域表现相对活跃，主动权益基金整体收益有所修复。同时，随着部分科技板块估值水平提升，基金经理的投资逻辑也正在发生变化——从前期关注产业趋势和估值扩张，逐步转向寻找业绩兑现能力更强的企业。下半",
+      "time": "2026-07-09 07:32:00"
+    },
+    {
+      "title": "A股限售股解禁一览：7.07亿元市值限售股今日解禁",
+      "summary": "【A股限售股解禁一览：7.07亿元市值限售股今日解禁】数据显示，周四（7月9日），共有6家公司限售股解禁，合计解禁量为3174.68万股，按最新收盘价计算，合计解禁市值为7.07亿元。从解禁市值来看，景旺电子、青矩技术、双林股份解禁市值居前，解禁市值分别为2.63亿元、2.3亿元、1.64亿元。",
+      "time": "2026-07-09 07:30:49"
+    },
+    {
+      "title": "A股股票回购一览：25家公司披露回购进展",
+      "summary": "【A股股票回购一览：25家公司披露回购进展】数据显示，7月9日，25家公司共发布25个股票回购相关进展。其中，9家公司首次披露股票回购预案，1家公司回购方案获股东大会通过，6家公司披露股票回购实施进展，9家公司回购方案已实施完毕。",
+      "time": "2026-07-09 07:29:48"
+    }
+  ],
+  "etf_active": [
+    {
+      "code": "159915",
+      "name": "创业板ETF易方达",
+      "price": 3.867,
+      "change_pct": -1.65,
+      "turnover_pct": 14.3,
+      "amount_wan": 644392.0
+    },
+    {
+      "code": "159995",
+      "name": "芯片ETF华夏",
+      "price": 1.493,
+      "change_pct": -0.53,
+      "turnover_pct": 4.1,
+      "amount_wan": 136156.0
+    },
+    {
+      "code": "159941",
+      "name": "纳指ETF广发",
+      "price": 1.595,
+      "change_pct": -1.79,
+      "turnover_pct": 3.95,
+      "amount_wan": 142729.0
+    }
+  ]
+}

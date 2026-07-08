@@ -14,19 +14,19 @@ HOLDINGS_SHARES="700"
 HOLDINGS_COST="1.623"     # 真实平均成本(2026-06-09 早上买入)
 
 echo "═══════════════════════════════════════════════"
-echo "  v1.6 每日选股 — $(date '+%Y-%m-%d %H:%M:%S')"
+echo "  x1.0 每日选股 — TZ=Asia/Shanghai $(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M:%S') (UTC $(date '+%Y-%m-%d %H:%M:%S'))"
 echo "═══════════════════════════════════════════════"
 echo "  持仓: ${HOLDINGS_CODE} × ${HOLDINGS_SHARES}股 @ ${HOLDINGS_COST}"
 echo
 
 # ── 1. 美股隔夜 ──
 echo "[1/5] 拉美股隔夜数据…"
-python3 scripts/us_market_fetcher.py
+TZ=Asia/Shanghai python3 scripts/us_market_fetcher.py
 
 # ── 2. 持仓跟踪 ──
 echo
 echo "[2/5] 跟踪 ${HOLDINGS_CODE} 持仓…"
-python3 scripts/strategy_holdings_tracker.py \
+TZ=Asia/Shanghai python3 scripts/strategy_holdings_tracker.py \
   --code="${HOLDINGS_CODE}" \
   --shares="${HOLDINGS_SHARES}" \
   --cost="${HOLDINGS_COST}"
@@ -34,24 +34,25 @@ python3 scripts/strategy_holdings_tracker.py \
 # ── 3. 9 策略并行 ──
 echo
 echo "[3/5] 9 策略并行选股…"
-python3 scripts/daily_stock_pick.py --mode=all
+TZ=Asia/Shanghai python3 scripts/daily_stock_pick.py --mode=all
 
 # ── 4. 拼 Markdown 报告 ──
 echo
 echo "[4/5] 生成 Markdown 报告…"
-python3 scripts/post_report.py
+TZ=Asia/Shanghai python3 scripts/post_report.py
 
 # ── 5. 自动写出 6 通道 ──
 echo
 echo "[5/5] 自动写出 6 通道…"
-python3 scripts/auto_publish.py
+TZ=Asia/Shanghai python3 scripts/auto_publish.py
 
 echo
 echo "═══════════════════════════════════════════════"
 echo "  ✅ 全部完成"
-echo "  📊 报告:  /workspace/daily_picks/$(date '+%Y-%m-%d').md"
-echo "  📋 摘要:  /workspace/daily_picks/$(date '+%Y-%m-%d')/summary.txt"
+echo "  📊 报告:  /workspace/daily_picks/$(TZ=Asia/Shanghai date '+%Y-%m-%d').md"
+echo "  📋 摘要:  /workspace/daily_picks/$(TZ=Asia/Shanghai date '+%Y-%m-%d')/summary.txt"
 echo "  📈 持仓:  /workspace/POSITIONS.md"
 echo "  📝 日志:  /workspace/DAILY_LOG.md"
 echo "  📚 上下文:/workspace/STOCK_CONTEXT.md"
+echo "  📁 x1.0 主报告: /workspace/output/$(TZ=Asia/Shanghai date '+%Y-%m-%d')_早盘潜力股_x1.0.md"
 echo "═══════════════════════════════════════════════"

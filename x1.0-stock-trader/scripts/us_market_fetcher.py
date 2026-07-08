@@ -6,7 +6,7 @@ import sys, json
 from pathlib import Path
 from datetime import date
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import tencent_quote, save_json, DAILY_DIR, log
+from _common import tencent_quote, save_json, DAILY_DIR, log, today_sh
 
 # 美股 5 指数 + 7 巨头 + 半导体 + 中概
 US_TICKERS = [
@@ -45,7 +45,7 @@ US_TICKERS = [
 ]
 
 def main():
-    today = date.today().strftime("%Y-%m-%d")
+    today = today_sh().strftime("%Y-%m-%d")
     out_dir = DAILY_DIR / today
     out_dir.mkdir(parents=True, exist_ok=True)
 

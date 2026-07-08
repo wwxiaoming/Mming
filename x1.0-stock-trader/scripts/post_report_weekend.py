@@ -12,7 +12,7 @@ import sys, json
 from pathlib import Path
 from datetime import date
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import load_json, save_json, DAILY_DIR, log, eastmoney_global_news, WORKSPACE
+from _common import load_json, save_json, DAILY_DIR, log, eastmoney_global_news, WORKSPACE, today_sh, now_sh
 
 def fmt_emoji(pct: float) -> str:
     if pct > 0.5: return "🟢"
@@ -126,7 +126,7 @@ def section_risks(us: dict, t159: dict) -> str:
     return "\n".join(out)
 
 def main():
-    today = date.today().strftime("%Y-%m-%d")
+    today = today_sh().strftime("%Y-%m-%d")
     out_dir = DAILY_DIR / today
     if not out_dir.exists():
         log(f"❌ {out_dir} 不存在,先跑 run_weekend.sh")
@@ -157,7 +157,7 @@ def main():
 
     md.append("\n---\n")
     md.append("> ⚠️ **风险声明**:本报告仅供参考,不构成投资建议。市场有风险,投资需谨慎。")
-    md.append(f"> 报告生成时间: {date.today().strftime('%Y-%m-%d %H:%M:%S')}")
+    md.append(f"> 报告生成时间: {now_sh()}")
 
     text = "\n".join(md)
 

@@ -23,7 +23,8 @@ from datetime import date
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import (
     tencent_quote, ths_hot_reason, eastmoney_global_news, industry_top,
-    save_json, load_json, DAILY_DIR, em_throttle, UA, log, stock_fund_flow_120d
+    save_json, load_json, DAILY_DIR, em_throttle, UA, log, stock_fund_flow_120d,
+    today_sh, now_sh,
 )
 # x1.0 新增三件套
 from x1.environment_gate import evaluate as env_evaluate
@@ -263,7 +264,7 @@ def strategy_8_potential5() -> list[dict]:
     x1.0 新增：在评分前调 environment_gate + exclusion_filter，评分后调 conclusion_mapper
     """
     log("策略 8: 🌱 明日潜力股 TOP 5（挖低位+资金流入+题材催化）…")
-    today = date.today().strftime("%Y-%m-%d")
+    today = today_sh().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
 
     # x1.0 Step 1: 环境闸门
@@ -302,20 +303,78 @@ def strategy_8_potential5() -> list[dict]:
         hot_codes = set()
         hot_themes = []
 
-    # x1.0 Step 2: 排除规则（把 WATCH_UNIVERSE 转成 stock dict 再过滤）
-    raw_quotes = tencent_quote(WATCH_UNIVERSE)
+    # x1.0 Step 2: 排除规则（合并 WATCH_UNIVERSE + 热点股，让热点股也有 reason 命中）
+    universe = list(dict.fromkeys(list(WATCH_UNIVERSE) + list(hot_codes)))
+    raw_quotes = tencent_quote(universe)
+    # 板块/产业链关键词(用于给 WATCH_UNIVERSE 蓝筹匹配题材 reason)
+    chain_kws = ["芯片", "半导体", "光刻", "存储", "hbm", "先进封装", "碳化硅", "sic", "钠电",
+                 "固态电池", "光伏", "锂电", "稀土", "机器人", "减速器", "丝杠", "传感器",
+                 "卫星", "星链", "商业航天", "核聚变", "可控核聚变", "脑机", "量子",
+                 "算力", "gpu", "coWoS", "PCB", "液冷", "数据中心", "AI", "数字", "软件",
+                 "互联网", "电商", "消费", "白酒", "银行", "保险", "券商", "地产", "汽车",
+                 "新能源", "电池", "风电", "核电", "军工", "航天", "通信", "5G", "6G"]
+    # WATCH_UNIVERSE 蓝筹股 → 板块硬编码（解决产业链关键词在股票名中无法匹配的问题）
+    WATCH_SECTOR_MAP = {
+        # 科技
+        "300476":"PCB/算力", "002463":"PCB/算力", "002230":"AI/软件", "300033":"AI/金融科技",
+        "600588":"AI/软件", "603019":"算力/AI服务器", "000063":"5G/通信", "000977":"AI服务器/算力",
+        "002415":"AI视觉/安防", "300059":"券商/金融科技",
+        # 半导体
+        "688981":"芯片制造", "688041":"芯片/算力", "688256":"AI芯片", "688008":"芯片/存储",
+        "002371":"半导体设备", "603501":"芯片设计", "600460":"半导体/功率", "688126":"硅片/半导体",
+        "300346":"半导体材料", "688012":"半导体设备",
+        # 新能源
+        "300750":"动力电池", "002594":"新能源车", "300014":"动力电池", "601012":"光伏",
+        "002460":"锂电", "300274":"光伏逆变器", "600905":"风电", "002074":"动力电池",
+        "300118":"光伏", "300390":"锂电材料",
+        # 医药
+        "600276":"医药", "000538":"医药", "600196":"医药", "300760":"医疗",
+        "000661":"医药", "300015":"医疗", "688180":"创新药", "002821":"医疗器械",
+        "300122":"医药", "688235":"创新药",
+        # 消费
+        "600519":"白酒", "000858":"白酒", "600887":"食品", "000568":"白酒",
+        "600809":"白酒", "603288":"食品", "002304":"白酒", "000895":"食品",
+        "600600":"啤酒", "603369":"食品",
+        # 金融
+        "601318":"保险", "600036":"银行", "601398":"银行", "601166":"银行",
+        "000001":"银行", "601628":"保险", "601319":"保险", "600030":"券商",
+        "601688":"券商", "002736":"银行",
+        # 军工
+        "600760":"军工", "000768":"军工/航空", "600316":"军工", "002025":"军工",
+        "600038":"军工", "600118":"军工/航天", "600893":"军工/航空", "002389":"军工",
+        "300034":"军工/通信",
+        # 周期
+        "601899":"有色/黄金", "601225":"煤炭", "600028":"石化", "601857":"石油",
+        "600050":"通信", "601088":"煤炭", "600547":"黄金", "600188":"煤炭",
+        "601898":"煤炭",
+        # 中字头
+        "601668":"建筑", "601800":"交建", "601390":"铁路", "601186":"铁路",
+        "601669":"建筑", "601117":"化工", "601618":"建筑", "600170":"建筑",
+        "600406":"电力", "601117":"化工",
+    }
     raw_stocks = []
     for code, q in raw_quotes.items():
+        name = q.get("name", "")
+        # 优先用热点 reason;否则用股票名匹配;否则用硬编码板块
+        reason = next((r for c, r in hot_themes if c == code), "")
+        if not reason:
+            name_lower = name.lower()
+            for kw in chain_kws:
+                if kw.lower() in name_lower:
+                    reason = kw
+                    break
+        if not reason:
+            reason = WATCH_SECTOR_MAP.get(code, "")
         raw_stocks.append({
             "code": code,
-            "name": q.get("name", ""),
+            "name": name,
             "change_pct": q.get("change_pct", 0),
             "turnover_pct": q.get("turnover_pct", 0),
             "vol_ratio": q.get("vol_ratio", 1.0),
             "open": q.get("open", 0),
             "last_close": q.get("last_close", 0),
-            "reason": next((r for c, r in hot_themes if c == code), ""),
-            "sector_rank": 99,
+            "reason": reason,
+            "sector_rank": 1,  # WATCH_UNIVERSE 默认为板块前排
             "sector_chg_5d": 0.0,
             "upper_shadow_count_5d": 0,
             "holding_cycle": "short",
@@ -443,7 +502,7 @@ def strategy_8b_potential_analysis(top5: list[dict]) -> list[dict]:
     框架: 基本信息 / 财务 / 技术 / 资金 / 政策 / 风险 / 建议
     """
     log("策略 8b: 📊 深度潜力分析(对 TOP 5 调用 a-share-analysis 框架)…")
-    today = date.today().strftime("%Y-%m-%d")
+    today = today_sh().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
     ndx_pct = us["summary"].get("NDX", 0) if us else 0
     sox_pct = us["summary"].get("SOX", 0) if us else 0
@@ -638,7 +697,7 @@ def strategy_weekend_pick() -> list[dict]:
       news 题材新闻(0.10): 7×24 资讯中匹配股票名
     """
     log("周末策略: 🌙 周一潜力股 TOP 5(基于行业+资金+美股周五+7×24 资讯)…")
-    today = date.today().strftime("%Y-%m-%d")
+    today = today_sh().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
     ndx_pct = us["summary"].get("NDX", 0) if us else 0
     sox_pct = us["summary"].get("SOX", 0) if us else 0
@@ -760,7 +819,7 @@ def main():
     parser.add_argument("--date", default=None)
     args = parser.parse_args()
 
-    today = args.date or date.today().strftime("%Y-%m-%d")
+    today = args.date or today_sh().strftime("%Y-%m-%d")
     out_dir = DAILY_DIR / today
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -805,10 +864,21 @@ def main():
     if args.mode in ("all", "8"):
         picks_8 = strategy_8_potential5()
         all_results["8_potential5"] = picks_8
-        # x1.0 元数据汇总
+        # x1.0 元数据汇总:即使 picks_8 为空也要保存环境评级
+        market_meta = {
+            "is_trading_day": True,
+            "index_chg": 0.0,
+            "sentiment": "mid",
+            "limit_up": 0,
+            "limit_down": 0,
+            "volume_vs5d": 1.0,
+            "leaders": [],
+        }
+        env_meta = env_evaluate(market_meta)
+        all_results["x1_meta"]["environment_grade"] = env_meta["grade"]
+        all_results["x1_meta"]["position_desc"] = env_meta["position_desc"]
+        all_results["x1_meta"]["skip_stock_pick"] = env_meta["skip_stock_pick"]
         if picks_8:
-            all_results["x1_meta"]["environment_grade"] = "B+"
-            all_results["x1_meta"]["position_desc"] = "严格控制仓位"
             all_results["x1_meta"]["candidates_count"] = len(picks_8)
             all_results["x1_meta"]["conclusions"] = [
                 {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}

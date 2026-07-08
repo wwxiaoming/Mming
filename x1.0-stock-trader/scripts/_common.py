@@ -5,7 +5,16 @@ _common.py — 公共基础: a-stock-data 工具函数 + 输出目录
 from __future__ import annotations
 import json, sys, time, random, urllib.request
 from pathlib import Path
-from datetime import datetime, date
+from datetime import datetime, date, timezone, timedelta
+
+# ── 时区:用户本地(Asia/Shanghai,UTC+8),A 股交易日基准 ──
+TZ_SH = timezone(timedelta(hours=8))
+def today_sh() -> date:
+    """返回用户本地日期(Asia/Shanghai)"""
+    return datetime.now(TZ_SH).date()
+def now_sh() -> str:
+    """返回用户本地时间字符串 YYYY-MM-DD HH:MM:SS"""
+    return datetime.now(TZ_SH).strftime("%Y-%m-%d %H:%M:%S")
 
 # ── 路径 ──
 WORKSPACE = Path("/workspace")
@@ -116,7 +125,7 @@ def eastmoney_global_news(page_size: int = 50) -> list[dict]:
 def ths_hot_reason(date_str: str | None = None) -> list[dict]:
     from urllib.parse import quote
     if date_str is None:
-        date_str = date.today().strftime("%Y-%m-%d")
+        date_str = today_sh().strftime("%Y-%m-%d")
     url = (
         f"http://zx.10jqka.com.cn/event/api/getharden/"
         f"date/{date_str}/orderby/date/orderway/desc/charset/GBK/"
