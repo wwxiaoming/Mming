@@ -22,8 +22,26 @@ EXCLUSION_REASONS = {
 
 
 def _high_rise(s: dict) -> bool:
-    """① 高位加速后接：当日涨幅 > 6%"""
-    return float(s.get("change_pct", 0) or 0) > 6.0
+    """① 高位加速后接:当日涨幅 > 6%
+    市场结构感知 + 题材保护:
+      - 创业板(300)/科创板(688) 涨停阈值 19.5%(20% 涨停板),涨停不算加速
+      - 深主板(002/000)/沪主板(600/601/603) 涨停阈值 9.5%(10% 涨停板),涨停不算加速
+      - 6% ~ 涨停阈值 之间,有题材(reason 非空)= "主升浪"放行;无题材= 高位加速 → 排除
+      - ≤6%: 正常波动,通过
+    """
+    chg = float(s.get("change_pct", 0) or 0)
+    code = str(s.get("code", ""))
+    reason = (s.get("reason") or "").strip()
+    if code.startswith(("300", "688")):
+        limit_threshold = 19.5
+    else:
+        limit_threshold = 9.5
+    if chg >= limit_threshold:
+        return False  # 涨停(到达日内上限),允许通过,后续由 4 选 1 结论处理
+    if chg <= 6.0:
+        return False  # 正常波动,通过
+    # 6% ~ 涨停阈值:有题材放行,无题材排除
+    return not reason
 
 
 def _low_volume(s: dict) -> bool:
@@ -55,25 +73,39 @@ def _theme_diffuse(s: dict) -> bool:
 
 
 def _not_front(s: dict) -> bool:
-    """⑥ 非前排：板块内排名 > 3"""
+    """⑥ 非前排：板块内排名 > 3
+    缺数据时(默认 99)放行,由五引擎评分处理"""
+    if "sector_rank" not in s:
+        return False
     rank = int(s.get("sector_rank", 99) or 99)
+    if rank == 99:  # 默认值,数据缺失
+        return False
     return rank > 3
 
 
 def _sector_weak(s: dict) -> bool:
-    """⑦ 板块持续性存疑：5 日板块涨跌 < -2%"""
+    """⑦ 板块持续性存疑：5 日板块涨跌 < -2%
+    缺数据时放行"""
+    if "sector_chg_5d" not in s:
+        return False
     return float(s.get("sector_chg_5d", 0) or 0) < -2.0
 
 
 def _history_dump(s: dict) -> bool:
-    """⑨ 冲高回落历史：最近 5 日 K 线 3 根上影线 > 5%"""
+    """⑨ 冲高回落历史：最近 5 日 K 线 3 根上影线 > 5%
+    缺数据时放行"""
+    if "upper_shadow_count_5d" not in s:
+        return False
     upper_shadows = s.get("upper_shadow_count_5d", 0)
     return int(upper_shadows) >= 3
 
 
 def _mode_mismatch(s: dict) -> bool:
-    """⑩ 模式不匹配：用户持仓周期不匹配短线"""
+    """⑩ 模式不匹配：用户持仓周期不匹配短线
+    缺数据时按短线处理"""
     cycle = s.get("holding_cycle", "short")
+    if cycle == "short":
+        return False
     return cycle not in ("short", "day", "overnight")
 
 

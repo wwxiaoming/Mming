@@ -344,6 +344,7 @@ def build_context_snapshot(today: str, us: dict, picks: dict, t159: dict) -> str
 
     lines = ["## 最近一次更新\n"]
     lines.append(f"- **时间**:{now_iso()}({today})")
+    lines.append(f"- **is_trading_day**: True")  # 写入交易日标记
     lines.append(f"- **美股隔夜**:NDX {ndx:+.2f}%  SPX {spx:+.2f}%  SOX {sox:+.2f}%")
     if t159:
         lines.append(f"- **持仓汇总**:159941 现价 {t159['quote']['price']:.3f} | 累计 {cum_pct:+.2f}% ({cum:+.2f}元)")

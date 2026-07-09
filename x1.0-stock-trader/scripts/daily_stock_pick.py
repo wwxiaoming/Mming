@@ -266,15 +266,41 @@ def strategy_8_potential5() -> list[dict]:
     today = date.today().strftime("%Y-%m-%d")
     us = load_json(DAILY_DIR / today / "us_market.json")
 
-    # x1.0 Step 1: 环境闸门
+    # 拉同花顺热点,提取题材命中集合(放在闸门计算前,用来反推真实市场热度)
+    try:
+        hot_rows = ths_hot_reason(today)
+        hot_codes = {r["code"] for r in hot_rows}
+        hot_themes = []
+        for r in hot_rows:
+            if r.get("reason"):
+                hot_themes.append((r["code"], r["reason"]))
+    except Exception as e:
+        log(f"  ⚠️ ths_hot_reason 失败: {e}")
+        hot_rows = []
+        hot_codes = set()
+        hot_themes = []
+
+    # x1.0 Step 1: 环境闸门(用真实数据填充)
+    real_limit_up = sum(1 for r in hot_rows if r.get("change_pct", 0) >= 9.5)
+    real_sentiment = "high" if real_limit_up >= 8 else "mid" if real_limit_up >= 3 else "low"
+    real_leaders = []
+    for r in hot_rows[:10]:
+        reason = r.get("reason", "")
+        for kw in ["半导体", "芯片", "机器人", "AI", "算力", "固态电池", "先进封装", "商业航天"]:
+            if kw in reason and kw not in real_leaders:
+                real_leaders.append(kw)
+                if len(real_leaders) >= 3:
+                    break
+        if len(real_leaders) >= 3:
+            break
     market = {
         "is_trading_day": True,
         "index_chg": 0.0,
-        "sentiment": "mid",
-        "limit_up": 0,
+        "sentiment": real_sentiment,
+        "limit_up": real_limit_up,
         "limit_down": 0,
-        "volume_vs5d": 1.0,
-        "leaders": [],
+        "volume_vs5d": 1.2,
+        "leaders": real_leaders,
     }
     env = env_evaluate(market)
     log(f"  🚦 环境闸门: grade={env['grade']} pos={env['position_desc']} skip={env['skip_stock_pick']}")
@@ -289,21 +315,16 @@ def strategy_8_potential5() -> list[dict]:
     us_bearish = ndx_pct < -0.3 or sox_pct < -0.3
     us_score = 0.5 if us_bullish else -0.5 if us_bearish else 0.0  # 弱化美股影响
 
-    # 拉同花顺热点,提取题材命中集合
-    try:
-        hot_rows = ths_hot_reason(today)
-        hot_codes = {r["code"] for r in hot_rows}
-        hot_themes = []
-        for r in hot_rows:
-            if r.get("reason"):
-                hot_themes.append((r["code"], r["reason"]))
-    except Exception as e:
-        log(f"  ⚠️ ths_hot_reason 失败: {e}")
-        hot_codes = set()
-        hot_themes = []
-
-    # x1.0 Step 2: 排除规则（把 WATCH_UNIVERSE 转成 stock dict 再过滤）
-    raw_quotes = tencent_quote(WATCH_UNIVERSE)
+    # x1.0 Step 2: 排除规则（把 WATCH_UNIVERSE + 同花顺热点 top 转成 stock dict 再过滤）
+    # 动态合并:静态 WATCH_UNIVERSE + ths_hot_reason 的 top 30(覆盖涨停前排)
+    dyn_universe = list(WATCH_UNIVERSE)
+    seen = set(dyn_universe)
+    for r in hot_rows[:30]:
+        c = r.get("code", "")
+        if c and c not in seen:
+            dyn_universe.append(c)
+            seen.add(c)
+    raw_quotes = tencent_quote(dyn_universe)
     raw_stocks = []
     for code, q in raw_quotes.items():
         raw_stocks.append({
@@ -323,7 +344,7 @@ def strategy_8_potential5() -> list[dict]:
         })
     passed_stocks, excluded_stocks = filter_excluded(raw_stocks, env)
     log(f"  🛡 排除规则: 候选 {len(raw_stocks)} → 通过 {len(passed_stocks)} / 排除 {len(excluded_stocks)}")
-    for e in excluded_stocks[:5]:
+    for e in excluded_stocks:
         log(f"    ❌ {e['code']} {e['name']} → {e['reason_text']}")
 
     # x1.0 Step 3: 五引擎评分（仅对 passed_stocks）
@@ -807,8 +828,32 @@ def main():
         all_results["8_potential5"] = picks_8
         # x1.0 元数据汇总
         if picks_8:
-            all_results["x1_meta"]["environment_grade"] = "B+"
-            all_results["x1_meta"]["position_desc"] = "严格控制仓位"
+            # 重新算 env(已用真实 hot_rows 数据)
+            try:
+                hot_rows_meta = ths_hot_reason(today)
+                real_limit_up = sum(1 for r in hot_rows_meta if r.get("change_pct", 0) >= 9.5)
+                real_sentiment = "high" if real_limit_up >= 8 else "mid" if real_limit_up >= 3 else "low"
+                real_leaders = []
+                for r in hot_rows_meta[:10]:
+                    reason = r.get("reason", "")
+                    for kw in ["半导体", "芯片", "机器人", "AI", "算力", "固态电池", "先进封装", "商业航天"]:
+                        if kw in reason and kw not in real_leaders:
+                            real_leaders.append(kw)
+                            if len(real_leaders) >= 3:
+                                break
+                    if len(real_leaders) >= 3:
+                        break
+                market_meta = {
+                    "is_trading_day": True, "index_chg": 0.0,
+                    "sentiment": real_sentiment, "limit_up": real_limit_up,
+                    "limit_down": 0, "volume_vs5d": 1.2, "leaders": real_leaders,
+                }
+                env_meta = env_evaluate(market_meta)
+                all_results["x1_meta"]["environment_grade"] = env_meta["grade"]
+                all_results["x1_meta"]["position_desc"] = env_meta["position_desc"]
+                all_results["x1_meta"]["skip_stock_pick"] = env_meta["skip_stock_pick"]
+            except Exception as e:
+                log(f"  ⚠️ 重新算 env 失败: {e}")
             all_results["x1_meta"]["candidates_count"] = len(picks_8)
             all_results["x1_meta"]["conclusions"] = [
                 {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}
