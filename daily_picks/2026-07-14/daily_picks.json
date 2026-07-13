@@ -1,0 +1,798 @@
+{
+  "x1_meta": {
+    "version": "x1.0",
+    "fused_from": [
+      "N1.0_v1.0",
+      "v1.7.0"
+    ],
+    "candidates_count": 0,
+    "conclusions": [],
+    "environment_grade": "C",
+    "position_desc": "以观察为主",
+    "skip_stock_pick": false,
+    "environment_reasoning": "指数 +0.00% 震荡 | 情绪中 | 涨停 0 跌停 0 一般 | 量能 1.00x 正常 | 无清晰主线"
+  },
+  "1_momentum": [
+    {
+      "code": "300534",
+      "name": "陇神戎发",
+      "change_pct": 20,
+      "turnover_pct": 17.51,
+      "amount_yi": 0.0,
+      "reason": "中药+医疗器械+国企"
+    },
+    {
+      "code": "300214",
+      "name": "日科化学",
+      "change_pct": 20,
+      "turnover_pct": 1.37,
+      "amount_yi": 0.0,
+      "reason": "并购重组+锂电池电解液+算力租赁+化工"
+    },
+    {
+      "code": "600664",
+      "name": "哈药股份",
+      "change_pct": 10.089,
+      "turnover_pct": 8,
+      "amount_yi": 0.0,
+      "reason": "中报预增+化学制药+创新药"
+    },
+    {
+      "code": "603313",
+      "name": "梦百合",
+      "change_pct": 10.055,
+      "turnover_pct": 12.99,
+      "amount_yi": 0.0,
+      "reason": "智能家居+跨境电商+美国产能"
+    },
+    {
+      "code": "000078",
+      "name": "ST海王",
+      "change_pct": 10.053,
+      "turnover_pct": 9.39,
+      "amount_yi": 0.0,
+      "reason": "miRNA肿瘤早筛+创新药+高管增持"
+    }
+  ],
+  "2_fund_flow": [
+    {
+      "code": "002379",
+      "name": "宏桥控股",
+      "price": 15.9,
+      "change_pct": 10.03,
+      "main_net_5d_yi": 0.002
+    },
+    {
+      "code": "603065",
+      "name": "宿迁联盛",
+      "price": 21.4,
+      "change_pct": 10.03,
+      "main_net_5d_yi": 0.002
+    },
+    {
+      "code": "300534",
+      "name": "陇神戎发",
+      "price": 9.0,
+      "change_pct": 20.0,
+      "main_net_5d_yi": 0.001
+    },
+    {
+      "code": "600664",
+      "name": "哈药股份",
+      "price": 3.71,
+      "change_pct": 10.09,
+      "main_net_5d_yi": 0.001
+    },
+    {
+      "code": "603313",
+      "name": "梦百合",
+      "price": 7.99,
+      "change_pct": 10.06,
+      "main_net_5d_yi": 0.001
+    }
+  ],
+  "3_value": [
+    {
+      "code": "000001",
+      "name": "平安银行",
+      "price": 10.54,
+      "pe_ttm": 4.75,
+      "pb": 0.45,
+      "change_pct": 0.86,
+      "mcap_yi": 2045.35
+    },
+    {
+      "code": "601186",
+      "name": "中国铁建",
+      "price": 6.17,
+      "pe_ttm": 4.76,
+      "pb": 0.3,
+      "change_pct": 0.0,
+      "mcap_yi": 709.75
+    },
+    {
+      "code": "601166",
+      "name": "兴业银行",
+      "price": 17.47,
+      "pe_ttm": 4.77,
+      "pb": 0.45,
+      "change_pct": 0.81,
+      "mcap_yi": 3697.15
+    },
+    {
+      "code": "601390",
+      "name": "中国中铁",
+      "price": 4.25,
+      "pe_ttm": 4.91,
+      "pb": 0.33,
+      "change_pct": -0.7,
+      "mcap_yi": 863.77
+    },
+    {
+      "code": "601668",
+      "name": "中国建筑",
+      "price": 4.64,
+      "pe_ttm": 5.05,
+      "pb": 0.39,
+      "change_pct": 1.09,
+      "mcap_yi": 1917.27
+    }
+  ],
+  "4_etf_premium": [
+    {
+      "code": "159915",
+      "name": "创业板ETF易方达",
+      "price": 3.751,
+      "change_pct": -2.87,
+      "turnover_pct": 16.14,
+      "amount_wan": 721465.0
+    },
+    {
+      "code": "159995",
+      "name": "芯片ETF华夏",
+      "price": 1.458,
+      "change_pct": -5.02,
+      "turnover_pct": 6.99,
+      "amount_wan": 232326.0
+    },
+    {
+      "code": "159941",
+      "name": "纳指ETF广发",
+      "price": 1.608,
+      "change_pct": -0.68,
+      "turnover_pct": 3.23,
+      "amount_wan": 117202.0
+    }
+  ],
+  "5_news": [
+    {
+      "title": "千亿康复医疗器械市场再迎政策加持",
+      "summary": "【千亿康复医疗器械市场再迎政策加持】7月13日，民政部等14部门印发《康复辅助器具产业扩能提质三年行动方案（2026—2028年）》，到2028年，做强做优做大脑机接口、康养机器人、假肢矫形器、助听器等6—8个重点子行业，突破50项产业关键技术（产品）。全国规模以上康复辅具企业力争突破500家，培育",
+      "time": "2026-07-14 07:38:21"
+    },
+    {
+      "title": "造船业高景气兑现 龙头企业上半年业绩大增",
+      "summary": "【造船业高景气兑现 龙头企业上半年业绩大增】造船业高景气周期正加速兑现为上市公司真实业绩。7月13日晚间，中国船舶(600150)披露业绩预告，预计2026年上半年归母净利润92亿元至110亿元，同比增长212.29%至273.39%。松发股份(603268)日前公告称，预计上半年归母净利润同比增长",
+      "time": "2026-07-14 07:35:40"
+    },
+    {
+      "title": "交易新规首周投资者新体验：盘后成交倍增 定价效率提升",
+      "summary": "【交易新规首周投资者新体验：盘后成交倍增 定价效率提升】下午三点，A股连续交易时段结束。退休教师张女士结合当天的行情数据、市场解读和券商研报各类信息，在盘后交易时段以当日收盘价买入了300股跟踪已久的医药股。“现在有了盘后交易，先把信息都研究透了再操作，心里踏实多了。”",
+      "time": "2026-07-14 07:33:00"
+    },
+    {
+      "title": "AI应用赛道热度抬升 12家公司上半年业绩亮眼",
+      "summary": "【AI应用赛道热度抬升 12家公司上半年业绩亮眼】7月13日，AI应用板块部分个股异动，中国软件涨停，浪潮软件涨6.76%，诚迈科技、国子软件、瑞芯微纷纷跟涨，分别上涨5.73%、5.12%、4.89%。消息面上，近期，人工智能（AI）应用端利好政策与产业事件持续密集落地，赛道景气度持续提升。",
+      "time": "2026-07-14 07:31:09"
+    },
+    {
+      "title": "举牌减少 投资降速 险资入市节奏生变",
+      "summary": "【举牌减少 投资降速 险资入市节奏生变】在经历2025年的险资入市高潮后，今年险资入市节奏明显放缓。上海证券报记者统计发现：今年以来，险资在A股市场和港股市场的举牌次数都较去年明显减少；与此同时，保险资金运用余额中的股票资产增速也有所降低。市场人士认为，2025年是险资快速增配权益资产的一年，今年险",
+      "time": "2026-07-14 07:21:22"
+    }
+  ],
+  "6_serenity_chain": [
+    {
+      "theme": "机器人",
+      "hits": 4,
+      "logic": "近期 4 只强势股 reason 包含 机器人"
+    },
+    {
+      "theme": "商业航天",
+      "hits": 3,
+      "logic": "近期 3 只强势股 reason 包含 商业航天"
+    },
+    {
+      "theme": "半导体",
+      "hits": 2,
+      "logic": "近期 2 只强势股 reason 包含 半导体"
+    },
+    {
+      "theme": "存储",
+      "hits": 1,
+      "logic": "近期 1 只强势股 reason 包含 存储"
+    },
+    {
+      "theme": "光刻",
+      "hits": 1,
+      "logic": "近期 1 只强势股 reason 包含 光刻"
+    }
+  ],
+  "7_buffett_moat": [
+    {
+      "code": "600519",
+      "name": "贵州茅台",
+      "pe_ttm": 18.3,
+      "pb": 6.5,
+      "roe_est": 35.5,
+      "price": 1210.99
+    },
+    {
+      "code": "601899",
+      "name": "紫金矿业",
+      "pe_ttm": 11.79,
+      "pb": 3.84,
+      "roe_est": 32.6,
+      "price": 27.36
+    },
+    {
+      "code": "000895",
+      "name": "双汇发展",
+      "pe_ttm": 15.57,
+      "pb": 4.12,
+      "roe_est": 26.5,
+      "price": 23.64
+    },
+    {
+      "code": "300274",
+      "name": "阳光电源",
+      "pe_ttm": 18.77,
+      "pb": 4.74,
+      "roe_est": 25.3,
+      "price": 108.0
+    },
+    {
+      "code": "601628",
+      "name": "中国人寿",
+      "pe_ttm": 7.37,
+      "pb": 1.84,
+      "roe_est": 25.0,
+      "price": 37.73
+    }
+  ],
+  "8_potential5": [],
+  "8_excluded": [
+    {
+      "code": "300476",
+      "name": "胜宏科技",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002463",
+      "name": "沪电股份",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002230",
+      "name": "科大讯飞",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300033",
+      "name": "同花顺",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600588",
+      "name": "用友网络",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "603019",
+      "name": "中科曙光",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "000063",
+      "name": "中兴通讯",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "000977",
+      "name": "浪潮信息",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002415",
+      "name": "海康威视",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300059",
+      "name": "东方财富",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "688981",
+      "name": "中芯国际",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "688041",
+      "name": "海光信息",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "688256",
+      "name": "寒武纪",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "688008",
+      "name": "澜起科技",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002371",
+      "name": "北方华创",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "603501",
+      "name": "豪威集团",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600460",
+      "name": "士兰微",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "688126",
+      "name": "沪硅产业",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300346",
+      "name": "南大光电",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "688012",
+      "name": "中微公司",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300750",
+      "name": "宁德时代",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002594",
+      "name": "比亚迪",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300014",
+      "name": "亿纬锂能",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601012",
+      "name": "隆基绿能",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002460",
+      "name": "赣锋锂业",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300274",
+      "name": "阳光电源",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600905",
+      "name": "三峡能源",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002074",
+      "name": "国轩高科",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300118",
+      "name": "东方日升",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300390",
+      "name": "天华新能",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600276",
+      "name": "恒瑞医药",
+      "reason_code": "E_LOW_VOL",
+      "reason_text": "② 缩量硬质：换手 < 1.5% 且 vol_ratio < 0.8，承接不明"
+    },
+    {
+      "code": "000538",
+      "name": "云南白药",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600196",
+      "name": "复星医药",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300760",
+      "name": "迈瑞医疗",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "000661",
+      "name": "长春高新",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300015",
+      "name": "爱尔眼科",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "688180",
+      "name": "君实生物-U",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002821",
+      "name": "凯莱英",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300122",
+      "name": "智飞生物",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "688235",
+      "name": "百济神州",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600519",
+      "name": "贵州茅台",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "000858",
+      "name": "五 粮 液",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600887",
+      "name": "伊利股份",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "000568",
+      "name": "泸州老窖",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600809",
+      "name": "山西汾酒",
+      "reason_code": "E_LOW_VOL",
+      "reason_text": "② 缩量硬质：换手 < 1.5% 且 vol_ratio < 0.8，承接不明"
+    },
+    {
+      "code": "603288",
+      "name": "海天味业",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002304",
+      "name": "洋河股份",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "000895",
+      "name": "双汇发展",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600600",
+      "name": "青岛啤酒",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "603369",
+      "name": "今世缘",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601318",
+      "name": "中国平安",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600036",
+      "name": "招商银行",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601398",
+      "name": "工商银行",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601166",
+      "name": "兴业银行",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "000001",
+      "name": "平安银行",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601628",
+      "name": "中国人寿",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601319",
+      "name": "中国人保",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600030",
+      "name": "中信证券",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601688",
+      "name": "华泰证券",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002736",
+      "name": "国信证券",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600760",
+      "name": "中航沈飞",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "000768",
+      "name": "中航西飞",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600316",
+      "name": "洪都航空",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002025",
+      "name": "航天电器",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600038",
+      "name": "中直股份",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600118",
+      "name": "中国卫星",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600893",
+      "name": "航发动力",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "002389",
+      "name": "航天彩虹",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "300034",
+      "name": "钢研高纳",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601899",
+      "name": "紫金矿业",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601225",
+      "name": "陕西煤业",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600028",
+      "name": "中国石化",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601857",
+      "name": "中国石油",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600050",
+      "name": "中国联通",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601088",
+      "name": "XD中国神",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600547",
+      "name": "山东黄金",
+      "reason_code": "E_LOW_VOL",
+      "reason_text": "② 缩量硬质：换手 < 1.5% 且 vol_ratio < 0.8，承接不明"
+    },
+    {
+      "code": "600188",
+      "name": "兖矿能源",
+      "reason_code": "E_LOW_VOL",
+      "reason_text": "② 缩量硬质：换手 < 1.5% 且 vol_ratio < 0.8，承接不明"
+    },
+    {
+      "code": "601898",
+      "name": "中煤能源",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601668",
+      "name": "中国建筑",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601800",
+      "name": "中国交建",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601390",
+      "name": "中国中铁",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601186",
+      "name": "中国铁建",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601669",
+      "name": "中国电建",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601117",
+      "name": "中国化学",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "601618",
+      "name": "中国中冶",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600170",
+      "name": "上海建工",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    },
+    {
+      "code": "600406",
+      "name": "国电南瑞",
+      "reason_code": "E_NO_THEME",
+      "reason_text": "④ 逻辑不清：题材 reason 为空，情绪冲动"
+    }
+  ],
+  "8_candidates_count": 87,
+  "8_passed_count": 0,
+  "8b_analysis": [],
+  "9_us_overnight": {
+    "NDX": 0,
+    "IXIC": 0,
+    "SPX": 0,
+    "DJI": 0,
+    "SOX": 0
+  }
+}

@@ -3,9 +3,22 @@ _common.py — 公共基础: a-stock-data 工具函数 + 输出目录
 所有 daily 脚本都从这里 import。
 """
 from __future__ import annotations
-import json, sys, time, random, urllib.request
+import json, sys, time, random, urllib.request, os
 from pathlib import Path
-from datetime import datetime, date
+from datetime import datetime, date, timedelta, timezone
+
+# ── A 股交易日日期统一用 Asia/Shanghai(CST) ──
+# A 股 09:30 开盘时,UTC 还在前一天(差 8h);cron `30 9 * * 1-5` Asia/Shanghai
+# 这里强制把当前日期锁在 CST,避免 UTC 与 A 股交易日错位。
+_CST = timezone(timedelta(hours=8))
+os.environ.setdefault("TZ", "Asia/Shanghai")
+
+def today_cst() -> str:
+    """返回 Asia/Shanghai 今天的 'YYYY-MM-DD'"""
+    return datetime.now(_CST).strftime("%Y-%m-%d")
+
+def today_cst_obj() -> date:
+    return datetime.now(_CST).date()
 
 # ── 路径 ──
 WORKSPACE = Path("/workspace")

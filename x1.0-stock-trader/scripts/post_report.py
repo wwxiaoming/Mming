@@ -1,11 +1,11 @@
 """
 post_report.py — x1.0 融合版报告
   1. 🚦 环境闸门（x1.0 新增，S/A/B/C/D 评级 + 仓位建议）
-  2. 🎯 明日潜力股 TOP 5（主菜，五引擎加权 + 4 选 1 结论）
-  3. 📊 每只 TOP 5 独立深度分析（财务/技术/资金/题材/美股联动/风险/建议 + 9 项结构）
-  4. 🌙 美股隔夜
-  5. 📈 159941 持仓跟踪
-  6. 🛡 排除规则摘要（x1.0 新增）
+  2. 📈 159941 持仓跟踪（持仓联动，必须在 TOP 5 之前）
+  3. 🎯 明日潜力股 TOP 5（主菜，五引擎加权 + 4 选 1 结论）
+  4. 📊 每只 TOP 5 独立深度分析（财务/技术/资金/题材/美股联动/风险/建议 + 9 项结构）
+  5. 🛡 排除规则摘要（x1.0 新增）
+  6. 🌙 美股隔夜
   7. ⚠️ 风险点
 
 调用方法学:
@@ -18,7 +18,7 @@ import sys, json
 from pathlib import Path
 from datetime import date
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE
+from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE, today_cst
 
 def fmt_emoji(pct: float) -> str:
     if pct > 0.5: return "🟢"
@@ -30,20 +30,37 @@ def section_environment_gate(meta: dict) -> str:
     grade = meta.get("environment_grade", "B")
     pos_desc = meta.get("position_desc", "严格控制仓位")
     skip = meta.get("skip_stock_pick", False)
+    reasoning = meta.get("environment_reasoning", "")
     grade_emoji = {"S": "🟢", "A": "🟢", "B": "🟡", "C": "⚪", "D": "🔴"}.get(grade, "⚪")
     out = ["### 🚦 环境闸门（x1.0 第 8 章闸门脚本化）\n"]
     out.append(f"- **环境评级**: {grade_emoji} **{grade} 级**")
     out.append(f"- **仓位建议**: {pos_desc}")
     if skip:
         out.append("- **🚨 闸门跳闸**: 评级 D / 休市日，今日跳过选股，仅出持仓与美股报告")
+    if reasoning:
+        out.append(f"- **闸门依据**: {reasoning}")
     out.append(f"\n> 闸门由 `x1.environment_gate.evaluate()` 计算，输入：指数/情绪/连板/量能/主线 5 维度。\n")
     return "\n".join(out)
 
 # ── 2. 明日潜力股 TOP 5 总览表 ──
 def section_potential5_summary(picks: dict) -> str:
     rows = picks.get("8_potential5", [])
+    x1m = picks.get("x1_meta", {})
+    env_grade = x1m.get("environment_grade", "?")
+    env_pos = x1m.get("position_desc", "?")
+    cand_total = picks.get("8_candidates_count", "?")
+    cand_passed = picks.get("8_passed_count", 0)
+
     if not rows:
-        return "### 🎯 明日潜力股 TOP 5\n(无候选股 — 闸门评级 D 或阈值过滤后无符合标的)\n"
+        # 即使无候选股,也强制输出 4 选 1 结论(整体结论)
+        return (
+            "### 🎯 明日潜力股 TOP 5 — 评分表(位置 0.20 + 估值 0.15 + 资金 0.30 + 题材 0.20 + 美股 0.15)\n\n"
+            f"**(无候选股 — 候选池 {cand_total} → 通过 {cand_passed} / 排除 {(cand_total if isinstance(cand_total,int) else '?')-cand_passed})**\n\n"
+            f"- 🚦 当前闸门评级 **{env_grade} 级** → {env_pos}\n"
+            f"- 🛡 排除规则把 **{cand_total}** 候选筛到 **{cand_passed}** 通过(详见下方「排除规则摘要」)\n"
+            "- 🎯 **4 选 1 整体结论**: 🔴 **明确不买** — 无任何标的满足五引擎阈值(>0.25),今日放弃开仓\n"
+            "- 💡 建议:耐心等板块/题材催化转暖,或下日观察是否出现低位+资金+题材共振\n\n"
+        )
     out = ["### 🎯 明日潜力股 TOP 5 — 评分表(位置 0.20 + 估值 0.15 + 资金 0.30 + 题材 0.20 + 美股 0.15)\n"]
     out.append("| # | 代码 | 名称 | 现价 | 涨跌% | PE | PB | 换手% | 量比 | **总分** | **4 选 1 结论** | 位置 | 估值 | 资金 | 题材 | 美股 | 热点 |")
     out.append("|---|------|------|------|-------|-----|----|------|-----|----------|----------------|------|------|------|------|------|------|")
@@ -147,6 +164,45 @@ def section_us(us: dict) -> str:
         out.append("")
     return "\n".join(out)
 
+# ── 5. 排除规则摘要（x1.0 新增） ──
+def section_exclusion_summary(picks: dict) -> str:
+    rows = picks.get("8_excluded", [])
+    if not rows:
+        return ""
+    # 按 reason_code 聚合统计
+    from collections import Counter
+    counter = Counter()
+    for r in rows:
+        counter[r.get("reason_code", "?")] += 1
+    out = ["### 🛡 排除规则摘要（x1.0 第 7 章）\n"]
+    out.append(f"- **候选池**: {picks.get('8_candidates_count', '?')} → **通过**: {picks.get('8_passed_count', 0)} / **排除**: {len(rows)}")
+    out.append("")
+    out.append("**按原因聚合**\n")
+    out.append("| 规则 | 数量 | 说明 |")
+    out.append("|------|------|------|")
+    reason_text = {
+        "E_HIGH_RISE":   "① 高位加速:当日涨幅 > 6% 已透支",
+        "E_LOW_VOL":     "② 缩量硬质:换手 < 1.5% 且 vol_ratio < 0.8",
+        "E_HIGH_GAP":    "③ 高开过多:开盘涨幅 > 5%",
+        "E_NO_THEME":    "④ 逻辑不清:题材 reason 为空",
+        "E_THEME_DIFF":  "⑤ 题材发散:单一题材占比 > 50%",
+        "E_NOT_FRONT":   "⑥ 非前排:不在板块 TOP 3",
+        "E_SECTOR_WEAK": "⑦ 板块持续性存疑:5 日板块涨跌 < -2%",
+        "E_HISTORY_DUMP":"⑨ 冲高回落历史:5 日 3 根上影线 > 5%",
+        "E_MODE_MISMATCH":"⑩ 模式不匹配",
+        "E_BAD_ENV":     "⑧ 环境不支持:闸门 D 级",
+    }
+    for code, cnt in counter.most_common():
+        out.append(f"| {code} | {cnt} | {reason_text.get(code, '?')} |")
+    # 列出前 10 个被排除的样本
+    out.append("")
+    out.append("**前 10 个被排除样本**\n")
+    for r in rows[:10]:
+        out.append(f"- ❌ **{r.get('code','?')} {r.get('name','?')}** → {r.get('reason_text', r.get('reason_code',''))}")
+    out.append("")
+    return "\n".join(out)
+
+
 # ── 4. 159941 持仓跟踪 ──
 def section_159941(t159: dict) -> str:
     if not t159:
@@ -201,28 +257,32 @@ def section_risks(picks: dict, us: dict, t159: dict, analyses: list[dict]) -> st
     return "\n".join(out)
 
 def main():
-    today = date.today().strftime("%Y-%m-%d")
+    today = today_cst()
     out_dir = DAILY_DIR / today
     if not out_dir.exists():
-        log(f"❌ {out_dir} 不存在,先跑 run_daily.sh")
-        sys.exit(1)
+        # 兼容 UTC 旧日期目录:尝试 -1d 回退
+        from datetime import timedelta
+        prev = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+        if (DAILY_DIR / prev).exists():
+            out_dir = DAILY_DIR / prev
+            today = prev
+            log(f"⚠️ 今天({today_cst()})目录不存在,回退到上一交易日 {today}")
+        else:
+            log(f"❌ {out_dir} 不存在,先跑 run_daily.sh")
+            sys.exit(1)
 
-    log("读 JSON 数据并拼 Markdown(x1.0 融合版: 闸门 + 潜力股 TOP 5 + 深度分析)…")
+    log("读 JSON 数据并拼 Markdown(x1.0 融合版: 闸门 + 持仓联动 + 潜力股 TOP 5 + 深度分析)…")
     us      = load_json(out_dir / "us_market.json")
     picks   = load_json(out_dir / "daily_picks.json")
     t159    = load_json(out_dir / "159941-tracker.json")
     analyses = picks.get("8b_analysis", [])
 
-    # 休市日处理（x1.0 第 10 章）
-    is_trading_day = True
-    try:
-        sc = (WORKSPACE / "STOCK_CONTEXT.md").read_text(encoding="utf-8")
-        is_trading_day = ("休市" not in sc and "is_trading_day: True" in sc) or ("is_trading_day: True" in sc)
-    except Exception:
-        is_trading_day = True
-
-    # 环境闸门元数据
+    # 休市日处理（x1.0 第 10 章）— 用 x1_meta.environment_grade / skip_stock_pick 判定
     x1_meta = picks.get("x1_meta", {})
+    env_grade = x1_meta.get("environment_grade", "")
+    skip_pick = x1_meta.get("skip_stock_pick", False)
+    # D 级 + skip=True + 休市文案 → 休市日
+    is_trading_day = not (skip_pick and env_grade == "D" and "休市" in x1_meta.get("position_desc", ""))
     if not is_trading_day:
         x1_meta = {
             "environment_grade": "D",
@@ -241,20 +301,27 @@ def main():
     md.append("> 4 选 1 结论映射: ≥0.70 试仓 / 0.50-0.70 等条件 / 0.25-0.50 观察 / <0.25 不买")
     md.append("> 方法学: a-share-analysis + consulting-analysis + x1.0 三框架\n")
 
+    # ── 顺序: 闸门 → 持仓联动(必须在 TOP 5 之前)→ TOP 5 → 深度分析 → 排除规则摘要 → 美股 → 风险
     md.append("---\n")
     md.append(section_environment_gate(x1_meta))
+    md.append("---\n")
+    md.append(section_159941(t159))  # x1.0: 持仓联动,必须在 TOP 5 之前出现
     md.append("---\n")
     md.append(section_potential5_summary(picks))
     md.append("---\n")
     md.append(section_per_stock_analysis(analyses))
+    # 排除规则摘要(只展示)
+    excl_section = section_exclusion_summary(picks)
+    if excl_section:
+        md.append("---\n")
+        md.append(excl_section)
     md.append("---\n")
     md.append(section_us(us))
-    md.append(section_159941(t159))
     md.append(section_risks(picks, us, t159, analyses))
 
     md.append("\n---\n")
     md.append("> ⚠️ **风险声明**:本报告仅供参考,不构成投资建议。市场有风险,投资需谨慎。")
-    md.append(f"> 报告生成时间: {date.today().strftime('%Y-%m-%d %H:%M:%S')}")
+    md.append(f"> 报告生成时间: {today_cst()}")
 
     text = "\n".join(md)
 

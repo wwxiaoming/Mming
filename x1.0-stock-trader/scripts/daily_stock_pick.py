@@ -23,12 +23,19 @@ from datetime import date
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import (
     tencent_quote, ths_hot_reason, eastmoney_global_news, industry_top,
-    save_json, load_json, DAILY_DIR, em_throttle, UA, log, stock_fund_flow_120d
+    save_json, load_json, DAILY_DIR, em_throttle, UA, log, stock_fund_flow_120d,
+    today_cst,
 )
 # x1.0 新增三件套
 from x1.environment_gate import evaluate as env_evaluate
 from x1.exclusion_filter import filter_excluded
 from x1.conclusion_mapper import map_conclusion
+
+# x1.0: 用于在 strategy_8 跑完后,把闸门结果回传给 main() 写入 x1_meta
+_LATEST_ENV: dict | None = None
+_LATEST_EXCLUDED: list | None = None
+_LATEST_CANDIDATES_TOTAL: int = 0
+_LATEST_PASSED: int = 0
 
 # 8 行业代表股(覆盖常用板块,用于行业 / 政策 / 资金 3 维度的快速采样)
 WATCH_UNIVERSE = [
@@ -279,6 +286,9 @@ def strategy_8_potential5() -> list[dict]:
     env = env_evaluate(market)
     log(f"  🚦 环境闸门: grade={env['grade']} pos={env['position_desc']} skip={env['skip_stock_pick']}")
     log(f"     {env['reasoning']}")
+    # 缓存到 module 级,供 main() 写入 x1_meta
+    global _LATEST_ENV
+    _LATEST_ENV = env
     if env["skip_stock_pick"]:
         log("  ⚠️ 闸门评级 D，直接返回空仓报告")
         return []
@@ -325,6 +335,12 @@ def strategy_8_potential5() -> list[dict]:
     log(f"  🛡 排除规则: 候选 {len(raw_stocks)} → 通过 {len(passed_stocks)} / 排除 {len(excluded_stocks)}")
     for e in excluded_stocks[:5]:
         log(f"    ❌ {e['code']} {e['name']} → {e['reason_text']}")
+
+    # x1.0: 把排除详情暂存到 module 级,供 main() 写入 x1_meta + post_report 展示
+    global _LATEST_EXCLUDED, _LATEST_CANDIDATES_TOTAL, _LATEST_PASSED
+    _LATEST_EXCLUDED = excluded_stocks
+    _LATEST_CANDIDATES_TOTAL = len(raw_stocks)
+    _LATEST_PASSED = len(passed_stocks)
 
     # x1.0 Step 3: 五引擎评分（仅对 passed_stocks）
     out = []
@@ -760,7 +776,7 @@ def main():
     parser.add_argument("--date", default=None)
     args = parser.parse_args()
 
-    today = args.date or date.today().strftime("%Y-%m-%d")
+    today = args.date or today_cst()
     out_dir = DAILY_DIR / today
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -805,15 +821,22 @@ def main():
     if args.mode in ("all", "8"):
         picks_8 = strategy_8_potential5()
         all_results["8_potential5"] = picks_8
-        # x1.0 元数据汇总
-        if picks_8:
-            all_results["x1_meta"]["environment_grade"] = "B+"
-            all_results["x1_meta"]["position_desc"] = "严格控制仓位"
-            all_results["x1_meta"]["candidates_count"] = len(picks_8)
-            all_results["x1_meta"]["conclusions"] = [
-                {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}
-                for r in picks_8
-            ]
+        # x1.0 元数据汇总(闸门评级由 strategy_8 内的 env_evaluate 写入)
+        all_results["x1_meta"]["candidates_count"] = len(picks_8)
+        all_results["x1_meta"]["conclusions"] = [
+            {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}
+            for r in picks_8
+        ] if picks_8 else []
+        # 排除规则摘要(post_report 展示)
+        all_results["8_excluded"] = _LATEST_EXCLUDED or []
+        all_results["8_candidates_count"] = _LATEST_CANDIDATES_TOTAL
+        all_results["8_passed_count"] = _LATEST_PASSED
+    # 把 strategy_8 内的闸门结果回写到 x1_meta(让 post_report 拿到真实评级)
+    if _LATEST_ENV is not None:
+        all_results["x1_meta"]["environment_grade"] = _LATEST_ENV["grade"]
+        all_results["x1_meta"]["position_desc"] = _LATEST_ENV["position_desc"]
+        all_results["x1_meta"]["skip_stock_pick"] = _LATEST_ENV["skip_stock_pick"]
+        all_results["x1_meta"]["environment_reasoning"] = _LATEST_ENV.get("reasoning", "")
     # 策略 8b: 深度潜力分析(依赖 8 的输出)
     if args.mode in ("all", "8b"):
         if "8_potential5" not in all_results:

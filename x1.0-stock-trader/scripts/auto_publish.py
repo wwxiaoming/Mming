@@ -12,7 +12,7 @@ import os, sys, json, re
 from pathlib import Path
 from datetime import datetime, date
 sys.path.insert(0, str(Path(__file__).parent))
-from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE
+from _common import load_json, save_json, DAILY_DIR, log, WORKSPACE, today_cst
 
 # ── 路径 ──
 POSITIONS_MD  = WORKSPACE / "POSITIONS.md"
@@ -225,13 +225,18 @@ def append_daily_log(today: str, us: dict, picks: dict, t159: dict):
     else:
         # 不存在 → 插到文件最前(在 # 标题之后)
         if "# 每日盘后日志" in text:
-            text = re.sub(
-                r"(# 每日盘后日志\(Daily Log\)\n\n>.*?\n\n)",
-                r"\1" + new_section + "\n",
+            new_text = re.sub(
+                r"(# 每日盘后日志\(Daily Log\)\n\n>.*?\n+)",
+                r"\1\n" + new_section + "\n",
                 text,
                 count=1,
                 flags=re.DOTALL,
             )
+            if new_text == text:
+                # regex 没匹配上(文件末尾没换行),降级方案:append 到末尾
+                log("  ⚠ DAILY_LOG.md regex 未匹配,append 到末尾")
+                new_text = text.rstrip() + "\n\n" + new_section + "\n"
+            text = new_text
         else:
             text = text + "\n" + new_section
         log(f"  ✅ DAILY_LOG.md 追加 {today} 区块")
@@ -414,11 +419,19 @@ def publish_feishu(today: str, summary: str):
 
 # ── 主入口 ──
 def main():
-    today = date.today().strftime("%Y-%m-%d")
+    today = today_cst()
     out_dir = DAILY_DIR / today
     if not out_dir.exists():
-        log(f"❌ {out_dir} 不存在,先跑 run_daily.sh")
-        sys.exit(1)
+        # 兼容:尝试昨天目录
+        from datetime import timedelta
+        prev = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+        if (DAILY_DIR / prev).exists():
+            out_dir = DAILY_DIR / prev
+            today = prev
+            log(f"⚠️ CST 今天({today_cst()})目录不存在,回退到 {today}")
+        else:
+            log(f"❌ {out_dir} 不存在,先跑 run_daily.sh")
+            sys.exit(1)
 
     log(f"=== 自动写出 6 通道({today})===")
 
