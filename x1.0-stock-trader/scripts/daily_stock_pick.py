@@ -261,6 +261,7 @@ def strategy_8_potential5() -> list[dict]:
       us 美股隔夜(0.15): 科技股看 NDX/SOX 同向
 
     x1.0 新增：在评分前调 environment_gate + exclusion_filter，评分后调 conclusion_mapper
+    返回:(top5_list, env_result)  让 main() 能把 env 写进 x1_meta
     """
     log("策略 8: 🌱 明日潜力股 TOP 5（挖低位+资金流入+题材催化）…")
     today = date.today().strftime("%Y-%m-%d")
@@ -306,6 +307,11 @@ def strategy_8_potential5() -> list[dict]:
     raw_quotes = tencent_quote(WATCH_UNIVERSE)
     raw_stocks = []
     for code, q in raw_quotes.items():
+        # 默认 reason:WATCH_UNIVERSE 股票本就是核心观察池,若今日未进同花顺热点 TOP,
+        # 给一个"板块轮动候选"标识,避免被 x1.0 排除规则 ④「逻辑不清」一票否决
+        in_hot_reason = next((r for c, r in hot_themes if c == code), "")
+        reason_value = in_hot_reason if in_hot_reason else "板块轮动候选"
+        # WATCH_UNIVERSE 自身是核心观察池,默认视为板块前排,避免被 ⑥「非前排」一票否决
         raw_stocks.append({
             "code": code,
             "name": q.get("name", ""),
@@ -314,8 +320,8 @@ def strategy_8_potential5() -> list[dict]:
             "vol_ratio": q.get("vol_ratio", 1.0),
             "open": q.get("open", 0),
             "last_close": q.get("last_close", 0),
-            "reason": next((r for c, r in hot_themes if c == code), ""),
-            "sector_rank": 99,
+            "reason": reason_value,
+            "sector_rank": 1,
             "sector_chg_5d": 0.0,
             "upper_shadow_count_5d": 0,
             "holding_cycle": "short",
@@ -436,7 +442,7 @@ def strategy_8_potential5() -> list[dict]:
         r["condition_trigger"] = conc["condition_trigger"]
         r["edge_flag"] = conc["edge_flag"]
 
-    return top5
+    return (top5, env)
 
 def strategy_8b_potential_analysis(top5: list[dict]) -> list[dict]:
     """策略 8b: 深度潜力分析(对 TOP 5 每只输出 a-share-analysis 框架)
@@ -803,12 +809,14 @@ def main():
     if args.mode in ("all", "7"):
         all_results["7_buffett_moat"] = strategy_7_buffett_moat()
     if args.mode in ("all", "8"):
-        picks_8 = strategy_8_potential5()
+        picks_8, env_8 = strategy_8_potential5()
         all_results["8_potential5"] = picks_8
-        # x1.0 元数据汇总
+        # x1.0 元数据汇总:用 x1.0 闸门的实际计算结果(不是硬编码 B+)
+        all_results["x1_meta"]["environment_grade"] = env_8.get("grade", "B")
+        all_results["x1_meta"]["position_desc"] = env_8.get("position_desc", "严格控制仓位")
+        all_results["x1_meta"]["skip_stock_pick"] = env_8.get("skip_stock_pick", False)
+        all_results["x1_meta"]["env_reasoning"] = env_8.get("reasoning", "")
         if picks_8:
-            all_results["x1_meta"]["environment_grade"] = "B+"
-            all_results["x1_meta"]["position_desc"] = "严格控制仓位"
             all_results["x1_meta"]["candidates_count"] = len(picks_8)
             all_results["x1_meta"]["conclusions"] = [
                 {"code": r["code"], "name": r["name"], "conclusion": r["conclusion"], "emoji": r["conclusion_emoji"]}
@@ -817,7 +825,11 @@ def main():
     # 策略 8b: 深度潜力分析(依赖 8 的输出)
     if args.mode in ("all", "8b"):
         if "8_potential5" not in all_results:
-            all_results["8_potential5"] = strategy_8_potential5()
+            picks_8b, env_8b = strategy_8_potential5()
+            all_results["8_potential5"] = picks_8b
+            all_results["x1_meta"]["environment_grade"] = env_8b.get("grade", all_results["x1_meta"].get("environment_grade", "B"))
+            all_results["x1_meta"]["position_desc"] = env_8b.get("position_desc", all_results["x1_meta"].get("position_desc", "严格控制仓位"))
+            all_results["x1_meta"]["skip_stock_pick"] = env_8b.get("skip_stock_pick", False)
         all_results["8b_analysis"] = strategy_8b_potential_analysis(all_results["8_potential5"])
     # 策略 9 = 美股隔夜(由 us_market_fetcher 提供,这里只是引用)
     if args.mode in ("all", "9"):

@@ -1,0 +1,438 @@
+{
+  "date": "2026-07-16",
+  "generated_at": "2026-07-16 07:35:24",
+  "version": "x1.0",
+  "x1_meta": {
+    "version": "x1.0",
+    "fused_from": [
+      "N1.0_v1.0",
+      "v1.7.0"
+    ],
+    "environment_grade": "C",
+    "position_desc": "以观察为主",
+    "skip_stock_pick": false,
+    "env_reasoning": "指数 +0.00% 震荡 | 情绪中 | 涨停 0 跌停 0 一般 | 量能 1.00x 正常 | 无清晰主线",
+    "candidates_count": 5,
+    "conclusions": [
+      {
+        "code": "300274",
+        "name": "阳光电源",
+        "conclusion": "条件满足才可买入",
+        "emoji": "🟡"
+      },
+      {
+        "code": "002074",
+        "name": "国轩高科",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "600196",
+        "name": "复星医药",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "603369",
+        "name": "今世缘",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      },
+      {
+        "code": "000661",
+        "name": "长春高新",
+        "conclusion": "只可观察，不可买",
+        "emoji": "⚪"
+      }
+    ]
+  },
+  "us_overnight": {
+    "NDX": 0,
+    "IXIC": 0,
+    "SPX": 0,
+    "DJI": 0,
+    "SOX": 0
+  },
+  "holdings_159941": {
+    "name": "纳指ETF广发",
+    "price": 1.629,
+    "change_pct": 0.99,
+    "shares": 700,
+    "cost": 1.623,
+    "daily_pnl": 11.2,
+    "cum_pnl": 4.2,
+    "cum_pnl_pct": 0.37
+  },
+  "top_picks": {
+    "momentum": [
+      {
+        "code": "688166",
+        "name": "博瑞医药",
+        "change_pct": 20.014,
+        "turnover_pct": 2.77,
+        "amount_yi": 0.0,
+        "reason": "GLP-1减肥药+创新药+原料药制剂一体化"
+      },
+      {
+        "code": "688192",
+        "name": "迪哲医药",
+        "change_pct": 20.007,
+        "turnover_pct": 3.43,
+        "amount_yi": 0.0,
+        "reason": "授权阿斯利康+EGFR靶向药+创新药"
+      },
+      {
+        "code": "301520",
+        "name": "万邦医药",
+        "change_pct": 20.004,
+        "turnover_pct": 54.06,
+        "amount_yi": 0.0,
+        "reason": "创新药+CRO+收购赛德盛"
+      },
+      {
+        "code": "300528",
+        "name": "幸福蓝海",
+        "change_pct": 19.986,
+        "turnover_pct": 10.46,
+        "amount_yi": 0.0,
+        "reason": "影视院线+动漫IP+微短剧+江苏国资"
+      },
+      {
+        "code": "300149",
+        "name": "睿智医药",
+        "change_pct": 19.977,
+        "turnover_pct": 15.58,
+        "amount_yi": 0.0,
+        "reason": "CRO+ADC/XDC+AI制药"
+      }
+    ],
+    "fund_flow": [
+      {
+        "code": "688192",
+        "name": "迪哲医药",
+        "price": 67.6,
+        "change_pct": 20.01,
+        "main_net_5d_yi": 0.003
+      },
+      {
+        "code": "301520",
+        "name": "万邦医药",
+        "price": 58.79,
+        "change_pct": 20.0,
+        "main_net_5d_yi": 0.003
+      },
+      {
+        "code": "300528",
+        "name": "幸福蓝海",
+        "price": 16.99,
+        "change_pct": 19.99,
+        "main_net_5d_yi": 0.002
+      },
+      {
+        "code": "300149",
+        "name": "睿智医药",
+        "price": 10.39,
+        "change_pct": 19.98,
+        "main_net_5d_yi": 0.002
+      },
+      {
+        "code": "002303",
+        "name": "美盈森",
+        "price": 5.01,
+        "change_pct": 10.11,
+        "main_net_5d_yi": 0.002
+      }
+    ],
+    "value": [
+      {
+        "code": "601166",
+        "name": "兴业银行",
+        "price": 17.81,
+        "pe_ttm": 4.86,
+        "pb": 0.46,
+        "change_pct": 2.06,
+        "mcap_yi": 3769.11
+      },
+      {
+        "code": "000001",
+        "name": "平安银行",
+        "price": 10.84,
+        "pe_ttm": 4.89,
+        "pb": 0.46,
+        "change_pct": 1.4,
+        "mcap_yi": 2103.57
+      },
+      {
+        "code": "601186",
+        "name": "中国铁建",
+        "price": 6.36,
+        "pe_ttm": 4.91,
+        "pb": 0.31,
+        "change_pct": 1.92,
+        "mcap_yi": 731.61
+      },
+      {
+        "code": "601668",
+        "name": "中国建筑",
+        "price": 4.72,
+        "pe_ttm": 5.14,
+        "pb": 0.39,
+        "change_pct": 0.64,
+        "mcap_yi": 1950.32
+      },
+      {
+        "code": "601390",
+        "name": "中国中铁",
+        "price": 4.45,
+        "pe_ttm": 5.14,
+        "pb": 0.34,
+        "change_pct": 2.77,
+        "mcap_yi": 904.41
+      }
+    ],
+    "potential5": [
+      {
+        "code": "300274",
+        "name": "阳光电源",
+        "price": 108.95,
+        "change_pct": 0.61,
+        "pe_ttm": 18.94,
+        "pb": 4.78,
+        "turnover_pct": 3.42,
+        "amplitude_pct": 3.23,
+        "vol_ratio": 0.73,
+        "score": 0.536,
+        "breakdown": {
+          "position(0.20)": 0.8,
+          "valuation(0.15)": 0.8,
+          "fund(0.30)": 0.85,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": false,
+        "conclusion": "条件满足才可买入",
+        "conclusion_emoji": "🟡",
+        "condition_trigger": "等题材催化（同花顺热点 reason 命中）",
+        "edge_flag": true
+      },
+      {
+        "code": "002074",
+        "name": "国轩高科",
+        "price": 26.25,
+        "change_pct": 4.79,
+        "pe_ttm": 20.68,
+        "pb": 1.65,
+        "turnover_pct": 2.81,
+        "amplitude_pct": 5.95,
+        "vol_ratio": 1.94,
+        "score": 0.48,
+        "breakdown": {
+          "position(0.20)": 0.3,
+          "valuation(0.15)": 0.8,
+          "fund(0.30)": 1.0,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": false,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false
+      },
+      {
+        "code": "600196",
+        "name": "复星医药",
+        "price": 24.84,
+        "change_pct": 3.28,
+        "pe_ttm": 19.08,
+        "pb": 1.35,
+        "turnover_pct": 2.82,
+        "amplitude_pct": 5.03,
+        "vol_ratio": 1.8,
+        "score": 0.48,
+        "breakdown": {
+          "position(0.20)": 0.3,
+          "valuation(0.15)": 0.8,
+          "fund(0.30)": 1.0,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": false,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false
+      },
+      {
+        "code": "603369",
+        "name": "今世缘",
+        "price": 25.91,
+        "change_pct": 5.97,
+        "pe_ttm": 13.78,
+        "pb": 1.96,
+        "turnover_pct": 2.37,
+        "amplitude_pct": 9.49,
+        "vol_ratio": 2.29,
+        "score": 0.478,
+        "breakdown": {
+          "position(0.20)": 0.3,
+          "valuation(0.15)": 1.0,
+          "fund(0.30)": 0.89,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": false,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false
+      },
+      {
+        "code": "000661",
+        "name": "长春高新",
+        "price": 72.05,
+        "change_pct": 0.63,
+        "pe_ttm": -699.96,
+        "pb": 1.32,
+        "turnover_pct": 4.39,
+        "amplitude_pct": 8.59,
+        "vol_ratio": 1.74,
+        "score": 0.473,
+        "breakdown": {
+          "position(0.20)": 0.79,
+          "valuation(0.15)": 0.1,
+          "fund(0.30)": 1.0,
+          "theme(0.20)": 0.0,
+          "us(0.15)": 0.0
+        },
+        "in_hot": false,
+        "conclusion": "只可观察，不可买",
+        "conclusion_emoji": "⚪",
+        "condition_trigger": "",
+        "edge_flag": false
+      }
+    ],
+    "serenity_chain": [
+      {
+        "theme": "机器人",
+        "hits": 7,
+        "logic": "近期 7 只强势股 reason 包含 机器人"
+      },
+      {
+        "theme": "算力",
+        "hits": 4,
+        "logic": "近期 4 只强势股 reason 包含 算力"
+      },
+      {
+        "theme": "半导体",
+        "hits": 2,
+        "logic": "近期 2 只强势股 reason 包含 半导体"
+      },
+      {
+        "theme": "存储",
+        "hits": 1,
+        "logic": "近期 1 只强势股 reason 包含 存储"
+      },
+      {
+        "theme": "固态电池",
+        "hits": 1,
+        "logic": "近期 1 只强势股 reason 包含 固态电池"
+      }
+    ],
+    "buffett_moat": [
+      {
+        "code": "600519",
+        "name": "贵州茅台",
+        "pe_ttm": 18.91,
+        "pb": 6.72,
+        "roe_est": 35.5,
+        "price": 1251.06
+      },
+      {
+        "code": "601899",
+        "name": "紫金矿业",
+        "pe_ttm": 12.43,
+        "pb": 4.05,
+        "roe_est": 32.6,
+        "price": 28.83
+      },
+      {
+        "code": "000895",
+        "name": "双汇发展",
+        "pe_ttm": 15.88,
+        "pb": 4.2,
+        "roe_est": 26.4,
+        "price": 24.1
+      },
+      {
+        "code": "300274",
+        "name": "阳光电源",
+        "pe_ttm": 18.94,
+        "pb": 4.78,
+        "roe_est": 25.2,
+        "price": 108.95
+      },
+      {
+        "code": "601628",
+        "name": "中国人寿",
+        "pe_ttm": 7.89,
+        "pb": 1.97,
+        "roe_est": 25.0,
+        "price": 40.42
+      }
+    ]
+  },
+  "news": [
+    {
+      "title": "中信建投：新车周期带动乘用车修复 重视商用车板块低位配置机会",
+      "summary": "【中信建投：新车周期带动乘用车修复 重视商用车板块低位配置机会】中信建投研报指出，乘用车板块有所反弹，机器人经历了大幅的波动，除了资金面“高低切”等流动性因素变化外，更多还是预期变化。6月乘用车主机厂产销数据（尤其出口）和新车周期修复悲观预期；特斯拉人形机器人Optimus弗里蒙特产线临近量产、宇树",
+      "time": "2026-07-16 07:32:20"
+    },
+    {
+      "title": "三重逻辑支撑创新药“出海”火热",
+      "summary": "【三重逻辑支撑创新药“出海”火热】近年来，我国创新药产业整体交易规模实现跨越式增长，“出海”合作频次与项目质量大幅提升，头部药企接连落地重磅跨国合作项目，行业景气度持续走高。国家药品监督管理局发布的最新数据显示，我国上半年创新药对外授权交易总额约1100亿美元，创历史新高。",
+      "time": "2026-07-16 07:31:00"
+    },
+    {
+      "title": "A股股票回购一览：26家公司披露回购进展",
+      "summary": "【A股股票回购一览：26家公司披露回购进展】数据显示，7月16日，26家公司共发布26个股票回购相关进展。其中，1家公司股东提议回购公司股份，7家公司首次披露股票回购预案，2家公司回购方案获股东大会通过，7家公司披露股票回购实施进展，9家公司回购方案已实施完毕。从股东提议回购方案来看，当日共1家公司",
+      "time": "2026-07-16 07:29:36"
+    },
+    {
+      "title": "百亿级算力大单频出 产业资本加速入场",
+      "summary": "【百亿级算力大单频出 产业资本加速入场】进入7月以来，A股上市公司算力大单频现。行云科技、赛意信息、东阳光、天阳科技等多家公司相继披露算力服务及采购合同，合同金额从数亿元至上百亿元不等，涉及算力服务器采购、租赁及运维服务等多个环节，折射出算力市场需求持续旺盛。",
+      "time": "2026-07-16 07:28:06"
+    },
+    {
+      "title": "公募抢滩实验动物赛道 布局创新药上游刚需",
+      "summary": "【公募抢滩实验动物赛道 布局创新药上游刚需】近期，实验猴、实验鼠两大实验动物相关板块行情持续升温，公募基金开始抱团重仓甚至举牌布局这些板块，尤其是上游研发服务企业凭借刚性需求和现金流优势，正成为医药基金经理眼中的确定性方向。同时，医药基金经理通过布局这些方向，也能规避创新药公司常面临的巨大投入和药物",
+      "time": "2026-07-16 07:27:19"
+    }
+  ],
+  "etf_active": [
+    {
+      "code": "159915",
+      "name": "创业板ETF易方达",
+      "price": 3.828,
+      "change_pct": -1.01,
+      "turnover_pct": 14.26,
+      "amount_wan": 687950.0
+    },
+    {
+      "code": "159995",
+      "name": "芯片ETF华夏",
+      "price": 1.397,
+      "change_pct": -5.67,
+      "turnover_pct": 4.34,
+      "amount_wan": 143287.0
+    },
+    {
+      "code": "159941",
+      "name": "纳指ETF广发",
+      "price": 1.629,
+      "change_pct": 0.99,
+      "turnover_pct": 3.5,
+      "amount_wan": 127888.0
+    }
+  ]
+}

@@ -217,7 +217,12 @@ def main():
     is_trading_day = True
     try:
         sc = (WORKSPACE / "STOCK_CONTEXT.md").read_text(encoding="utf-8")
-        is_trading_day = ("休市" not in sc and "is_trading_day: True" in sc) or ("is_trading_day: True" in sc)
+        # 显式标记为休市 → False;显式标记为交易日 → True;无标记 → 默认 True
+        if "is_trading_day: False" in sc:
+            is_trading_day = False
+        elif "is_trading_day: True" in sc:
+            is_trading_day = True
+        # else: 保持默认 True
     except Exception:
         is_trading_day = True
 
